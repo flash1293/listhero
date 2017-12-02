@@ -2,6 +2,7 @@
   "name": "ekofe",
   "version": "0.1.0",
   "private": true,
+  "homepage" : "http://flash1293.github.io/ekofe",
   "dependencies": {
     "material-ui": "^0.19.4",
     "react": "^16.2.0",
