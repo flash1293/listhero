@@ -15,17 +15,36 @@ import syncMiddleware from './syncMiddleware';
 import syncReducer from './syncReducer';
 import reducer from './reducer';
 import { ConnectedLists, ConnectedEditList, ConnectedViewList } from './components';
+import { setInterval } from 'timers';
 
 const persistConfig = {
   key: 'ekofe',
   storage
 }
 
-const persistentReducer = persistReducer(persistConfig, syncReducer(combineReduxers({ lists: reducer })));
-const store = createStore(persistentReducer, applyMiddleware(syncMiddleware('http://localhost:3030/actions', 'lists')));
+const postAction = (req) => fetch('http://localhost:3001/', {
+  method: 'post',
+  headers: {
+    'Accept': 'application/json, text/plain, */*',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(req)
+}).then(res=>res.json());
+const syncFilter = action => action.type !== 'persist/REHYDRATE';
+
+const persistentReducer = persistReducer(persistConfig, combineReducers({ lists: syncReducer(reducer) }));
+const store = createStore(persistentReducer, applyMiddleware(syncMiddleware(postAction, syncFilter, 'lists')));
 const persistor = persistStore(store);
 
+const dispatchRefresh = () => store.dispatch({ type: '@@sync/REQUEST_SYNC' });
+
 class App extends Component {
+  componentDidMount() {
+    this.interval = setInterval(dispatchRefresh, 5000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
   render() {
     return (
       <PersistGate persistor={persistor}>

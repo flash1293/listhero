@@ -1,29 +1,23 @@
-import sync from "./syncReducer";
+import { isNumber } from "util";
 
-export default (endpoint, key) => {
-    const requestInFlight = false;
+export default (postAction, filter, key) => {
+    let requestInFlight = false;
     let syncLog = [];
-    return store => next => action => {
+    return store => next => {
+        const getSyncState = () => store.getState()[key];
         const startSync = () => {
+            if (requestInFlight) return;
             requestInFlight = true;
             const actionsToSync = syncLog.splice(0, syncLog.length); 
-            fetch(endpont, {
-                method: 'post',
-                headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    startFrom: store.getState()[key].sequence - actionsToSync.length,
+            postAction({
+                    startFrom: getSyncState().sequence - actionsToSync.length,
                     actions: actionsToSync
-                })
             })
-            .then(res=> res.json())
             .then(res => {
-                if (res.replayFrom) {
+                if (isNumber(res.replayFrom)) {
                     next({
                         type: '@@sync/MERGE',
-                        undo: store.getState()[key].sequence - res.replayFrom,
+                        undo: getSyncState().sequence - res.replayFrom,
                         replayLog: res.replayLog.concat(syncLog)
                     });
                 } else {
@@ -38,19 +32,24 @@ export default (endpoint, key) => {
                 }
             })
             .catch(() => {
-                // sync failed, try again
+                // sync failed, prepend actions which were selected to sync back to the synclog and try again
                 syncLog = actionsToSync.concat(syncLog);
-                startSync();
+                requestInFlight = false;
+                setTimeout(startSync, 1000);
             });
         };
-        syncLog.push(action);
-        if (!requestInFlight) {
-            startSync();
+        return action => {
+            const oldState = getSyncState();
+            const result = next(action);
+            if (action.type === '@@sync/REQUEST_SYNC') {
+                startSync();
+            } else {
+                if (oldState !== getSyncState() && filter(action)) {
+                    syncLog.push(action);
+                    startSync();
+                }
+            }
+            return result;
         }
-
-        console.log('dispatching', action)
-        let result = next(action)
-        console.log('next state', store.getState())
-        return result
     };
 }

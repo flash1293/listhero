@@ -11,6 +11,7 @@ import IconButton from 'material-ui/IconButton';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import Divider from 'material-ui/Divider';
 import { connect } from 'react-redux';
+import uuid from 'uuid/v4';
 
 const SortableItem = SortableElement(({item}) =>
     <ListItem primaryText={item.name} />
@@ -20,7 +21,7 @@ const SortableList = SortableContainer(({items}) => {
     return (
     <List>
         {items.map((item, index) => (
-        <SortableItem key={index} index={index} item={item} />
+        <SortableItem key={item.uid} index={index} item={item} />
         ))}
     </List>
     );
@@ -48,7 +49,7 @@ export class EditList extends Component {
         });
     }
     onSortEnd = ({oldIndex, newIndex}) => {
-        this.props.onMove(oldIndex, newIndex);
+        this.props.onMove(this.props.items[oldIndex].uid, this.props.items[newIndex].uid);
     }
     render() {
         const activeItems = this.props.items.filter(i => !i.done);
@@ -73,13 +74,13 @@ export class EditList extends Component {
 }
 
 export const ConnectedEditList = connect((state, ownProps) => ({
-    name: state.lists[ownProps.match.params.id].name,
-    items: state.lists[ownProps.match.params.id].items
+    ...state.lists.present.find(l => l.uid === ownProps.match.params.id)
 }), (dispatch, ownProps) => ({
     onAdd: (name) => {
         dispatch({
             type: 'ADD_ITEM',
             list: ownProps.match.params.id,
+            uid: uuid(),
             name
         });
     },
@@ -89,12 +90,12 @@ export const ConnectedEditList = connect((state, ownProps) => ({
             list: ownProps.match.params.id
         });
     },
-    onMove: (oldIndex, newIndex) => {
+    onMove: (oldId, newId) => {
         dispatch({
             type: 'MOVE_ITEM',
             list: ownProps.match.params.id,
-            oldIndex,
-            newIndex
+            oldId,
+            newId
         });
     }
 }))(EditList);

@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 
 export class ViewList extends Component {
     onToggle = (item) => {
-        this.props.onToggle(this.props.items.indexOf(item));
+        this.props.onToggle(item.uid);
     }
     render() {
         const activeItems = this.props.items.filter(i => !i.done);
@@ -42,8 +42,7 @@ export class ViewList extends Component {
 }
 
 export const ConnectedViewList = connect((state, ownProps) => ({
-    name: state.lists[ownProps.match.params.id].name,
-    items: state.lists[ownProps.match.params.id].items
+    ...state.lists.present.find(l => l.uid === ownProps.match.params.id)
 }), (dispatch, ownProps) => ({
     onRemove: () => {
         dispatch({
