@@ -1,5 +1,6 @@
 import {arrayMove} from 'react-sortable-hoc';
 
+// TODO: lists-wrapper hier rausnehmen
 const initalState = { lists: [
     {
         name: 'Einkaufen',
