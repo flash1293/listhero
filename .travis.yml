@@ -4,7 +4,7 @@ sudo: enabled
 services:
   - docker
 
-install: cd client && yarn install
+install: cd client && yarn install && yarn build
 script:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker build -t ekofe-client client 
