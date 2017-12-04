@@ -1,0 +1,15 @@
+language: node_js
+sudo: enabled
+
+services:
+  - docker
+
+install: cd client && yarn install
+script:
+  - docker build -t ekofe-client client 
+  - docker build -t ekofe-server server
+  - docker images
+  - docker tag ekofe-client $DOCKER_USERNAME/ekofe-client
+  - docker tag ekofe-server $DOCKER_USERNAME/ekofe-server
+  - docker push $DOCKER_USERNAME/ekofe-client
+  - docker push $DOCKER_USERNAME/ekofe-server
