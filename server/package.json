@@ -1,0 +1,15 @@
+{
+  "name": "ekofe-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": {},
+  "author": "Johannes Reuter <flash1293@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "express-ws": "^3.0.0",
+    "uuid": "^3.1.0"
+  }
+}

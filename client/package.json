@@ -19,7 +19,6 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "deploy": "yarn build && rm -rf docs && mkdir docs && cp -r build/* docs"
+    "eject": "react-scripts eject"
   }
 }
