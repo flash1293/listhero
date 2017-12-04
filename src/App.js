@@ -37,7 +37,7 @@ const persistentReducer = persistReducer(persistConfig, combineReducers({ lists:
 const store = createStore(persistentReducer, applyMiddleware(syncMiddleware(postAction, syncFilter, 'lists')));
 const persistor = persistStore(store);
 
-const dispatchRefresh = () => store.dispatch({ type: '@@sync/REQUEST_SYNC' });
+const dispatchRefresh = () => store.dispatch({ type: '@@sync/REQUEST_SYNC', key: 'lists' });
 
 class App extends Component {
   componentDidMount() {
