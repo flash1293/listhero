@@ -6,6 +6,7 @@ services:
 
 install: cd client && yarn install
 script:
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker build -t ekofe-client client 
   - docker build -t ekofe-server server
   - docker images
