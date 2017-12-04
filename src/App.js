@@ -40,12 +40,17 @@ const persistor = persistStore(store);
 const dispatchRefresh = () => store.dispatch({ type: '@@sync/REQUEST_SYNC', key: 'lists' });
 
 class App extends Component {
-  componentDidMount() {
-    this.ws =new WebSocket(`ws://localhost:3001/updates/${clientSession}`);
+  setupWs = () => {
+    this.ws = new WebSocket(`ws://localhost:3001/updates/${clientSession}`);
     this.ws.onmessage = () => {
       console.log("update push received");
       dispatchRefresh();
     };
+    this.ws.onerror = () => {
+      setTimeout(this.setupWs, 5000);
+    }
+  }
+  componentDidMount() {
     dispatchRefresh();
   }
   componentWillUnmount() {

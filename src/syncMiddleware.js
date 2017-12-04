@@ -1,8 +1,34 @@
 import { isNumber } from "util";
 
+
 export default (postAction, filter, key) => {
+    let syncLog;
+    const saveSyncLog = () => {
+        localStorage.setItem(`sync-log:${key}`, JSON.stringify(syncLog));
+    };
+    const loadSyncLog = () => {
+        const serializedLog = localStorage.getItem(`sync-log:${key}`);
+        if (serializedLog) {
+            syncLog = JSON.parse(serializedLog);
+        } else {
+            syncLog = [];
+        }
+    };
+    const isSeedCorrect = (seed) => {
+        const storageKey = `sync-seed:${key}`;
+        const savedSeed = localStorage.getItem(storageKey);
+        if (savedSeed) {
+            const isCorrect = seed === savedSeed;
+            if (!isCorrect) {
+                localStorage.setItem(storageKey, seed);
+            }
+            return isCorrect;
+        }
+        localStorage.setItem(storageKey, seed);
+        return true;
+    }
     let requestInFlight = false;
-    let syncLog = [];
+    loadSyncLog();
     return store => next => {
         const getSyncState = () => store.getState()[key];
         const startSync = () => {
@@ -15,7 +41,15 @@ export default (postAction, filter, key) => {
                     actions: actionsToSync
             })
             .then(res => {
-                if (isNumber(res.replayFrom)) {
+                if(!isSeedCorrect(res.seed)) {
+                    console.log('purging local state, server has another seed');
+                    // server has another seed than the client, purge all data and resync
+                    next({
+                        type: '@@sync/PURGE',
+                        key
+                    });
+                    startSync();
+                } else if (isNumber(res.replayFrom)) {
                     next({
                         type: '@@sync/MERGE',
                         key,
@@ -30,9 +64,11 @@ export default (postAction, filter, key) => {
                 }
                 if (syncLog.length > 0) {
                     console.log('sync completed, restarting for new changes');
+                    saveSyncLog();
                     startSync();
                 } else {
                     console.log('sync completed');
+                    saveSyncLog();
                     requestInFlight = false;
                 }
             })
@@ -52,6 +88,7 @@ export default (postAction, filter, key) => {
             } else {
                 if (oldState !== getSyncState() && filter(action)) {
                     syncLog.push(action);
+                    saveSyncLog();
                     startSync();
                 }
             }

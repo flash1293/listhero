@@ -6,7 +6,7 @@ const initalState = [];
 function replaceByMap(list, pred, map) {
   const newList = [...list];
   const index = list.findIndex(pred);
-  newList[index] = map(newList[index]);
+  if(index > -1) newList[index] = map(newList[index]);
   return newList;
 }
 
@@ -30,14 +30,18 @@ export default function reducer(state = initalState, action) {
       return replaceByMap(
         state,
         l => l.uid === action.list,
-        list => ({
-          ...list,
-          items: arrayMove(
-            list.items,
-            list.items.findIndex(i => i.uid === action.oldId),
-            list.items.findIndex(i => i.uid === action.newId)
-          )
-        })
+        list => {
+          const oldIndex = list.items.findIndex(i => i.uid === action.oldId);
+          const newIndex = list.items.findIndex(i => i.uid === action.newId);
+          return (oldIndex === -1 || newIndex === -1) ? list : {
+            ...list,
+            items: arrayMove(
+              list.items,
+              list.items.findIndex(i => i.uid === action.oldId),
+              list.items.findIndex(i => i.uid === action.newId)
+            )
+          }
+        }
       );
     case "TOGGLE_ITEM":
       return replaceByMap(

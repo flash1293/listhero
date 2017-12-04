@@ -30,6 +30,9 @@ export default (reducer, key) => {
               past: [],
               merged: true
           };
+        case '@@sync/PURGE':
+          if (action.key !== key) return state;
+          return initialState;
         default:
           // Delegate handling the action to the passed reducer
           const newPresent = reducer(present, action);

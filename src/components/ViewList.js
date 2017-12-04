@@ -9,12 +9,14 @@ import IconButton from 'material-ui/IconButton';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import Divider from 'material-ui/Divider';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router';
 
 export class ViewList extends Component {
     onToggle = (item) => {
         this.props.onToggle(item.uid);
     }
     render() {
+        if (!this.props.uid) return <Redirect to="/" />;
         const activeItems = this.props.items.filter(i => !i.done);
         const doneItems = this.props.items.filter(i => i.done);
         return (

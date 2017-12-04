@@ -12,6 +12,7 @@ import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import Divider from 'material-ui/Divider';
 import { connect } from 'react-redux';
 import uuid from 'uuid/v4';
+import { Redirect } from 'react-router';
 
 const SortableItem = SortableElement(({item}) =>
     <ListItem primaryText={item.name} />
@@ -52,6 +53,7 @@ export class EditList extends Component {
         this.props.onMove(this.props.items[oldIndex].uid, this.props.items[newIndex].uid);
     }
     render() {
+        if (!this.props.uid) return <Redirect to="/" />;
         const activeItems = this.props.items.filter(i => !i.done);
         const doneItems = this.props.items.filter(i => i.done);
         return (
