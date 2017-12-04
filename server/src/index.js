@@ -1,18 +1,41 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const uuid = require('uuid/v4');
+const fs = require('fs');
+
+const seed = process.env.SEED;
 
 const app = express();
 const expressWs = require('express-ws')(app);
 app.use(bodyParser.json({ type: 'application/json' }));
 app.use(cors());
 
-let actionLog = [];
-let clients = [];
-let seed = uuid();
+const logFile = `${process.env.DATA_DIR}/${seed}.data`;
+const loadLog = () => {
+  if(fs.existsSync(logFile)) {
+    const serializedLog = fs.readFileSync(logFile);
+    return JSON.parse(serializedLog);
+  } else {
+    return [];
+  }
+}
 
-app.post('/', (req, res) => {
+
+let actionLog = loadLog();
+let clients = [];
+let unflushedActions = false;
+
+const writeLog = () => {
+  if (!unflushedActions) return;
+  console.log('flusing actions to disk');
+  const serializedLog = JSON.stringify(actionLog);
+  fs.writeFile(logFile, serializedLog, () => {});
+  unflushedActions = false;
+}
+
+setInterval(writeLog, 10000);
+
+app.post('/api', (req, res) => {
   const { startFrom, actions } = req.body;
   const sequence = actionLog.length;
   actionLog = actionLog.concat(actions);
@@ -28,12 +51,13 @@ app.post('/', (req, res) => {
     });
   }
   if(actions.length > 0) {
+    unflushedActions = true;
     clients.forEach(c => c.session !== req.headers['x-sync-session'] && c.ws.send(""));
   }
   console.log(`New action log length: ${actionLog.length}`);
 });
 
-app.ws('/updates/:session', (ws, req) => {
+app.ws('/api/updates/:session', (ws, req) => {
   console.log('new update listener');
   clients.push({ ws, session: req.params.session });
   ws.on('close', () => {
@@ -42,4 +66,10 @@ app.ws('/updates/:session', (ws, req) => {
   });
 });
 
-app.listen(3001, () => console.log('Ekofe server listening on port 3001!'));
+const server = app.listen(3001, () => console.log('Ekofe server listening on port 3001!'));
+
+process.on('SIGTERM', function () {
+  server.close(function () {
+    process.exit(0);
+  });
+});

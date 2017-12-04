@@ -1,0 +1,17 @@
+version: '2'
+services:
+  client:
+    build: ./client
+    ports:
+      - 8080:8080
+    links:
+      - server
+  server:
+    build: ./server
+    ports:
+      - 3001:3001
+    volumes:
+      - "./data:/data"
+    environment:
+      - SEED=547645382715487
+      - DATA_DIR=/data

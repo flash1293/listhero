@@ -21,8 +21,10 @@ const persistConfig = {
   storage
 }
 
+const API_URL = `${window.location.host}/api`;
+
 const clientSession = uuid();
-const postAction = (req) => fetch('http://localhost:3001/', {
+const postAction = (req) => fetch(`http://${API_URL}/`, {
   method: 'post',
   headers: {
     'Accept': 'application/json, text/plain, */*',
@@ -33,15 +35,27 @@ const postAction = (req) => fetch('http://localhost:3001/', {
 }).then(res=>res.json());
 const syncFilter = action => action.type !== 'persist/REHYDRATE';
 
+const refreshOnRehydrateMiddleware = store => next => action => {
+  let result = next(action);
+  if (action.type === 'persist/REHYDRATE') {
+    next({
+      type: '@@sync/REQUEST_SYNC',
+      key: 'lists'
+    });
+  }
+  return result;
+};
+
+
 const persistentReducer = persistReducer(persistConfig, combineReducers({ lists: syncReducer(reducer, 'lists') }));
-const store = createStore(persistentReducer, applyMiddleware(syncMiddleware(postAction, syncFilter, 'lists')));
+const store = createStore(persistentReducer, applyMiddleware(refreshOnRehydrateMiddleware, syncMiddleware(postAction, syncFilter, 'lists')));
 const persistor = persistStore(store);
 
 const dispatchRefresh = () => store.dispatch({ type: '@@sync/REQUEST_SYNC', key: 'lists' });
 
 class App extends Component {
   setupWs = () => {
-    this.ws = new WebSocket(`ws://localhost:3001/updates/${clientSession}`);
+    this.ws = new WebSocket(`ws://${API_URL}/updates/${clientSession}`);
     this.ws.onmessage = () => {
       console.log("update push received");
       dispatchRefresh();
@@ -51,7 +65,7 @@ class App extends Component {
     }
   }
   componentDidMount() {
-    dispatchRefresh();
+    this.setupWs();
   }
   componentWillUnmount() {
     this.ws.close();
