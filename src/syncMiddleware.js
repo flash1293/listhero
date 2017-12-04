@@ -18,12 +18,14 @@ export default (postAction, filter, key) => {
                 if (isNumber(res.replayFrom)) {
                     next({
                         type: '@@sync/MERGE',
+                        key,
                         undo: getSyncState().sequence - res.replayFrom,
                         replayLog: res.replayLog.concat(syncLog)
                     });
                 } else {
                     next({
-                        type: '@@sync/SYNC'
+                        type: '@@sync/SYNC',
+                        key
                     });
                 }
                 if (syncLog.length > 0) {
@@ -45,7 +47,7 @@ export default (postAction, filter, key) => {
         return action => {
             const oldState = getSyncState();
             const result = next(action);
-            if (action.type === '@@sync/REQUEST_SYNC') {
+            if (action.type === '@@sync/REQUEST_SYNC' && action.key === key) {
                 startSync();
             } else {
                 if (oldState !== getSyncState() && filter(action)) {

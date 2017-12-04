@@ -1,4 +1,4 @@
-export default (reducer) => {
+export default (reducer, key) => {
     // Call the reducer with empty action to populate the initial state
     const initialState = {
       past: [],
@@ -13,6 +13,7 @@ export default (reducer) => {
   
       switch (action.type) {
         case '@@sync/MERGE':
+          if (action.key !== key) return state;
           const startingState = (action.undo === 0 ? present : past[past.length - action.undo]);
           const newState = action.replayLog.reduce(reducer, startingState);
           return {
@@ -23,6 +24,7 @@ export default (reducer) => {
             sequence: sequence - action.undo + action.replayLog.length
           }
         case '@@sync/SYNC':
+          if (action.key !== key) return state;
           return {
               ...state,
               past: [],

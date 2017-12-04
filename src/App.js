@@ -33,7 +33,7 @@ const postAction = (req) => fetch('http://localhost:3001/', {
 }).then(res=>res.json());
 const syncFilter = action => action.type !== 'persist/REHYDRATE';
 
-const persistentReducer = persistReducer(persistConfig, combineReducers({ lists: syncReducer(reducer) }));
+const persistentReducer = persistReducer(persistConfig, combineReducers({ lists: syncReducer(reducer, 'lists') }));
 const store = createStore(persistentReducer, applyMiddleware(syncMiddleware(postAction, syncFilter, 'lists')));
 const persistor = persistStore(store);
 
