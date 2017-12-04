@@ -7,6 +7,7 @@ export default (postAction, filter, key) => {
         const getSyncState = () => store.getState()[key];
         const startSync = () => {
             if (requestInFlight) return;
+            console.log('attempting sync');
             requestInFlight = true;
             const actionsToSync = syncLog.splice(0, syncLog.length); 
             postAction({
@@ -26,12 +27,15 @@ export default (postAction, filter, key) => {
                     });
                 }
                 if (syncLog.length > 0) {
+                    console.log('sync completed, restarting for new changes');
                     startSync();
                 } else {
+                    console.log('sync completed');
                     requestInFlight = false;
                 }
             })
             .catch(() => {
+                console.log('sync failed, retry in 1 second');
                 // sync failed, prepend actions which were selected to sync back to the synclog and try again
                 syncLog = actionsToSync.concat(syncLog);
                 requestInFlight = false;

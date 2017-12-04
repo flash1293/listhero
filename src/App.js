@@ -9,24 +9,25 @@ import { Provider } from 'react-redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import { PersistGate } from 'redux-persist/es/integration/react'
 import storage from 'redux-persist/es/storage';
-
+import uuid from 'uuid/v4';
 
 import syncMiddleware from './syncMiddleware';
 import syncReducer from './syncReducer';
 import reducer from './reducer';
 import { ConnectedLists, ConnectedEditList, ConnectedViewList } from './components';
-import { setInterval } from 'timers';
 
 const persistConfig = {
   key: 'ekofe',
   storage
 }
 
+const clientSession = uuid();
 const postAction = (req) => fetch('http://localhost:3001/', {
   method: 'post',
   headers: {
     'Accept': 'application/json, text/plain, */*',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'X-Sync-Session': clientSession
   },
   body: JSON.stringify(req)
 }).then(res=>res.json());
@@ -40,10 +41,15 @@ const dispatchRefresh = () => store.dispatch({ type: '@@sync/REQUEST_SYNC' });
 
 class App extends Component {
   componentDidMount() {
-    this.interval = setInterval(dispatchRefresh, 5000);
+    this.ws =new WebSocket(`ws://localhost:3001/updates/${clientSession}`);
+    this.ws.onmessage = () => {
+      console.log("update push received");
+      dispatchRefresh();
+    };
+    dispatchRefresh();
   }
   componentWillUnmount() {
-    clearInterval(this.interval);
+    this.ws.close();
   }
   render() {
     return (
