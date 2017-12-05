@@ -9,20 +9,21 @@ import TextField from 'material-ui/TextField';
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import IconButton from 'material-ui/IconButton';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import DragHandle from 'material-ui/svg-icons/editor/drag-handle';
 import Divider from 'material-ui/Divider';
 import { connect } from 'react-redux';
 import uuid from 'uuid/v4';
 import { Redirect } from 'react-router';
 
-const SortableItem = SortableElement(({item}) =>
-    <ListItem primaryText={item.name} />
+const SortableItem = SortableElement(({item, done}) =>
+    <ListItem style={done ? {color: '#aaa'} : {}} leftIcon={<DragHandle />} primaryText={item.name} />
 );
 
-const SortableList = SortableContainer(({items}) => {
+const SortableList = SortableContainer(({items, done}) => {
     return (
     <List>
         {items.map((item, index) => (
-        <SortableItem key={item.uid} index={index} item={item} />
+        <SortableItem key={item.uid} index={index} done={done} item={item} />
         ))}
     </List>
     );
@@ -49,13 +50,14 @@ export class EditList extends Component {
             addText: value
         });
     }
-    onSortEnd = ({oldIndex, newIndex}) => {
-        this.props.onMove(this.props.items[oldIndex].uid, this.props.items[newIndex].uid);
+    onSortEndActive = ({oldIndex, newIndex}) => {
+        this.props.onMove(this.props.activeItems[oldIndex].uid, this.props.activeItems[newIndex].uid);
+    }
+    onSortEndDone = ({oldIndex, newIndex}) => {
+        this.props.onMove(this.props.doneItems[oldIndex].uid, this.props.doneItems[newIndex].uid);
     }
     render() {
         if (!this.props.uid) return <Redirect to="/" />;
-        const activeItems = this.props.items.filter(i => !i.done);
-        const doneItems = this.props.items.filter(i => i.done);
         return (
             <div>
                 <AppBar
@@ -66,18 +68,23 @@ export class EditList extends Component {
                     <TextField fullWidth key="add-textfield" ref={(el) => this.addInput = el} value={this.state.addText} onChange={this.onChangeAddText} hintText="Neuer Eintrag" />
                 </form>
 
-                <SortableList items={activeItems} onSortEnd={this.onSortEnd} />
-                {doneItems.length > 0 && <Divider inset={true} />}
-                {doneItems.length > 0 && <FlatButton labelStyle={{fontSize: '0.7em'}} label="Erledigte Löschen" onClick={this.props.onRemove} />}
-                <SortableList items={doneItems} onSortEnd={this.onSortEnd} />
+                <SortableList items={this.props.activeItems} onSortEnd={this.onSortEndActive} />
+                {this.props.doneItems.length > 0 && <Divider inset={true} />}
+                {this.props.doneItems.length > 0 && <FlatButton labelStyle={{fontSize: '0.7em'}} label="Erledigte Löschen" onClick={this.props.onRemove} />}
+                <SortableList done items={this.props.doneItems} onSortEnd={this.onSortEndDone} />
             </div>
         );
     }
 }
 
-export const ConnectedEditList = connect((state, ownProps) => ({
-    ...state.lists.present.find(l => l.uid === ownProps.match.params.id)
-}), (dispatch, ownProps) => ({
+export const ConnectedEditList = connect((state, ownProps) => {
+    const list = state.lists.present.find(l => l.uid === ownProps.match.params.id)
+    return {
+        ...list,
+        doneItems: list.items.filter(i => i.done),
+        activeItems: list.items.filter(i => !i.done) 
+    };
+}, (dispatch, ownProps) => ({
     onAdd: (name) => {
         dispatch({
             type: 'ADD_ITEM',

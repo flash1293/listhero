@@ -55,19 +55,25 @@ const dispatchRefresh = () => store.dispatch({ type: '@@sync/REQUEST_SYNC', key:
 
 class App extends Component {
   setupWs = () => {
+    console.log('websocket started');
     this.ws = new WebSocket(`ws://${API_URL}/updates/${clientSession}`);
     this.ws.onmessage = () => {
       console.log("update push received");
       dispatchRefresh();
     };
-    this.ws.onerror = () => {
-      setTimeout(this.setupWs, 5000);
+    this.ws.onerror = (e) => {
+      console.log('websocket-error', e);
+    }
+    this.ws.onclose = () => {
+      console.log('closed, restart websocket');
+      setTimeout(this.setupWs, 0);
     }
   }
   componentDidMount() {
     this.setupWs();
   }
   componentWillUnmount() {
+    this.ws.onclose = undefined;
     this.ws.close();
   }
   render() {
