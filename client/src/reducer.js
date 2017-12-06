@@ -6,14 +6,14 @@ const initalState = [];
 function replaceByMap(list, pred, map) {
   const newList = [...list];
   const index = list.findIndex(pred);
-  if(index > -1) newList[index] = map(newList[index]);
+  if (index > -1) newList[index] = map(newList[index]);
   return newList;
 }
 
 export default function reducer(state = initalState, action) {
   switch (action.type) {
     case "ADD_LIST":
-      return [...state, { name: action.name, uid: action.uid, items: [] }];
+      return [{ name: action.name, uid: action.uid, items: [] }, ...state];
     case "ADD_ITEM":
       return replaceByMap(
         state,
@@ -21,8 +21,8 @@ export default function reducer(state = initalState, action) {
         list => ({
           ...list,
           items: [
-            ...list.items,
-            { name: action.name, uid: action.uid, done: false }
+            { name: action.name, uid: action.uid, done: false },
+            ...list.items
           ]
         })
       );
@@ -33,14 +33,12 @@ export default function reducer(state = initalState, action) {
         list => {
           const oldIndex = list.items.findIndex(i => i.uid === action.oldId);
           const newIndex = list.items.findIndex(i => i.uid === action.newId);
-          return (oldIndex === -1 || newIndex === -1) ? list : {
-            ...list,
-            items: arrayMove(
-              list.items,
-              list.items.findIndex(i => i.uid === action.oldId),
-              list.items.findIndex(i => i.uid === action.newId)
-            )
-          }
+          return oldIndex === -1
+            ? list
+            : {
+                ...list,
+                items: arrayMove(list.items, oldIndex, newIndex)
+              };
         }
       );
     case "TOGGLE_ITEM":

@@ -58,16 +58,13 @@ const store = createStore(
   persistentReducer,
   applyMiddleware(
     refreshOnRehydrateMiddleware,
-    syncMiddleware(postAction, syncFilter, "lists", REDUCER_VERSION)
+    syncMiddleware(postAction, syncFilter, "lists")
   )
 );
 const persistor = persistStore(store);
 
 const dispatchRefresh = () =>
   store.dispatch({ type: "@@sync/REQUEST_SYNC", key: "lists" });
-
-const dispatchPurge = () =>
-  store.dispatch({ type: "@@sync/PURGE", key: "lists" });
 
 class App extends Component {
   setupWs = () => {
