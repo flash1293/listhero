@@ -24,7 +24,7 @@ const persistConfig = {
   storage
 };
 
-const API_URL = `${window.location.host}/api`;
+const API_URL = window.location.origin;
 
 const clientSession = uuid();
 const postAction = req =>
@@ -69,7 +69,11 @@ const dispatchRefresh = () =>
 class App extends Component {
   setupWs = () => {
     console.log("websocket started");
-    this.ws = new WebSocket(`ws://${API_URL}/updates/${clientSession}`);
+    this.ws = new WebSocket(
+      `ws${window.location.protocol === "https:" ? "s" : ""}://${
+        API_URL
+      }/updates/${clientSession}`
+    );
     this.ws.onmessage = () => {
       console.log("update push received");
       dispatchRefresh();
