@@ -29,7 +29,7 @@ const API_HOST = window.location.host;
 
 const clientSession = uuid();
 const postAction = req =>
-  fetch(`http://${API_URL}/`, {
+  fetch(`http://${API_URL}/api`, {
     method: "post",
     headers: {
       Accept: "application/json, text/plain, */*",
@@ -73,7 +73,7 @@ class App extends Component {
     this.ws = new WebSocket(
       `ws${window.location.protocol === "https:" ? "s" : ""}://${
         API_HOST
-      }/updates/${clientSession}`
+      }/api/updates/${clientSession}`
     );
     this.ws.onmessage = () => {
       console.log("update push received");
