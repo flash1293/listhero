@@ -57,6 +57,22 @@ export default function reducer(state = initalState, action) {
           )
         })
       );
+    case "EDIT_ITEM":
+      return replaceByMap(
+        state,
+        l => l.uid === action.list,
+        list => ({
+          ...list,
+          items: replaceByMap(
+            list.items,
+            i => i.uid === action.item,
+            item => ({
+              ...item,
+              name: action.name
+            })
+          )
+        })
+      );
     case "REMOVE_DONE":
       return replaceByMap(
         state,
