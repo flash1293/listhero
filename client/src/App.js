@@ -25,6 +25,7 @@ const persistConfig = {
 };
 
 const API_URL = window.location.origin;
+const API_HOST = window.location.host;
 
 const clientSession = uuid();
 const postAction = req =>
@@ -71,7 +72,7 @@ class App extends Component {
     console.log("websocket started");
     this.ws = new WebSocket(
       `ws${window.location.protocol === "https:" ? "s" : ""}://${
-        API_URL
+        API_HOST
       }/updates/${clientSession}`
     );
     this.ws.onmessage = () => {
