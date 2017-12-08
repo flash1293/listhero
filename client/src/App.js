@@ -29,7 +29,7 @@ const API_HOST = window.location.host;
 
 const clientSession = uuid();
 const postAction = req =>
-  fetch(`http://${API_URL}/api`, {
+  fetch(`${API_URL}/api`, {
     method: "post",
     headers: {
       Accept: "application/json, text/plain, */*",
