@@ -75,8 +75,10 @@ export default (postAction, filter, key) => {
           console.log("sync failed, retry in 1 second");
           // sync failed, prepend actions which were selected to sync back to the synclog and try again
           syncLog = actionsToSync.concat(syncLog);
-          requestInFlight = false;
-          setTimeout(startSync, 1000);
+          setTimeout(() => {
+            requestInFlight = false;
+            startSync();
+          }, 1000);
         });
     };
     return action => {
