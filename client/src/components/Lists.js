@@ -4,6 +4,7 @@ import AppBar from "material-ui/AppBar";
 import FlatButton from "material-ui/FlatButton";
 import IconButton from "material-ui/IconButton";
 import ContentRemove from "material-ui/svg-icons/content/remove";
+import ActionList from "material-ui/svg-icons/action/list";
 import { List, ListItem } from "material-ui/List";
 import TextField from "material-ui/TextField";
 import Paper from "material-ui/Paper";
@@ -63,6 +64,8 @@ export class Lists extends Component {
             <ListItem
               key={list.uid}
               primaryText={list.name}
+              secondaryText={`${list.activeItemCount} Einträge `}
+              leftIcon={<ActionList />}
               rightIconButton={
                 this.state.editMode ? (
                   <IconButton onClick={() => this.props.onRemove(list.uid)}>
@@ -95,7 +98,10 @@ export class Lists extends Component {
 
 export const ConnectedLists = connect(
   state => ({
-    lists: state.lists ? (state.lists.present || []) : []
+    lists: (state.lists ? state.lists.present || [] : []).map(list => ({
+      ...list,
+      activeItemCount: list.items.filter(i => !i.done).length
+    }))
   }),
   dispatch => ({
     onAdd: name => {
