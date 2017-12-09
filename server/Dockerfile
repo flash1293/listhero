@@ -6,7 +6,7 @@ ADD yarn.lock /app/
 
 WORKDIR /app
 
-RUN yarn install
+RUN yarn install --production
 
 EXPOSE 3001
 CMD node index.js
