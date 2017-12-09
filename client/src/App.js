@@ -24,12 +24,15 @@ const persistConfig = {
   storage
 };
 
-const API_URL = window.location.origin;
-const API_HOST = window.location.host;
+let API_PROTOCOL = window.location.protocol;
+let API_HOST = window.location.host;
+if (window.location.hostname === "localhost") {
+  API_HOST = "localhost:3001";
+}
 
 const clientSession = uuid();
 const postAction = req =>
-  fetch(`${API_URL}/api`, {
+  fetch(`${API_PROTOCOL}//${API_HOST}/api`, {
     method: "post",
     headers: {
       Accept: "application/json, text/plain, */*",
@@ -71,9 +74,9 @@ class App extends Component {
   setupWs = () => {
     console.log("websocket started");
     this.ws = new WebSocket(
-      `ws${window.location.protocol === "https:" ? "s" : ""}://${
-        API_HOST
-      }/api/updates/${clientSession}`
+      `ws${API_PROTOCOL === "https:" ? "s" : ""}://${API_HOST}/api/updates/${
+        clientSession
+      }`
     );
     this.ws.onmessage = () => {
       console.log("update push received");
