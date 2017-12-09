@@ -108,6 +108,18 @@ balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
 
+basic-auth@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/basic-auth/-/basic-auth-2.0.0.tgz#015db3f353e02e56377755f962742e8981e7bbba"
+  dependencies:
+    safe-buffer "5.1.1"
+
+basicauth-middleware@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/basicauth-middleware/-/basicauth-middleware-3.0.0.tgz#67316ff20876c3295040ca64c3d7cf8287d692e2"
+  dependencies:
+    basic-auth "^2.0.0"
+
 bcrypt-pbkdf@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/bcrypt-pbkdf/-/bcrypt-pbkdf-1.0.1.tgz#63bc5dcb61331b92bc05fd528953c33462a06f8d"

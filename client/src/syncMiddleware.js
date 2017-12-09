@@ -30,7 +30,7 @@ export default (postAction, filter, key) => {
   loadSyncLog();
   return store => next => {
     const getSyncState = () => store.getState()[key];
-    const startSync = () => {
+    const startSync = (options = { skipRetry: false }) => {
       if (requestInFlight) return;
       console.log("attempting sync");
       requestInFlight = true;
@@ -72,20 +72,29 @@ export default (postAction, filter, key) => {
           }
         })
         .catch(() => {
-          console.log("sync failed, retry in 1 second");
+          next({
+            type: "@@sync/SYNC_FAILED",
+            key
+          });
           // sync failed, prepend actions which were selected to sync back to the synclog and try again
           syncLog = actionsToSync.concat(syncLog);
-          setTimeout(() => {
+          if (options.skipRetry) {
+            console.log("sync failed");
             requestInFlight = false;
-            startSync();
-          }, 1000);
+          } else {
+            console.log("sync failed, retry in 1 second");
+            setTimeout(() => {
+              requestInFlight = false;
+              startSync();
+            }, 1000);
+          }
         });
     };
     return action => {
       const oldState = getSyncState();
       const result = next(action);
       if (action.type === "@@sync/REQUEST_SYNC" && action.key === key) {
-        startSync();
+        startSync({ skipRetry: action.skipRetry });
       } else {
         if (oldState !== getSyncState() && filter(action)) {
           syncLog.push(action);

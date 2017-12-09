@@ -8,6 +8,8 @@ import NavigationClose from "material-ui/svg-icons/navigation/close";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
 
+import redirectToLogin from "./RedirectToLogin";
+
 export class ViewList extends Component {
   onToggle = item => {
     this.props.onToggle(item.uid);
@@ -47,17 +49,19 @@ export class ViewList extends Component {
   }
 }
 
-export const ConnectedViewList = connect(
-  (state, ownProps) => ({
-    ...state.lists.present.find(l => l.uid === ownProps.match.params.id)
-  }),
-  (dispatch, ownProps) => ({
-    onToggle: index => {
-      dispatch({
-        type: "TOGGLE_ITEM",
-        list: ownProps.match.params.id,
-        item: index
-      });
-    }
-  })
-)(ViewList);
+export const ConnectedViewList = redirectToLogin(
+  connect(
+    (state, ownProps) => ({
+      ...state.lists.present.find(l => l.uid === ownProps.match.params.id)
+    }),
+    (dispatch, ownProps) => ({
+      onToggle: index => {
+        dispatch({
+          type: "TOGGLE_ITEM",
+          list: ownProps.match.params.id,
+          item: index
+        });
+      }
+    })
+  )(ViewList)
+);

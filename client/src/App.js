@@ -10,9 +10,11 @@ import uuid from "uuid/v4";
 
 import syncMiddleware from "./syncMiddleware";
 import syncReducer from "./syncReducer";
-import reducer from "./reducer";
+import listReducer from "./listReducer";
+import userReducer from "./userReducer";
 import {
   ConnectedLists,
+  ConnectedLogin,
   ConnectedEditList,
   ConnectedViewList
 } from "./components";
@@ -37,7 +39,8 @@ const postAction = req =>
     headers: {
       Accept: "application/json, text/plain, */*",
       "Content-Type": "application/json",
-      "X-Sync-Session": clientSession
+      "X-Sync-Session": clientSession,
+      Authorization: `Basic ${btoa("user:" + store.getState().user.password)}`
     },
     body: JSON.stringify(req)
   }).then(res => res.json());
@@ -45,7 +48,7 @@ const syncFilter = action => action.type !== "persist/REHYDRATE";
 
 const refreshOnRehydrateMiddleware = store => next => action => {
   let result = next(action);
-  if (action.type === "persist/REHYDRATE") {
+  if (action.type === "persist/REHYDRATE" && store.getState().user.loggedIn) {
     next({
       type: "@@sync/REQUEST_SYNC",
       key: "lists"
@@ -56,7 +59,10 @@ const refreshOnRehydrateMiddleware = store => next => action => {
 
 const persistentReducer = persistReducer(
   persistConfig,
-  combineReducers({ lists: syncReducer(reducer, "lists") })
+  combineReducers({
+    lists: syncReducer(listReducer, "lists"),
+    user: userReducer
+  })
 );
 const store = createStore(
   persistentReducer,
@@ -76,7 +82,8 @@ class App extends Component {
     this.ws = new WebSocket(
       `ws${API_PROTOCOL === "https:" ? "s" : ""}://${API_HOST}/api/updates/${
         clientSession
-      }`
+      }`,
+      store.getState().user.password
     );
     this.ws.onmessage = () => {
       console.log("update push received");
@@ -91,7 +98,15 @@ class App extends Component {
     };
   };
   componentDidMount() {
-    this.setupWs();
+    if (store.getState().user.loggedIn) {
+      this.setupWs();
+    } else {
+      store.subscribe(() => {
+        if (store.getState().user.loggedIn && !this.ws) {
+          this.setupWs();
+        }
+      });
+    }
   }
   componentWillUnmount() {
     this.ws.onclose = undefined;
@@ -105,6 +120,7 @@ class App extends Component {
             <Router>
               <div>
                 <Route exact path="/" component={ConnectedLists} />
+                <Route exact path="/login" component={ConnectedLogin} />
                 <Route exact path="/lists/:id" component={ConnectedViewList} />
                 <Route
                   exact

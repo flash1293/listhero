@@ -19,6 +19,8 @@ import { connect } from "react-redux";
 import uuid from "uuid/v4";
 import { Redirect } from "react-router";
 
+import redirectToLogin from "./RedirectToLogin";
+
 const SortableDragHandle = SortableHandle(() => <DragHandle />);
 
 const SortableItem = SortableElement(({ item, onClick, onRemove }) => {
@@ -196,54 +198,56 @@ export class EditList extends Component {
   }
 }
 
-export const ConnectedEditList = connect(
-  (state, ownProps) => {
-    const list = state.lists.present.find(
-      l => l.uid === ownProps.match.params.id
-    );
-    return {
-      ...list,
-      doneItems: list.items.filter(i => i.done),
-      activeItems: list.items.filter(i => !i.done)
-    };
-  },
-  (dispatch, ownProps) => ({
-    onAdd: name => {
-      dispatch({
-        type: "ADD_ITEM",
-        list: ownProps.match.params.id,
-        uid: uuid(),
-        name
-      });
+export const ConnectedEditList = redirectToLogin(
+  connect(
+    (state, ownProps) => {
+      const list = state.lists.present.find(
+        l => l.uid === ownProps.match.params.id
+      );
+      return {
+        ...list,
+        doneItems: list.items.filter(i => i.done),
+        activeItems: list.items.filter(i => !i.done)
+      };
     },
-    onRemove: () => {
-      dispatch({
-        type: "REMOVE_DONE",
-        list: ownProps.match.params.id
-      });
-    },
-    onChangeItem: (item, name) => {
-      dispatch({
-        type: "EDIT_ITEM",
-        list: ownProps.match.params.id,
-        item,
-        name
-      });
-    },
-    onMove: (oldId, newId) => {
-      dispatch({
-        type: "MOVE_ITEM",
-        list: ownProps.match.params.id,
-        oldId,
-        newId
-      });
-    },
-    onToggle: index => {
-      dispatch({
-        type: "TOGGLE_ITEM",
-        list: ownProps.match.params.id,
-        item: index
-      });
-    }
-  })
-)(EditList);
+    (dispatch, ownProps) => ({
+      onAdd: name => {
+        dispatch({
+          type: "ADD_ITEM",
+          list: ownProps.match.params.id,
+          uid: uuid(),
+          name
+        });
+      },
+      onRemove: () => {
+        dispatch({
+          type: "REMOVE_DONE",
+          list: ownProps.match.params.id
+        });
+      },
+      onChangeItem: (item, name) => {
+        dispatch({
+          type: "EDIT_ITEM",
+          list: ownProps.match.params.id,
+          item,
+          name
+        });
+      },
+      onMove: (oldId, newId) => {
+        dispatch({
+          type: "MOVE_ITEM",
+          list: ownProps.match.params.id,
+          oldId,
+          newId
+        });
+      },
+      onToggle: index => {
+        dispatch({
+          type: "TOGGLE_ITEM",
+          list: ownProps.match.params.id,
+          item: index
+        });
+      }
+    })
+  )(EditList)
+);

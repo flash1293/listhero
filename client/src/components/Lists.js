@@ -19,6 +19,8 @@ import Paper from "material-ui/Paper";
 import { connect } from "react-redux";
 import uuid from "uuid/v4";
 
+import redirectToLogin from "./RedirectToLogin";
+
 const SortableDragHandle = SortableHandle(() => (
   <DragHandle style={{ float: "left", marginRight: "10px" }} />
 ));
@@ -159,33 +161,35 @@ export class Lists extends Component {
   }
 }
 
-export const ConnectedLists = connect(
-  state => ({
-    lists: (state.lists ? state.lists.present || [] : []).map(list => ({
-      ...list,
-      activeItemCount: list.items.filter(i => !i.done).length
-    }))
-  }),
-  dispatch => ({
-    onAdd: name => {
-      dispatch({
-        type: "ADD_LIST",
-        uid: uuid(),
-        name
-      });
-    },
-    onMove: (oldId, newId) => {
-      dispatch({
-        type: "MOVE_LIST",
-        oldId,
-        newId
-      });
-    },
-    onRemove: list => {
-      dispatch({
-        type: "REMOVE_LIST",
-        list
-      });
-    }
-  })
-)(Lists);
+export const ConnectedLists = redirectToLogin(
+  connect(
+    state => ({
+      lists: (state.lists ? state.lists.present || [] : []).map(list => ({
+        ...list,
+        activeItemCount: list.items.filter(i => !i.done).length
+      }))
+    }),
+    dispatch => ({
+      onAdd: name => {
+        dispatch({
+          type: "ADD_LIST",
+          uid: uuid(),
+          name
+        });
+      },
+      onMove: (oldId, newId) => {
+        dispatch({
+          type: "MOVE_LIST",
+          oldId,
+          newId
+        });
+      },
+      onRemove: list => {
+        dispatch({
+          type: "REMOVE_LIST",
+          list
+        });
+      }
+    })
+  )(Lists)
+);
