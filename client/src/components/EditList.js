@@ -86,11 +86,6 @@ export class EditList extends Component {
       addText: value
     });
   };
-  onChangeDialogText = (_, value) => {
-    this.setState({
-      dialogText: value
-    });
-  };
   onSortEndActive = ({ oldIndex, newIndex }) => {
     if (oldIndex === newIndex) return;
     this.props.onMove(
@@ -107,10 +102,16 @@ export class EditList extends Component {
   onItemClick = item => {
     this.setState({ dialogId: item.uid, dialogText: item.name });
   };
+  onChangeDialogText = (_, value) => {
+    this.setState({
+      dialogText: value
+    });
+  };
   onRemoveItem = item => {
     this.props.onToggle(item.uid);
   };
-  handleChangeItem = () => {
+  handleChangeItem = e => {
+    e.preventDefault();
     this.props.onChangeItem(this.state.dialogId, this.state.dialogText);
     this.setState({ dialogId: null, dialogText: "" });
   };
@@ -185,13 +186,15 @@ export class EditList extends Component {
           open={this.state.dialogId !== null}
           onRequestClose={this.handleDialogClose}
         >
-          <TextField
-            name="editField"
-            fullWidth
-            autoFocus
-            value={this.state.dialogText}
-            onChange={this.onChangeDialogText}
-          />
+          <form onSubmit={this.handleChangeItem}>
+            <TextField
+              name="editField"
+              fullWidth
+              autoFocus
+              value={this.state.dialogText}
+              onChange={this.onChangeDialogText}
+            />
+          </form>
         </Dialog>
       </div>
     );

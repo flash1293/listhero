@@ -13,6 +13,7 @@ import MenuItem from "material-ui/MenuItem";
 import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
 import DragHandle from "material-ui/svg-icons/editor/drag-handle";
 import ActionList from "material-ui/svg-icons/action/list";
+import Dialog from "material-ui/Dialog";
 import { List, ListItem } from "material-ui/List";
 import TextField from "material-ui/TextField";
 import Paper from "material-ui/Paper";
@@ -25,7 +26,7 @@ const SortableDragHandle = SortableHandle(() => (
   <DragHandle style={{ float: "left", marginRight: "10px" }} />
 ));
 
-const SortableItem = SortableElement(({ list, onRemove }) => {
+const SortableItem = SortableElement(({ list, onRemove, onEdit }) => {
   return (
     <ListItem
       key={list.uid}
@@ -41,6 +42,7 @@ const SortableItem = SortableElement(({ list, onRemove }) => {
           anchorOrigin={{ horizontal: "left", vertical: "top" }}
           targetOrigin={{ horizontal: "left", vertical: "top" }}
         >
+          <MenuItem primaryText="Ändern" onClick={onEdit} />
           <MenuItem primaryText="Löschen" onClick={onRemove} />
         </IconMenu>
       }
@@ -50,7 +52,7 @@ const SortableItem = SortableElement(({ list, onRemove }) => {
   );
 });
 
-const SortableList = SortableContainer(({ lists, onRemove }) => {
+const SortableList = SortableContainer(({ lists, onRemove, onEdit }) => {
   return (
     <List>
       {lists.map((list, index) => (
@@ -58,6 +60,7 @@ const SortableList = SortableContainer(({ lists, onRemove }) => {
           key={list.uid}
           index={index}
           onRemove={() => onRemove(list.uid)}
+          onEdit={() => onEdit(list)}
           list={list}
         />
       ))}
@@ -68,7 +71,9 @@ const SortableList = SortableContainer(({ lists, onRemove }) => {
 export class Lists extends Component {
   state = {
     editMode: false,
-    addText: ""
+    addText: "",
+    dialogText: "",
+    dialogId: null
   };
   onToggleEditMode = () => {
     this.setState({ editMode: !this.state.editMode }, () => {
@@ -99,7 +104,38 @@ export class Lists extends Component {
       this.props.lists[newIndex].uid
     );
   };
+  onListChange = ({ uid: dialogId, name: dialogText }) =>
+    this.setState({ dialogId, dialogText });
+
+  handleDialogClose = () => {
+    this.setState({ dialogId: null });
+  };
+  onChangeList = list => {
+    this.setState({ dialogId: list.uid, dialogText: list.name });
+  };
+  onChangeDialogText = (_, value) => {
+    this.setState({
+      dialogText: value
+    });
+  };
+  handleChangeList = e => {
+    e.preventDefault();
+    this.props.onChangeList(this.state.dialogId, this.state.dialogText);
+    this.setState({ dialogId: null, dialogText: "" });
+  };
   render() {
+    const dialogActions = [
+      <FlatButton
+        label="Abbrechen"
+        primary={false}
+        onClick={this.handleDialogClose}
+      />,
+      <FlatButton
+        label="Speichern"
+        primary={true}
+        onClick={this.handleChangeList}
+      />
+    ];
     return (
       <div>
         <AppBar
@@ -133,6 +169,7 @@ export class Lists extends Component {
               key="sortable_lists"
               lists={this.props.lists}
               onRemove={this.props.onRemove}
+              onEdit={this.onListChange}
               onSortEnd={this.onSortEnd}
               useDragHandle
             />
@@ -156,6 +193,23 @@ export class Lists extends Component {
             eine Liste hinzuzufügen.
           </Paper>
         )}
+        <Dialog
+          title="Liste umbenennen"
+          actions={dialogActions}
+          modal={false}
+          open={this.state.dialogId !== null}
+          onRequestClose={this.handleDialogClose}
+        >
+          <form onSubmit={this.handleChangeList}>
+            <TextField
+              name="editField"
+              fullWidth
+              autoFocus
+              value={this.state.dialogText}
+              onChange={this.onChangeDialogText}
+            />
+          </form>
+        </Dialog>
       </div>
     );
   }
@@ -182,6 +236,13 @@ export const ConnectedLists = redirectToLogin(
           type: "MOVE_LIST",
           oldId,
           newId
+        });
+      },
+      onChangeList: (list, name) => {
+        dispatch({
+          type: "EDIT_LIST",
+          list,
+          name
         });
       },
       onRemove: list => {

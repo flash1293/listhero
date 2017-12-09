@@ -13,8 +13,10 @@ function replaceByMap(list, pred, map) {
 export default function reducer(state = initalState, action) {
   switch (action.type) {
     case "ADD_LIST":
+      if (action.name === "") return state;
       return [{ name: action.name, uid: action.uid, items: [] }, ...state];
     case "ADD_ITEM":
+      if (action.name === "") return state;
       return replaceByMap(
         state,
         l => l.uid === action.list,
@@ -75,6 +77,15 @@ export default function reducer(state = initalState, action) {
               name: action.name
             })
           )
+        })
+      );
+    case "EDIT_LIST":
+      return replaceByMap(
+        state,
+        l => l.uid === action.list,
+        list => ({
+          ...list,
+          name: action.name
         })
       );
     case "REMOVE_DONE":
