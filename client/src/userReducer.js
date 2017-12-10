@@ -27,12 +27,16 @@ export default function reducer(state = initalState, action) {
         return state;
       }
     case "@@sync/SYNC_FAILED":
-      return {
-        ...state,
-        requesting: false,
-        loggedIn: false,
-        failed: true
-      };
+      if (state.requesting) {
+        return {
+          ...state,
+          requesting: false,
+          loggedIn: false,
+          failed: true
+        };
+      } else {
+        return state;
+      }
     default:
       return state;
   }
