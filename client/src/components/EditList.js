@@ -11,13 +11,20 @@ import {
 } from "react-sortable-hoc";
 import IconButton from "material-ui/IconButton";
 import NavigationClose from "material-ui/svg-icons/navigation/close";
+import ActionHistory from "material-ui/svg-icons/action/history";
+import ActionShoppingBasket from "material-ui/svg-icons/action/shopping-basket";
 import DragHandle from "material-ui/svg-icons/editor/drag-handle";
 import Divider from "material-ui/Divider";
 import Dialog from "material-ui/Dialog";
 import ContentRemove from "material-ui/svg-icons/content/remove";
+import Paper from "material-ui/Paper";
 import { connect } from "react-redux";
 import uuid from "uuid/v4";
 import { Redirect } from "react-router";
+import {
+  BottomNavigation,
+  BottomNavigationItem
+} from "material-ui/BottomNavigation";
 
 import redirectToLogin from "./RedirectToLogin";
 
@@ -169,7 +176,7 @@ export class EditList extends Component {
             onClick={this.props.onRemove}
           />
         )}
-        <List>
+        <List style={{ paddingBottom: "65px" }}>
           {this.props.doneItems.map((item, index) => (
             <ListItem
               style={{ color: "#aaa" }}
@@ -179,6 +186,30 @@ export class EditList extends Component {
             />
           ))}
         </List>
+        <Paper
+          style={{
+            position: "fixed",
+            bottom: "10px",
+            right: "10px",
+            left: "10px"
+          }}
+          zDepth={1}
+        >
+          <BottomNavigation selectedIndex={this.state.selectedIndex}>
+            <Link to={`/lists/${this.props.uid}/edit/last-used`}>
+              <BottomNavigationItem
+                label="Zuletzt verwendet"
+                icon={<ActionHistory />}
+              />
+            </Link>
+            <Link to={`/lists/${this.props.uid}/edit/categories`}>
+              <BottomNavigationItem
+                label="Kategorien"
+                icon={<ActionShoppingBasket />}
+              />
+            </Link>
+          </BottomNavigation>
+        </Paper>
         <Dialog
           title="Eintrag ändern"
           actions={dialogActions}

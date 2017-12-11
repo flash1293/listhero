@@ -16,10 +16,12 @@ import {
   ConnectedLists,
   ConnectedLogin,
   ConnectedEditList,
+  ConnectedRecentUsed,
+  ConnectedCategories,
   ConnectedViewList
 } from "./components";
 
-const APP_VERSION = 1;
+const APP_VERSION = 2;
 
 const persistConfig = {
   key: `ekofe-${APP_VERSION}`,
@@ -80,9 +82,9 @@ class App extends Component {
   setupWs = () => {
     console.log("websocket started");
     this.ws = new WebSocket(
-      `ws${API_PROTOCOL === "https:" ? "s" : ""}://${API_HOST}/api/updates/${
-        clientSession
-      }`,
+      `ws${
+        API_PROTOCOL === "https:" ? "s" : ""
+      }://${API_HOST}/api/updates/${clientSession}`,
       store.getState().user.password
     );
     this.ws.onmessage = () => {
@@ -126,6 +128,16 @@ class App extends Component {
                   exact
                   path="/lists/:id/edit"
                   component={ConnectedEditList}
+                />
+                <Route
+                  exact
+                  path="/lists/:id/edit/last-used"
+                  component={ConnectedRecentUsed}
+                />
+                <Route
+                  exact
+                  path="/lists/:id/edit/categories"
+                  component={ConnectedCategories}
                 />
               </div>
             </Router>
