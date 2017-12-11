@@ -4,7 +4,7 @@ import AppBar from "material-ui/AppBar";
 import { List, ListItem } from "material-ui/List";
 import FlatButton from "material-ui/FlatButton";
 import IconButton from "material-ui/IconButton";
-import NavigationClose from "material-ui/svg-icons/navigation/close";
+import NavigationArrowBack from "material-ui/svg-icons/navigation/arrow-back";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
 
@@ -23,7 +23,7 @@ export class ViewList extends Component {
           title={this.props.name}
           iconElementLeft={
             <IconButton containerElement={<Link to="/" />}>
-              <NavigationClose />
+              <NavigationArrowBack />
             </IconButton>
           }
           iconElementRight={

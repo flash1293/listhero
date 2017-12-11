@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import AppBar from "material-ui/AppBar";
 import { List, ListItem } from "material-ui/List";
 import IconButton from "material-ui/IconButton";
-import NavigationClose from "material-ui/svg-icons/navigation/close";
+import NavigationArrowBack from "material-ui/svg-icons/navigation/arrow-back";
 import ContentAdd from "material-ui/svg-icons/content/add";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
@@ -24,7 +24,7 @@ export class RecentUsed extends Component {
                 <Link to={`/lists/${this.props.match.params.id}/edit`} />
               }
             >
-              <NavigationClose />
+              <NavigationArrowBack />
             </IconButton>
           }
         />

@@ -10,7 +10,7 @@ import {
   SortableHandle
 } from "react-sortable-hoc";
 import IconButton from "material-ui/IconButton";
-import NavigationClose from "material-ui/svg-icons/navigation/close";
+import NavigationArrowBack from "material-ui/svg-icons/navigation/arrow-back";
 import ActionHistory from "material-ui/svg-icons/action/history";
 import ActionShoppingBasket from "material-ui/svg-icons/action/shopping-basket";
 import DragHandle from "material-ui/svg-icons/editor/drag-handle";
@@ -146,7 +146,7 @@ export class EditList extends Component {
                 <Link to={`/lists/${this.props.match.params.id}`} />
               }
             >
-              <NavigationClose />
+              <NavigationArrowBack />
             </IconButton>
           }
         />
