@@ -3,7 +3,7 @@ import AppBar from "material-ui/AppBar";
 import RaisedButton from "material-ui/RaisedButton";
 import { connect } from "react-redux";
 import TextField from "material-ui/TextField";
-import CircularProgress from "material-ui/CircularProgress";
+import { CircularProgress } from "material-ui/Progress";
 import { Redirect } from "react-router";
 
 export class Login extends Component {
@@ -40,6 +40,7 @@ export class Login extends Component {
               label="Login"
               disabled={this.props.requesting}
               primary={true}
+              type="submit"
               onClick={this.onLogin}
               icon={
                 this.props.requesting ? (

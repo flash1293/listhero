@@ -6,10 +6,11 @@ import {
   SortableHandle
 } from "react-sortable-hoc";
 import AppBar from "material-ui/AppBar";
-import FlatButton from "material-ui/FlatButton";
+import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
 import IconMenu from "material-ui/IconMenu";
 import MenuItem from "material-ui/MenuItem";
+import { MenuItem, MenuList } from "material-ui/Menu";
 import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
 import DragHandle from "material-ui/svg-icons/editor/drag-handle";
 import ActionList from "material-ui/svg-icons/action/list";
@@ -125,12 +126,12 @@ export class Lists extends Component {
   };
   render() {
     const dialogActions = [
-      <FlatButton
+      <Button
         label="Abbrechen"
         primary={false}
         onClick={this.handleDialogClose}
       />,
-      <FlatButton
+      <Button
         label="Speichern"
         primary={true}
         onClick={this.handleChangeList}
@@ -142,7 +143,7 @@ export class Lists extends Component {
           title="Alle Listen"
           showMenuIconButton={false}
           iconElementRight={
-            <FlatButton
+            <Button
               label={this.state.editMode ? "Schließen" : "Editieren"}
               onClick={this.onToggleEditMode}
             />

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import AppBar from "material-ui/AppBar";
 import { List, ListItem } from "material-ui/List";
-import FlatButton from "material-ui/FlatButton";
+import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
 import NavigationArrowBack from "material-ui/svg-icons/navigation/arrow-back";
 import { connect } from "react-redux";
@@ -27,7 +27,7 @@ export class ViewList extends Component {
             </IconButton>
           }
           iconElementRight={
-            <FlatButton
+            <Button
               label="Editieren"
               containerElement={
                 <Link to={`/lists/${this.props.match.params.id}/edit`} />

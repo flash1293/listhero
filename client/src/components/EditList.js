@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import AppBar from "material-ui/AppBar";
 import { Link } from "react-router-dom";
-import FlatButton from "material-ui/FlatButton";
+import Button from "material-ui/Button";
 import { List, ListItem } from "material-ui/List";
 import TextField from "material-ui/TextField";
 import {
@@ -125,12 +125,12 @@ export class EditList extends Component {
   render() {
     if (!this.props.uid) return <Redirect to="/" />;
     const dialogActions = [
-      <FlatButton
+      <Button
         label="Abbrechen"
         primary={false}
         onClick={this.handleDialogClose}
       />,
-      <FlatButton
+      <Button
         label="Speichern"
         primary={true}
         onClick={this.handleChangeItem}
@@ -170,7 +170,7 @@ export class EditList extends Component {
         />
         {this.props.doneItems.length > 0 && <Divider inset={true} />}
         {this.props.doneItems.length > 0 && (
-          <FlatButton
+          <Button
             labelStyle={{ fontSize: "0.7em" }}
             label="Erledigte Löschen"
             onClick={this.props.onRemove}
