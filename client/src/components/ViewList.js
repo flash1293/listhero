@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import AppBar from "material-ui/AppBar";
-import { List, ListItem } from "material-ui/List";
+import Toolbar from "material-ui/Toolbar";
+import Typography from "material-ui/Typography";
+import List, { ListItem, ListItemText } from "material-ui/List";
 import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
-import NavigationArrowBack from "material-ui/svg-icons/navigation/arrow-back";
+import ArrowBack from "material-ui-icons/ArrowBack";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
 
@@ -19,29 +21,26 @@ export class ViewList extends Component {
     const activeItems = this.props.items.filter(i => !i.done);
     return (
       <div>
-        <AppBar
-          title={this.props.name}
-          iconElementLeft={
-            <IconButton containerElement={<Link to="/" />}>
-              <NavigationArrowBack />
-            </IconButton>
-          }
-          iconElementRight={
-            <Button
-              label="Editieren"
-              containerElement={
-                <Link to={`/lists/${this.props.match.params.id}/edit`} />
-              }
-            />
-          }
-        />
+        <AppBar position="static" color="default">
+          <Toolbar>
+            <Link to="/">
+              <IconButton>
+                <ArrowBack />
+              </IconButton>
+            </Link>
+            <Typography type="title" color="inherit" style={{ flex: 1 }}>
+              {this.props.name}
+            </Typography>
+            <Link to={`/lists/${this.props.match.params.id}/edit`}>
+              <Button>Editieren</Button>
+            </Link>
+          </Toolbar>
+        </AppBar>
         <List>
           {activeItems.map((item, index) => (
-            <ListItem
-              key={index}
-              onClick={() => this.onToggle(item)}
-              primaryText={item.name}
-            />
+            <ListItem button key={index} onClick={() => this.onToggle(item)}>
+              <ListItemText primary={item.name} />
+            </ListItem>
           ))}
         </List>
       </div>

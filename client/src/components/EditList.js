@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import AppBar from "material-ui/AppBar";
+import Toolbar from "material-ui/Toolbar";
+import Typography from "material-ui/Typography";
 import { Link } from "react-router-dom";
 import Button from "material-ui/Button";
-import { List, ListItem } from "material-ui/List";
+import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
 import TextField from "material-ui/TextField";
 import {
   SortableContainer,
@@ -10,47 +12,38 @@ import {
   SortableHandle
 } from "react-sortable-hoc";
 import IconButton from "material-ui/IconButton";
-import NavigationArrowBack from "material-ui/svg-icons/navigation/arrow-back";
-import ActionHistory from "material-ui/svg-icons/action/history";
-import ActionShoppingBasket from "material-ui/svg-icons/action/shopping-basket";
-import DragHandle from "material-ui/svg-icons/editor/drag-handle";
+import ArrowBack from "material-ui-icons/ArrowBack";
+import ActionHistory from "material-ui-icons/History";
+import ActionShoppingBasket from "material-ui-icons/ShoppingBasket";
+import DragHandle from "material-ui-icons/DragHandle";
 import Divider from "material-ui/Divider";
-import Dialog from "material-ui/Dialog";
-import ContentRemove from "material-ui/svg-icons/content/remove";
+import Dialog, { DialogActions, DialogContent } from "material-ui/Dialog";
+import ContentRemove from "material-ui-icons/Remove";
 import Paper from "material-ui/Paper";
 import { connect } from "react-redux";
 import uuid from "uuid/v4";
 import { Redirect } from "react-router";
-import {
-  BottomNavigation,
-  BottomNavigationItem
+import BottomNavigation, {
+  BottomNavigationButton
 } from "material-ui/BottomNavigation";
 
 import redirectToLogin from "./RedirectToLogin";
+import removeFromProps from "./RemoveFromProps";
+
+const BottomNavigationLink = removeFromProps("showLabel")(Link);
 
 const SortableDragHandle = SortableHandle(() => <DragHandle />);
 
 const SortableItem = SortableElement(({ item, onClick, onRemove }) => {
-  const containerStyle = {
-    display: "flex",
-    alignItems: "center"
-  };
-  const labelStyle = {
-    paddingLeft: "10px"
-  };
-
   return (
-    <ListItem
-      onClick={onClick}
-      rightIconButton={
-        <IconButton onClick={onRemove}>
-          <ContentRemove />
-        </IconButton>
-      }
-    >
-      <div style={containerStyle}>
-        <SortableDragHandle /> <span style={labelStyle}>{item.name}</span>
-      </div>
+    <ListItem onClick={onClick} button>
+      <ListItemIcon>
+        <SortableDragHandle />
+      </ListItemIcon>
+      <ListItemText primary={item.name} />
+      <ListItemIcon onClick={onRemove}>
+        <ContentRemove />
+      </ListItemIcon>
     </ListItem>
   );
 });
@@ -63,7 +56,10 @@ const SortableList = SortableContainer(({ items, onClick, onRemove }) => {
           key={item.uid}
           index={index}
           onClick={() => onClick(item)}
-          onRemove={() => onRemove(item)}
+          onRemove={e => {
+            e.stopPropagation();
+            onRemove(item);
+          }}
           item={item}
         />
       ))}
@@ -77,9 +73,7 @@ export class EditList extends Component {
     dialogId: null
   };
   onRequestAdd = () => {
-    this.setState({ addMode: true }, () => {
-      this.addInput.focus();
-    });
+    this.setState({ addMode: true });
   };
   onAdd = e => {
     e.preventDefault();
@@ -88,9 +82,9 @@ export class EditList extends Component {
       addText: ""
     }));
   };
-  onChangeAddText = (_, value) => {
+  onChangeAddText = e => {
     this.setState({
-      addText: value
+      addText: e.target.value
     });
   };
   onSortEndActive = ({ oldIndex, newIndex }) => {
@@ -109,9 +103,9 @@ export class EditList extends Component {
   onItemClick = item => {
     this.setState({ dialogId: item.uid, dialogText: item.name });
   };
-  onChangeDialogText = (_, value) => {
+  onChangeDialogText = e => {
     this.setState({
-      dialogText: value
+      dialogText: e.target.value
     });
   };
   onRemoveItem = item => {
@@ -124,40 +118,28 @@ export class EditList extends Component {
   };
   render() {
     if (!this.props.uid) return <Redirect to="/" />;
-    const dialogActions = [
-      <Button
-        label="Abbrechen"
-        primary={false}
-        onClick={this.handleDialogClose}
-      />,
-      <Button
-        label="Speichern"
-        primary={true}
-        onClick={this.handleChangeItem}
-      />
-    ];
     return (
       <div>
-        <AppBar
-          title={`${this.props.name} editieren`}
-          iconElementLeft={
-            <IconButton
-              containerElement={
-                <Link to={`/lists/${this.props.match.params.id}`} />
-              }
-            >
-              <NavigationArrowBack />
-            </IconButton>
-          }
-        />
+        <AppBar position="static" color="default">
+          <Toolbar>
+            <Link to={`/lists/${this.props.match.params.id}`}>
+              <IconButton>
+                <ArrowBack />
+              </IconButton>
+            </Link>
+            <Typography type="title" color="inherit" style={{ flex: 1 }}>
+              {this.props.name} editieren
+            </Typography>
+          </Toolbar>
+        </AppBar>
         <form onSubmit={this.onAdd} style={{ margin: "10px" }}>
           <TextField
             fullWidth
+            autoFocus
             key="add-textfield"
-            ref={el => (this.addInput = el)}
             value={this.state.addText}
             onChange={this.onChangeAddText}
-            hintText="Neuer Eintrag"
+            placeholder="Neuer Eintrag"
           />
         </form>
 
@@ -170,20 +152,20 @@ export class EditList extends Component {
         />
         {this.props.doneItems.length > 0 && <Divider inset={true} />}
         {this.props.doneItems.length > 0 && (
-          <Button
-            labelStyle={{ fontSize: "0.7em" }}
-            label="Erledigte Löschen"
-            onClick={this.props.onRemove}
-          />
+          <Button style={{ fontSize: "0.7em" }} onClick={this.props.onRemove}>
+            Erledigte Löschen
+          </Button>
         )}
         <List style={{ paddingBottom: "65px" }}>
           {this.props.doneItems.map((item, index) => (
             <ListItem
+              button
               style={{ color: "#aaa" }}
               key={index}
-              primaryText={item.name}
               onClick={() => this.onToggle(item)}
-            />
+            >
+              <ListItemText primary={item.name} />
+            </ListItem>
           ))}
         </List>
         <Paper
@@ -193,39 +175,52 @@ export class EditList extends Component {
             right: "10px",
             left: "10px"
           }}
-          zDepth={1}
+          elevation={1}
         >
-          <BottomNavigation selectedIndex={this.state.selectedIndex}>
-            <Link to={`/lists/${this.props.uid}/edit/last-used`}>
-              <BottomNavigationItem
+          <BottomNavigation>
+            <BottomNavigationLink
+              to={`/lists/${this.props.uid}/edit/last-used`}
+            >
+              <BottomNavigationButton
+                showLabel
                 label="Zuletzt verwendet"
                 icon={<ActionHistory />}
               />
-            </Link>
-            <Link to={`/lists/${this.props.uid}/edit/categories`}>
-              <BottomNavigationItem
+            </BottomNavigationLink>
+            <BottomNavigationLink
+              to={`/lists/${this.props.uid}/edit/categories`}
+            >
+              <BottomNavigationButton
+                showLabel
                 label="Kategorien"
                 icon={<ActionShoppingBasket />}
               />
-            </Link>
+            </BottomNavigationLink>
           </BottomNavigation>
         </Paper>
         <Dialog
-          title="Eintrag ändern"
-          actions={dialogActions}
-          modal={false}
           open={this.state.dialogId !== null}
           onRequestClose={this.handleDialogClose}
         >
-          <form onSubmit={this.handleChangeItem}>
-            <TextField
-              name="editField"
-              fullWidth
-              autoFocus
-              value={this.state.dialogText}
-              onChange={this.onChangeDialogText}
-            />
-          </form>
+          <DialogContent>
+            <form onSubmit={this.handleChangeItem}>
+              <TextField
+                name="editField"
+                fullWidth
+                autoFocus
+                value={this.state.dialogText}
+                onChange={this.onChangeDialogText}
+              />
+            </form>
+          </DialogContent>
+          <DialogActions>
+            <Button label="Abbrechen" onClick={this.handleDialogClose}>
+              Abbrechen
+            </Button>
+            <Button color="primary" onClick={this.handleChangeItem}>
+              Speichern
+            </Button>
+          </DialogActions>
         </Dialog>
       </div>
     );

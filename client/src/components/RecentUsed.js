@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import AppBar from "material-ui/AppBar";
-import { List, ListItem } from "material-ui/List";
+import Toolbar from "material-ui/Toolbar";
+import Typography from "material-ui/Typography";
+import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
 import IconButton from "material-ui/IconButton";
-import NavigationArrowBack from "material-ui/svg-icons/navigation/arrow-back";
-import ContentAdd from "material-ui/svg-icons/content/add";
+import ArrowBack from "material-ui-icons/ArrowBack";
+import ContentAdd from "material-ui-icons/Add";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
 import uuid from "uuid/v4";
@@ -16,26 +18,26 @@ export class RecentUsed extends Component {
     if (!this.props.uid) return <Redirect to="/" />;
     return (
       <div>
-        <AppBar
-          title="Zuletzt verwendet"
-          iconElementLeft={
-            <IconButton
-              containerElement={
-                <Link to={`/lists/${this.props.match.params.id}/edit`} />
-              }
-            >
-              <NavigationArrowBack />
-            </IconButton>
-          }
-        />
+        <AppBar position="static" color="default">
+          <Toolbar>
+            <Link to={`/lists/${this.props.match.params.id}/edit`}>
+              <IconButton>
+                <ArrowBack />
+              </IconButton>
+            </Link>
+            <Typography type="title" color="inherit">
+              Zuletzt verwendet
+            </Typography>
+          </Toolbar>
+        </AppBar>
         <List>
           {this.props.recentItems.map((item, index) => (
-            <ListItem
-              key={index}
-              rightIcon={<ContentAdd />}
-              onClick={() => this.props.onAdd(item)}
-              primaryText={item}
-            />
+            <ListItem button key={index} onClick={() => this.props.onAdd(item)}>
+              <ListItemText primary={item} />
+              <ListItemIcon>
+                <ContentAdd />
+              </ListItemIcon>
+            </ListItem>
           ))}
         </List>
       </div>

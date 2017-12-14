@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { HashRouter as Router, Route } from "react-router-dom";
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import { persistStore, persistReducer } from "redux-persist";
@@ -118,30 +117,28 @@ class App extends Component {
     return (
       <PersistGate persistor={persistor}>
         <Provider store={store}>
-          <MuiThemeProvider>
-            <Router>
-              <div>
-                <Route exact path="/" component={ConnectedLists} />
-                <Route exact path="/login" component={ConnectedLogin} />
-                <Route exact path="/lists/:id" component={ConnectedViewList} />
-                <Route
-                  exact
-                  path="/lists/:id/edit"
-                  component={ConnectedEditList}
-                />
-                <Route
-                  exact
-                  path="/lists/:id/edit/last-used"
-                  component={ConnectedRecentUsed}
-                />
-                <Route
-                  exact
-                  path="/lists/:id/edit/categories"
-                  component={ConnectedCategories}
-                />
-              </div>
-            </Router>
-          </MuiThemeProvider>
+          <Router>
+            <div>
+              <Route exact path="/" component={ConnectedLists} />
+              <Route exact path="/login" component={ConnectedLogin} />
+              <Route exact path="/lists/:id" component={ConnectedViewList} />
+              <Route
+                exact
+                path="/lists/:id/edit"
+                component={ConnectedEditList}
+              />
+              <Route
+                exact
+                path="/lists/:id/edit/last-used"
+                component={ConnectedRecentUsed}
+              />
+              <Route
+                exact
+                path="/lists/:id/edit/categories"
+                component={ConnectedCategories}
+              />
+            </div>
+          </Router>
         </Provider>
       </PersistGate>
     );

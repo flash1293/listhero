@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import AppBar from "material-ui/AppBar";
-import RaisedButton from "material-ui/RaisedButton";
+import Toolbar from "material-ui/Toolbar";
+import Typography from "material-ui/Typography";
+import Button from "material-ui/Button";
 import { connect } from "react-redux";
 import TextField from "material-ui/TextField";
 import { CircularProgress } from "material-ui/Progress";
@@ -10,9 +12,9 @@ export class Login extends Component {
   state = {
     passwordText: ""
   };
-  onChangeText = (_, value) => {
+  onChangeText = e => {
     this.setState({
-      passwordText: value
+      passwordText: e.target.value
     });
   };
   onLogin = e => {
@@ -25,31 +27,47 @@ export class Login extends Component {
     } else
       return (
         <div>
-          <AppBar title="Login" showMenuIconButton={false} />
+          <AppBar position="static" color="default">
+            <Toolbar>
+              <Typography type="title" color="inherit">
+                Login
+              </Typography>
+            </Toolbar>
+          </AppBar>
           <form onSubmit={this.onLogin} style={{ margin: "10px" }}>
             <TextField
               fullWidth
               autoFocus
               value={this.state.passwordText}
               onChange={this.onChangeText}
-              hintText="Passwort"
+              placeholder="Passwort"
               type="password"
-              errorText={this.props.failed ? "Zugriff fehlgeschlagen" : ""}
+              label={this.props.failed ? "Zugriff fehlgeschlagen" : ""}
+              error={this.props.failed}
             />
-            <RaisedButton
-              label="Login"
+            <Button
+              raised
+              style={{ marginTop: "10px", position: "relative" }}
               disabled={this.props.requesting}
-              primary={true}
+              color="primary"
               type="submit"
               onClick={this.onLogin}
-              icon={
-                this.props.requesting ? (
-                  <CircularProgress size={25} thickness={2} />
-                ) : (
-                  undefined
-                )
-              }
-            />
+            >
+              Login
+              {this.props.requesting && (
+                <CircularProgress
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    marginTop: -11,
+                    marginLeft: -11
+                  }}
+                  size={25}
+                  thickness={4}
+                />
+              )}
+            </Button>
           </form>
         </div>
       );
