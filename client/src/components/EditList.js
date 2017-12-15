@@ -23,6 +23,9 @@ import Paper from "material-ui/Paper";
 import { connect } from "react-redux";
 import uuid from "uuid/v4";
 import { Redirect } from "react-router";
+import Input, { InputAdornment } from "material-ui/Input";
+import { FormControl } from "material-ui/Form";
+import Send from "material-ui-icons/Send";
 import BottomNavigation, {
   BottomNavigationButton
 } from "material-ui/BottomNavigation";
@@ -133,14 +136,22 @@ export class EditList extends Component {
           </Toolbar>
         </AppBar>
         <form onSubmit={this.onAdd} style={{ margin: "10px" }}>
-          <TextField
-            fullWidth
-            autoFocus
-            key="add-textfield"
-            value={this.state.addText}
-            onChange={this.onChangeAddText}
-            placeholder="Neuer Eintrag"
-          />
+          <FormControl fullWidth>
+            <Input
+              type="text"
+              autoFocus
+              placeholder="Neuer Eintrag"
+              value={this.state.addText}
+              onChange={this.onChangeAddText}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={this.onAdd}>
+                    <Send />
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
         </form>
 
         <SortableList

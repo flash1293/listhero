@@ -14,9 +14,12 @@ import ArrowBack from "material-ui-icons/ArrowBack";
 import DragHandle from "material-ui-icons/DragHandle";
 import Edit from "material-ui-icons/Edit";
 import Delete from "material-ui-icons/Delete";
+import Send from "material-ui-icons/Send";
 import Dialog, { DialogActions, DialogContent } from "material-ui/Dialog";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
 import TextField from "material-ui/TextField";
+import Input, { InputAdornment } from "material-ui/Input";
+import { FormControl } from "material-ui/Form";
 import { connect } from "react-redux";
 import uuid from "uuid/v4";
 
@@ -125,14 +128,22 @@ export class ListsEdit extends Component {
           </Toolbar>
         </AppBar>
         <form onSubmit={this.onAdd} style={{ margin: "10px" }}>
-          <TextField
-            fullWidth
-            autoFocus
-            key="add-textfield"
-            value={this.state.addText}
-            onChange={this.onChangeAddText}
-            placeholder="Neue Liste"
-          />
+          <FormControl fullWidth>
+            <Input
+              type="text"
+              autoFocus
+              placeholder="Neue Liste"
+              value={this.state.addText}
+              onChange={this.onChangeAddText}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={this.onAdd}>
+                    <Send />
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
         </form>
         <SortableList
           lists={this.props.lists}
