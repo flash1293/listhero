@@ -30,8 +30,8 @@ import BottomNavigation, {
   BottomNavigationButton
 } from "material-ui/BottomNavigation";
 
-import redirectToLogin from "./RedirectToLogin";
-import removeFromProps from "./RemoveFromProps";
+import redirectToLogin from "../components/RedirectToLogin";
+import removeFromProps from "../components/RemoveFromProps";
 
 const BottomNavigationLink = removeFromProps("showLabel")(Link);
 
@@ -238,7 +238,7 @@ export class EditList extends Component {
   }
 }
 
-export const ConnectedEditList = redirectToLogin(
+export default redirectToLogin(
   connect(
     (state, ownProps) => {
       const list = state.lists.present.find(

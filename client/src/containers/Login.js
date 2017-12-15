@@ -74,7 +74,7 @@ export class Login extends Component {
   }
 }
 
-export const ConnectedLogin = connect(
+export default connect(
   (state, ownProps) => ({
     ...state.user
   }),

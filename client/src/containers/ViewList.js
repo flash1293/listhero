@@ -3,40 +3,43 @@ import { Link } from "react-router-dom";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
-import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
+import List, { ListItem, ListItemText } from "material-ui/List";
+import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
 import ArrowBack from "material-ui-icons/ArrowBack";
-import ContentAdd from "material-ui-icons/Add";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
-import uuid from "uuid/v4";
 
-import redirectToLogin from "./RedirectToLogin";
+import redirectToLogin from "../components/RedirectToLogin";
 
-export class RecentUsed extends Component {
+export class ViewList extends Component {
+  onToggle = item => {
+    this.props.onToggle(item.uid);
+  };
   render() {
     if (!this.props.uid) return <Redirect to="/" />;
+    const activeItems = this.props.items.filter(i => !i.done);
     return (
       <div>
         <AppBar position="static" color="primary">
           <Toolbar>
-            <Link to={`/lists/${this.props.match.params.id}/edit`}>
+            <Link to="/">
               <IconButton color="inherit">
                 <ArrowBack />
               </IconButton>
             </Link>
-            <Typography type="title" color="inherit">
-              Zuletzt verwendet
+            <Typography type="title" color="inherit" style={{ flex: 1 }}>
+              {this.props.name}
             </Typography>
+            <Link to={`/lists/${this.props.match.params.id}/edit`}>
+              <Button color="inherit">Editieren</Button>
+            </Link>
           </Toolbar>
         </AppBar>
         <List>
-          {this.props.recentItems.map((item, index) => (
-            <ListItem button key={index} onClick={() => this.props.onAdd(item)}>
-              <ListItemText primary={item} />
-              <ListItemIcon>
-                <ContentAdd />
-              </ListItemIcon>
+          {activeItems.map((item, index) => (
+            <ListItem button key={index} onClick={() => this.onToggle(item)}>
+              <ListItemText primary={item.name} />
             </ListItem>
           ))}
         </List>
@@ -45,20 +48,19 @@ export class RecentUsed extends Component {
   }
 }
 
-export const ConnectedRecentUsed = redirectToLogin(
+export default redirectToLogin(
   connect(
     (state, ownProps) => ({
       ...state.lists.present.find(l => l.uid === ownProps.match.params.id)
     }),
     (dispatch, ownProps) => ({
-      onAdd: name => {
+      onToggle: index => {
         dispatch({
-          type: "ADD_ITEM",
+          type: "TOGGLE_ITEM",
           list: ownProps.match.params.id,
-          uid: uuid(),
-          name
+          item: index
         });
       }
     })
-  )(RecentUsed)
+  )(ViewList)
 );

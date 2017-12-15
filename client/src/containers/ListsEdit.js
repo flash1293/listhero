@@ -23,7 +23,7 @@ import { FormControl } from "material-ui/Form";
 import { connect } from "react-redux";
 import uuid from "uuid/v4";
 
-import redirectToLogin from "./RedirectToLogin";
+import redirectToLogin from "../components/RedirectToLogin";
 
 const SortableDragHandle = SortableHandle(() => (
   <DragHandle style={{ float: "left", marginRight: "10px" }} />
@@ -179,7 +179,7 @@ export class ListsEdit extends Component {
   }
 }
 
-export const ConnectedListsEdit = redirectToLogin(
+export default redirectToLogin(
   connect(
     state => ({
       lists: state.lists ? state.lists.present || [] : []

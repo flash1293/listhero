@@ -13,15 +13,7 @@ import syncMiddleware from "./syncMiddleware";
 import syncReducer from "./syncReducer";
 import listReducer from "./listReducer";
 import userReducer from "./userReducer";
-import {
-  ConnectedLists,
-  ConnectedLogin,
-  ConnectedEditList,
-  ConnectedListsEdit,
-  ConnectedRecentUsed,
-  ConnectedCategories,
-  ConnectedViewList
-} from "./components";
+import { asyncComponent } from "./components/AsyncComponent";
 
 // eslint-disable-next-line
 import styles from "./App.css";
@@ -139,24 +131,50 @@ class App extends Component {
           <MuiThemeProvider theme={theme}>
             <Router>
               <div>
-                <Route exact path="/" component={ConnectedLists} />
-                <Route exact path="/login" component={ConnectedLogin} />
-                <Route exact path="/edit" component={ConnectedListsEdit} />
-                <Route exact path="/lists/:id" component={ConnectedViewList} />
+                <Route
+                  exact
+                  path="/"
+                  component={asyncComponent(() => import("./containers/Lists"))}
+                />
+                <Route
+                  exact
+                  path="/login"
+                  component={asyncComponent(() => import("./containers/Login"))}
+                />
+                <Route
+                  exact
+                  path="/edit"
+                  component={asyncComponent(() =>
+                    import("./containers/ListsEdit")
+                  )}
+                />
+                <Route
+                  exact
+                  path="/lists/:id"
+                  component={asyncComponent(() =>
+                    import("./containers/ViewList")
+                  )}
+                />
                 <Route
                   exact
                   path="/lists/:id/edit"
-                  component={ConnectedEditList}
+                  component={asyncComponent(() =>
+                    import("./containers/EditList")
+                  )}
                 />
                 <Route
                   exact
                   path="/lists/:id/edit/last-used"
-                  component={ConnectedRecentUsed}
+                  component={asyncComponent(() =>
+                    import("./containers/RecentUsed")
+                  )}
                 />
                 <Route
                   exact
                   path="/lists/:id/edit/categories"
-                  component={ConnectedCategories}
+                  component={asyncComponent(() =>
+                    import("./containers/Categories")
+                  )}
                 />
               </div>
             </Router>

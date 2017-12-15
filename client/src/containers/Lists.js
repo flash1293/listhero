@@ -9,8 +9,8 @@ import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
 import Paper from "material-ui/Paper";
 import { connect } from "react-redux";
 
-import redirectToLogin from "./RedirectToLogin";
-import { Logo } from "./Logo";
+import redirectToLogin from "../components/RedirectToLogin";
+import { Logo } from "../components/Logo";
 
 export class Lists extends Component {
   render() {
@@ -55,7 +55,7 @@ export class Lists extends Component {
   }
 }
 
-export const ConnectedLists = redirectToLogin(
+export default redirectToLogin(
   connect(state => ({
     lists: (state.lists ? state.lists.present || [] : []).map(list => ({
       ...list,

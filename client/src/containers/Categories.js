@@ -14,7 +14,7 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router";
 import uuid from "uuid/v4";
 
-import redirectToLogin from "./RedirectToLogin";
+import redirectToLogin from "../components/RedirectToLogin";
 
 import categoryList from "../categories.json";
 
@@ -86,7 +86,7 @@ export class Categories extends Component {
   }
 }
 
-export const ConnectedCategories = redirectToLogin(
+export default redirectToLogin(
   connect(
     (state, ownProps) => ({
       ...state.lists.present.find(l => l.uid === ownProps.match.params.id)

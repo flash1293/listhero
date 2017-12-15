@@ -5,3 +5,4 @@ export * from "./ViewList";
 export * from "./RecentUsed";
 export * from "./Categories";
 export * from "./Login";
+export * from "./AsyncComponent";
