@@ -15,15 +15,15 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="logo.svg">
+   sodipodi:docname="logo_inverted.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
      id="base"
-     pagecolor="#ffffff"
+     pagecolor="#a73c3c"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.1450159"
      inkscape:cx="372.04724"
@@ -56,14 +56,7 @@
      inkscape:label="Background"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-308.26772)">
-    <path
-       style="fill:#d1372f;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 621.5517,349.62222 129.50715,352.01365 56.918387,457.51474 371.53647,987.45523 691.74901,457.20929 Z"
-       id="path4137"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc" />
-  </g>
+     transform="translate(0,-308.26772)" />
   <g
      inkscape:groupmode="layer"
      id="layer2"
@@ -72,7 +65,7 @@
      transform="translate(0,-308.26772)">
     <path
        style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 521.26546,655.8403 -163.66722,1.25896 0,-297.11892 -123.37989,-3.73294 -1.25897,405.34709 25.17958,0.62948 0.62947,0 262.49702,0.6295 z"
+       d="m 529.18431,656.16666 -172.35945,1.32583 0,-312.89871 -129.93251,-2.65168 -1.32585,425.59528 26.51684,0.66292 0.66292,0 276.43804,0.66291 z"
        id="path4141"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccccc" />
@@ -86,7 +79,7 @@
        sodipodi:nodetypes="cccccc"
        inkscape:connector-curvature="0"
        id="path4145"
-       d="M 621.5517,349.62222 129.50715,352.01365 56.918387,457.51474 371.53647,987.45523 691.74901,457.20929 Z"
-       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#8f8f8f;stroke-width:24.67597961;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       d="M 634.79669,333.68554 116.61999,336.20397 40.176107,447.30818 371.50334,1005.3934 708.72214,446.98649 Z"
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:25.9865036;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>

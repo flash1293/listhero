@@ -4,6 +4,8 @@ import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/es/integration/react";
+import { MuiThemeProvider, createMuiTheme } from "material-ui/styles";
+import { red } from "material-ui/colors";
 import storage from "redux-persist/es/storage";
 import uuid from "uuid/v4";
 
@@ -15,10 +17,27 @@ import {
   ConnectedLists,
   ConnectedLogin,
   ConnectedEditList,
+  ConnectedListsEdit,
   ConnectedRecentUsed,
   ConnectedCategories,
   ConnectedViewList
 } from "./components";
+
+// eslint-disable-next-line
+import styles from "./App.css";
+
+function theme(outerTheme) {
+  return createMuiTheme({
+    typography: {
+      fontFamily:
+        "-apple-system,system-ui,BlinkMacSystemFont," +
+        '"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif'
+    },
+    palette: {
+      primary: red
+    }
+  });
+}
 
 const APP_VERSION = 2;
 
@@ -117,28 +136,31 @@ class App extends Component {
     return (
       <PersistGate persistor={persistor}>
         <Provider store={store}>
-          <Router>
-            <div>
-              <Route exact path="/" component={ConnectedLists} />
-              <Route exact path="/login" component={ConnectedLogin} />
-              <Route exact path="/lists/:id" component={ConnectedViewList} />
-              <Route
-                exact
-                path="/lists/:id/edit"
-                component={ConnectedEditList}
-              />
-              <Route
-                exact
-                path="/lists/:id/edit/last-used"
-                component={ConnectedRecentUsed}
-              />
-              <Route
-                exact
-                path="/lists/:id/edit/categories"
-                component={ConnectedCategories}
-              />
-            </div>
-          </Router>
+          <MuiThemeProvider theme={theme}>
+            <Router>
+              <div>
+                <Route exact path="/" component={ConnectedLists} />
+                <Route exact path="/login" component={ConnectedLogin} />
+                <Route exact path="/edit" component={ConnectedListsEdit} />
+                <Route exact path="/lists/:id" component={ConnectedViewList} />
+                <Route
+                  exact
+                  path="/lists/:id/edit"
+                  component={ConnectedEditList}
+                />
+                <Route
+                  exact
+                  path="/lists/:id/edit/last-used"
+                  component={ConnectedRecentUsed}
+                />
+                <Route
+                  exact
+                  path="/lists/:id/edit/categories"
+                  component={ConnectedCategories}
+                />
+              </div>
+            </Router>
+          </MuiThemeProvider>
         </Provider>
       </PersistGate>
     );

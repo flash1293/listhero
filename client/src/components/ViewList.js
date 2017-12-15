@@ -21,10 +21,10 @@ export class ViewList extends Component {
     const activeItems = this.props.items.filter(i => !i.done);
     return (
       <div>
-        <AppBar position="static" color="default">
+        <AppBar position="static" color="primary">
           <Toolbar>
             <Link to="/">
-              <IconButton>
+              <IconButton color="inherit">
                 <ArrowBack />
               </IconButton>
             </Link>
@@ -32,7 +32,7 @@ export class ViewList extends Component {
               {this.props.name}
             </Typography>
             <Link to={`/lists/${this.props.match.params.id}/edit`}>
-              <Button>Editieren</Button>
+              <Button color="inherit">Editieren</Button>
             </Link>
           </Toolbar>
         </AppBar>

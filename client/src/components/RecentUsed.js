@@ -18,10 +18,10 @@ export class RecentUsed extends Component {
     if (!this.props.uid) return <Redirect to="/" />;
     return (
       <div>
-        <AppBar position="static" color="default">
+        <AppBar position="static" color="primary">
           <Toolbar>
             <Link to={`/lists/${this.props.match.params.id}/edit`}>
-              <IconButton>
+              <IconButton color="inherit">
                 <ArrowBack />
               </IconButton>
             </Link>

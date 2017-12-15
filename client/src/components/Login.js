@@ -27,7 +27,7 @@ export class Login extends Component {
     } else
       return (
         <div>
-          <AppBar position="static" color="default">
+          <AppBar position="static" color="primary">
             <Toolbar>
               <Typography type="title" color="inherit">
                 Login
