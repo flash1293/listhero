@@ -16,7 +16,7 @@ import uuid from "uuid/v4";
 
 import redirectToLogin from "../components/RedirectToLogin";
 
-import categoryList from "../categories.json";
+import categoryList from "../data/categories.json";
 
 export class Categories extends Component {
   state = {

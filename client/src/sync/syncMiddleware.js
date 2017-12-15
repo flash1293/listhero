@@ -1,6 +1,6 @@
 import { isNumber } from "util";
 
-export default (postAction, filter, key) => {
+export default (postActionCreator, filter, key) => {
   let syncLog;
   const saveSyncLog = () => {
     localStorage.setItem(`sync-log:${key}`, JSON.stringify(syncLog));
@@ -29,6 +29,7 @@ export default (postAction, filter, key) => {
   let requestInFlight = false;
   loadSyncLog();
   return store => next => {
+    const postAction = postActionCreator(store);
     const getSyncState = () => store.getState()[key];
     const startSync = (options = { skipRetry: false }) => {
       if (requestInFlight) return;
