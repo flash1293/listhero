@@ -12,21 +12,15 @@ import {
 } from "react-sortable-hoc";
 import IconButton from "material-ui/IconButton";
 import ArrowBack from "material-ui-icons/ArrowBack";
-import ActionHistory from "material-ui-icons/History";
-import ActionShoppingBasket from "material-ui-icons/ShoppingBasket";
 import DragHandle from "material-ui-icons/DragHandle";
 import Divider from "material-ui/Divider";
 import ContentRemove from "material-ui-icons/Remove";
-import Paper from "material-ui/Paper";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
-import BottomNavigation, {
-  BottomNavigationButton
-} from "material-ui/BottomNavigation";
 
 import redirectToLogin from "../components/RedirectToLogin";
-import removeFromProps from "../components/RemoveFromProps";
 import ChangeNameDialog from "../components/ChangeNameDialog";
+import AddItemNavigation from "../components/AddItemNavigation";
 import AddForm from "../components/AddForm";
 import buildHandlers, {
   toggleItem,
@@ -35,8 +29,6 @@ import buildHandlers, {
   editItem,
   moveItem
 } from "../redux/actions";
-
-const BottomNavigationLink = removeFromProps("showLabel")(Link);
 
 const SortableDragHandle = SortableHandle(() => <DragHandle />);
 
@@ -145,36 +137,7 @@ export class EditList extends Component {
             </ListItem>
           ))}
         </List>
-        <Paper
-          style={{
-            position: "fixed",
-            bottom: "10px",
-            right: "10px",
-            left: "10px"
-          }}
-          elevation={1}
-        >
-          <BottomNavigation>
-            <BottomNavigationLink
-              to={`/lists/${this.props.uid}/edit/last-used`}
-            >
-              <BottomNavigationButton
-                showLabel
-                label="Zuletzt verwendet"
-                icon={<ActionHistory />}
-              />
-            </BottomNavigationLink>
-            <BottomNavigationLink
-              to={`/lists/${this.props.uid}/edit/categories`}
-            >
-              <BottomNavigationButton
-                showLabel
-                label="Kategorien"
-                icon={<ActionShoppingBasket />}
-              />
-            </BottomNavigationLink>
-          </BottomNavigation>
-        </Paper>
+        <AddItemNavigation uid={this.props.uid} />
         {this.state.dialogItem && (
           <ChangeNameDialog
             initialText={this.state.dialogItem.name}
