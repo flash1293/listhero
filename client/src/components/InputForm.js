@@ -1,7 +1,6 @@
 import { withState, withProps } from "recompose";
 import { compose } from "redux";
 
-// TODO with state
 const textHandler = withState("text", "storeText", undefined);
 const submitHandler = withProps(ownerProps => ({
   handleSubmit: e => {

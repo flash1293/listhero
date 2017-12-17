@@ -12,81 +12,66 @@ import ArrowBack from "material-ui-icons/ArrowBack";
 import Add from "material-ui-icons/Add";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
+import compose from "ramda/src/compose";
 
 import redirectToLogin from "../components/RedirectToLogin";
+import redirectToHome from "../components/RedirectToHome";
 import buildHandlers, { addStackableItem } from "../redux/actions";
+import collapsable from "../components/Collapsable";
 
 import categoryList from "../data/categories.json";
 
-export class Categories extends Component {
-  state = {
-    open: {}
-  };
-  handleOpen(category) {
-    this.setState({
-      open: {
-        ...this.state.open,
-        [category]: !this.state.open[category]
-      }
-    });
-  }
-  render() {
-    if (!this.props.uid) return <Redirect to="/" />;
-    return (
-      <div>
-        <AppBar position="static" color="primary">
-          <Toolbar>
-            <Link to={`/lists/${this.props.match.params.id}/edit`}>
-              <IconButton color="inherit">
-                <ArrowBack />
-              </IconButton>
-            </Link>
-            <Typography type="title" color="inherit">
-              Kategorien
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <List>
-          {Object.entries(categoryList).map(([category, entries], index) => [
-            <ListItem
-              button
-              onClick={() => this.handleOpen(category)}
-              key={index}
-            >
-              <ListItemText primary={category} />
-              {this.state.open[category] ? <ExpandLess /> : <ExpandMore />}
-            </ListItem>,
-            <Collapse
-              key={`${index}-collapse`}
-              component="li"
-              in={this.state.open[category]}
-              timeout="auto"
-              unmountOnExit
-            >
-              <List disablePadding>
-                {entries.map((entry, index) => (
-                  <ListItem
-                    button
-                    onClick={() => this.props.addStackableItem(entry)}
-                    key={index}
-                    style={{ paddingLeft: "38px", paddingRight: 0 }}
-                  >
-                    <ListItemText primary={entry} />
-                    <ListItemIcon>
-                      <Add />
-                    </ListItemIcon>
-                  </ListItem>
-                ))}
-              </List>
-            </Collapse>
-          ])}
-        </List>
-      </div>
-    );
-  }
-}
+const Categories = ({ open, toggle, uid, addStackableItem }) => (
+  <div>
+    <AppBar position="static" color="primary">
+      <Toolbar>
+        <Link to={`/lists/${uid}/edit`}>
+          <IconButton color="inherit">
+            <ArrowBack />
+          </IconButton>
+        </Link>
+        <Typography type="title" color="inherit">
+          Kategorien
+        </Typography>
+      </Toolbar>
+    </AppBar>
+    <List>
+      {Object.entries(categoryList).map(([category, entries], index) => [
+        <ListItem button onClick={() => toggle(category)} key={index}>
+          <ListItemText primary={category} />
+          {open[category] ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>,
+        <Collapse
+          key={`${index}-collapse`}
+          component="li"
+          in={open[category]}
+          timeout="auto"
+          unmountOnExit
+        >
+          <List disablePadding>
+            {entries.map((entry, index) => (
+              <ListItem
+                button
+                onClick={() => addStackableItem(entry)}
+                key={index}
+                style={{ paddingLeft: "38px", paddingRight: 0 }}
+              >
+                <ListItemText primary={entry} />
+                <ListItemIcon>
+                  <Add />
+                </ListItemIcon>
+              </ListItem>
+            ))}
+          </List>
+        </Collapse>
+      ])}
+    </List>
+  </div>
+);
 
-export default redirectToLogin(
+export default compose(
+  redirectToLogin,
+  redirectToHome,
   connect(
     (state, ownProps) => ({
       ...state.lists.present.find(l => l.uid === ownProps.match.params.id)
@@ -94,5 +79,6 @@ export default redirectToLogin(
     buildHandlers({
       addStackableItem
     })
-  )(Categories)
-);
+  ),
+  collapsable
+)(Categories);
