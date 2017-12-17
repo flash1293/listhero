@@ -12,9 +12,9 @@ import ArrowBack from "material-ui-icons/ArrowBack";
 import Add from "material-ui-icons/Add";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
-import uuid from "uuid/v4";
 
 import redirectToLogin from "../components/RedirectToLogin";
+import buildHandlers, { addStackableItem } from "../redux/actions";
 
 import categoryList from "../data/categories.json";
 
@@ -67,7 +67,7 @@ export class Categories extends Component {
                 {entries.map((entry, index) => (
                   <ListItem
                     button
-                    onClick={() => this.props.onAdd(entry)}
+                    onClick={() => this.props.addStackableItem(entry)}
                     key={index}
                     style={{ paddingLeft: "38px", paddingRight: 0 }}
                   >
@@ -91,16 +91,8 @@ export default redirectToLogin(
     (state, ownProps) => ({
       ...state.lists.present.find(l => l.uid === ownProps.match.params.id)
     }),
-    (dispatch, ownProps) => ({
-      onAdd: name => {
-        dispatch({
-          type: "ADD_ITEM",
-          list: ownProps.match.params.id,
-          uid: uuid(),
-          stackIfPossible: true,
-          name
-        });
-      }
+    buildHandlers({
+      addStackableItem
     })
   )(Categories)
 );

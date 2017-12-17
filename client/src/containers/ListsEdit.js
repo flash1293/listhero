@@ -15,11 +15,16 @@ import Edit from "material-ui-icons/Edit";
 import Delete from "material-ui-icons/Delete";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
 import { connect } from "react-redux";
-import uuid from "uuid/v4";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import ChangeNameDialog from "../components/ChangeNameDialog";
 import AddForm from "../components/AddForm";
+import buildHandlers, {
+  addList,
+  removeList,
+  editList,
+  moveList
+} from "../redux/actions";
 
 const SortableDragHandle = SortableHandle(() => (
   <DragHandle style={{ float: "left", marginRight: "10px" }} />
@@ -70,7 +75,7 @@ export class ListsEdit extends Component {
   };
   onSortEnd = ({ oldIndex, newIndex }) => {
     if (oldIndex === newIndex) return;
-    this.props.onMove(
+    this.props.moveList(
       this.props.lists[oldIndex].uid,
       this.props.lists[newIndex].uid
     );
@@ -82,7 +87,7 @@ export class ListsEdit extends Component {
     this.setState({ dialogList: list });
   };
   handleChangeList = text => {
-    this.props.onChangeList(this.state.dialogList.uid, text);
+    this.props.editList(this.state.dialogList.uid, text);
     this.setState({ dialogList: null });
   };
   render() {
@@ -100,10 +105,10 @@ export class ListsEdit extends Component {
             </Typography>
           </Toolbar>
         </AppBar>
-        <AddForm placeholder="Neue Liste" onSubmit={this.props.onAdd} />
+        <AddForm placeholder="Neue Liste" onSubmit={this.props.addList} />
         <SortableList
           lists={this.props.lists}
-          onRemove={this.props.onRemove}
+          onRemove={this.props.removeList}
           onEdit={this.onChangeList}
           onSortEnd={this.onSortEnd}
           useDragHandle
@@ -125,34 +130,11 @@ export default redirectToLogin(
     state => ({
       lists: state.lists ? state.lists.present || [] : []
     }),
-    dispatch => ({
-      onAdd: name => {
-        dispatch({
-          type: "ADD_LIST",
-          uid: uuid(),
-          name
-        });
-      },
-      onMove: (oldId, newId) => {
-        dispatch({
-          type: "MOVE_LIST",
-          oldId,
-          newId
-        });
-      },
-      onChangeList: (list, name) => {
-        dispatch({
-          type: "EDIT_LIST",
-          list,
-          name
-        });
-      },
-      onRemove: list => {
-        dispatch({
-          type: "REMOVE_LIST",
-          list
-        });
-      }
+    buildHandlers({
+      addList,
+      removeList,
+      moveList,
+      editList
     })
   )(ListsEdit)
 );

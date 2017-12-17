@@ -19,7 +19,6 @@ import Divider from "material-ui/Divider";
 import ContentRemove from "material-ui-icons/Remove";
 import Paper from "material-ui/Paper";
 import { connect } from "react-redux";
-import uuid from "uuid/v4";
 import { Redirect } from "react-router";
 import BottomNavigation, {
   BottomNavigationButton
@@ -29,6 +28,13 @@ import redirectToLogin from "../components/RedirectToLogin";
 import removeFromProps from "../components/RemoveFromProps";
 import ChangeNameDialog from "../components/ChangeNameDialog";
 import AddForm from "../components/AddForm";
+import buildHandlers, {
+  toggleItem,
+  addItem,
+  removeDoneItems,
+  editItem,
+  moveItem
+} from "../redux/actions";
 
 const BottomNavigationLink = removeFromProps("showLabel")(Link);
 
@@ -73,13 +79,13 @@ export class EditList extends Component {
   };
   onSortEndActive = ({ oldIndex, newIndex }) => {
     if (oldIndex === newIndex) return;
-    this.props.onMove(
+    this.props.moveItem(
       this.props.activeItems[oldIndex].uid,
       this.props.activeItems[newIndex].uid
     );
   };
   onToggle = item => {
-    this.props.onToggle(item.uid);
+    this.props.toggleItem(item.uid);
   };
   handleDialogClose = () => {
     this.setState({ dialogItem: null });
@@ -88,10 +94,10 @@ export class EditList extends Component {
     this.setState({ dialogItem: item });
   };
   onRemoveItem = item => {
-    this.props.onToggle(item.uid);
+    this.props.toggleItem(item.uid);
   };
   handleChangeItem = text => {
-    this.props.onChangeItem(this.state.dialogItem.uid, text);
+    this.props.editItem(this.state.dialogItem.uid, text);
     this.setState({ dialogItem: null });
   };
   render() {
@@ -110,7 +116,7 @@ export class EditList extends Component {
             </Typography>
           </Toolbar>
         </AppBar>
-        <AddForm placeholder="Neuer Eintrag" onSubmit={this.props.onAdd} />
+        <AddForm placeholder="Neuer Eintrag" onSubmit={this.props.addItem} />
         <SortableList
           items={this.props.activeItems}
           onSortEnd={this.onSortEndActive}
@@ -120,7 +126,10 @@ export class EditList extends Component {
         />
         {this.props.doneItems.length > 0 && <Divider inset={true} />}
         {this.props.doneItems.length > 0 && (
-          <Button style={{ fontSize: "0.7em" }} onClick={this.props.onRemove}>
+          <Button
+            style={{ fontSize: "0.7em" }}
+            onClick={this.props.removeDoneItems}
+          >
             Erledigte Löschen
           </Button>
         )}
@@ -190,44 +199,12 @@ export default redirectToLogin(
         activeItems: list.items.filter(i => !i.done)
       };
     },
-    (dispatch, ownProps) => ({
-      onAdd: name => {
-        dispatch({
-          type: "ADD_ITEM",
-          list: ownProps.match.params.id,
-          uid: uuid(),
-          name
-        });
-      },
-      onRemove: () => {
-        dispatch({
-          type: "REMOVE_DONE",
-          list: ownProps.match.params.id
-        });
-      },
-      onChangeItem: (item, name) => {
-        dispatch({
-          type: "EDIT_ITEM",
-          list: ownProps.match.params.id,
-          item,
-          name
-        });
-      },
-      onMove: (oldId, newId) => {
-        dispatch({
-          type: "MOVE_ITEM",
-          list: ownProps.match.params.id,
-          oldId,
-          newId
-        });
-      },
-      onToggle: index => {
-        dispatch({
-          type: "TOGGLE_ITEM",
-          list: ownProps.match.params.id,
-          item: index
-        });
-      }
+    buildHandlers({
+      addItem,
+      removeDoneItems,
+      editItem,
+      moveItem,
+      toggleItem
     })
   )(EditList)
 );

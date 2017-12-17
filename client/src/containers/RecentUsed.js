@@ -9,9 +9,9 @@ import ArrowBack from "material-ui-icons/ArrowBack";
 import ContentAdd from "material-ui-icons/Add";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
-import uuid from "uuid/v4";
 
 import redirectToLogin from "../components/RedirectToLogin";
+import buildHandlers, { addItem } from "../redux/actions";
 
 export class RecentUsed extends Component {
   render() {
@@ -32,7 +32,11 @@ export class RecentUsed extends Component {
         </AppBar>
         <List>
           {this.props.recentItems.map((item, index) => (
-            <ListItem button key={index} onClick={() => this.props.onAdd(item)}>
+            <ListItem
+              button
+              key={index}
+              onClick={() => this.props.addItem(item)}
+            >
               <ListItemText primary={item} />
               <ListItemIcon>
                 <ContentAdd />
@@ -50,15 +54,8 @@ export default redirectToLogin(
     (state, ownProps) => ({
       ...state.lists.present.find(l => l.uid === ownProps.match.params.id)
     }),
-    (dispatch, ownProps) => ({
-      onAdd: name => {
-        dispatch({
-          type: "ADD_ITEM",
-          list: ownProps.match.params.id,
-          uid: uuid(),
-          name
-        });
-      }
+    buildHandlers({
+      addItem
     })
   )(RecentUsed)
 );

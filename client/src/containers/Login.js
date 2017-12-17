@@ -8,6 +8,8 @@ import TextField from "material-ui/TextField";
 import { CircularProgress } from "material-ui/Progress";
 import { Redirect } from "react-router";
 
+import buildHandlers, { requestLogin } from "../redux/actions";
+
 export class Login extends Component {
   state = {
     passwordText: ""
@@ -78,17 +80,7 @@ export default connect(
   (state, ownProps) => ({
     ...state.user
   }),
-  (dispatch, ownProps) => ({
-    onLogin: password => {
-      dispatch({
-        type: "LOGIN",
-        password
-      });
-      dispatch({
-        type: "@@sync/REQUEST_SYNC",
-        key: "lists",
-        skipRetry: true
-      });
-    }
+  buildHandlers({
+    requestLogin
   })
 )(Login);
