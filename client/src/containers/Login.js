@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
@@ -7,80 +7,75 @@ import { connect } from "react-redux";
 import TextField from "material-ui/TextField";
 import { CircularProgress } from "material-ui/Progress";
 import { Redirect } from "react-router";
+import { branch } from "recompose";
+import { compose } from "redux";
 
 import buildHandlers, { requestLogin } from "../redux/actions";
+import inputForm from "../components/InputForm";
 
-export class Login extends Component {
-  state = {
-    passwordText: ""
-  };
-  onChangeText = e => {
-    this.setState({
-      passwordText: e.target.value
-    });
-  };
-  onLogin = e => {
-    e.preventDefault();
-    this.props.onLogin(this.state.passwordText);
-  };
-  render() {
-    if (this.props.loggedIn) {
-      return <Redirect to="/" />;
-    } else
-      return (
-        <div>
-          <AppBar position="static" color="primary">
-            <Toolbar>
-              <Typography type="title" color="inherit">
-                Login
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          <form onSubmit={this.onLogin} style={{ margin: "10px" }}>
-            <TextField
-              fullWidth
-              autoFocus
-              value={this.state.passwordText}
-              onChange={this.onChangeText}
-              placeholder="Passwort"
-              type="password"
-              label={this.props.failed ? "Zugriff fehlgeschlagen" : ""}
-              error={this.props.failed}
-            />
-            <Button
-              raised
-              style={{ marginTop: "10px", position: "relative" }}
-              disabled={this.props.requesting}
-              color="primary"
-              type="submit"
-              onClick={this.onLogin}
-            >
-              Login
-              {this.props.requesting && (
-                <CircularProgress
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    marginTop: -11,
-                    marginLeft: -11
-                  }}
-                  size={25}
-                  thickness={4}
-                />
-              )}
-            </Button>
-          </form>
-        </div>
-      );
-  }
-}
+const Login = ({
+  text,
+  handleChangeText,
+  handleSubmit,
+  requesting,
+  failed
+}) => (
+  <div>
+    <AppBar position="static" color="primary">
+      <Toolbar>
+        <Typography type="title" color="inherit">
+          Login
+        </Typography>
+      </Toolbar>
+    </AppBar>
+    <form onSubmit={handleSubmit} style={{ margin: "10px" }}>
+      <TextField
+        fullWidth
+        autoFocus
+        value={text !== undefined ? text : ""}
+        onChange={handleChangeText}
+        placeholder="Passwort"
+        type="password"
+        label={failed ? "Zugriff fehlgeschlagen" : ""}
+        error={failed}
+      />
+      <Button
+        raised
+        style={{ marginTop: "10px", position: "relative" }}
+        disabled={requesting}
+        color="primary"
+        type="submit"
+        onClick={handleSubmit}
+      >
+        Login
+        {requesting && (
+          <CircularProgress
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              marginTop: -11,
+              marginLeft: -11
+            }}
+            size={25}
+            thickness={4}
+          />
+        )}
+      </Button>
+    </form>
+  </div>
+);
 
-export default connect(
-  (state, ownProps) => ({
-    ...state.user
-  }),
-  buildHandlers({
-    requestLogin
-  })
-)(Login);
+const enhance = compose(
+  connect(
+    (state, ownProps) => ({
+      ...state.user
+    }),
+    buildHandlers({
+      onSubmit: requestLogin
+    })
+  ),
+  branch(props => props.loggedIn, () => () => <Redirect to="/" />, inputForm)
+);
+
+export default enhance(Login);
