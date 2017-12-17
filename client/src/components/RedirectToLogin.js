@@ -1,20 +1,13 @@
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
+import { branch } from "recompose";
+import prop from "ramda/src/prop";
+import { compose } from "redux";
 
-export default ComponentToWrap => {
-  return connect((state, ownProps) => ({
-    isLoggedIn: state.user.loggedIn
-  }))(
-    class RedirectedComponent extends Component {
-      render() {
-        const { isLoggedIn, ...ownProps } = this.props;
-        if (!isLoggedIn) {
-          return <Redirect to="/login" />;
-        } else {
-          return <ComponentToWrap {...ownProps} />;
-        }
-      }
-    }
-  );
-};
+export default compose(
+  connect(state => ({
+    loggedOut: !state.user.loggedIn
+  })),
+  branch(prop("loggedOut"), () => () => <Redirect to="/login" />)
+);
