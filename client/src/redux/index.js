@@ -20,8 +20,8 @@ export const store = createStore(
   persistentReducer,
   applyMiddleware(
     refreshOnRehydrateMiddleware,
-    syncMiddleware,
-    websocketMiddleware
+    websocketMiddleware,
+    syncMiddleware
   )
 );
 export const persistor = persistStore(store);
