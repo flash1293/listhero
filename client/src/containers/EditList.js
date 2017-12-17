@@ -5,7 +5,6 @@ import Typography from "material-ui/Typography";
 import { Link } from "react-router-dom";
 import Button from "material-ui/Button";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
-import TextField from "material-ui/TextField";
 import {
   SortableContainer,
   SortableElement,
@@ -17,21 +16,19 @@ import ActionHistory from "material-ui-icons/History";
 import ActionShoppingBasket from "material-ui-icons/ShoppingBasket";
 import DragHandle from "material-ui-icons/DragHandle";
 import Divider from "material-ui/Divider";
-import Dialog, { DialogActions, DialogContent } from "material-ui/Dialog";
 import ContentRemove from "material-ui-icons/Remove";
 import Paper from "material-ui/Paper";
 import { connect } from "react-redux";
 import uuid from "uuid/v4";
 import { Redirect } from "react-router";
-import Input, { InputAdornment } from "material-ui/Input";
-import { FormControl } from "material-ui/Form";
-import Send from "material-ui-icons/Send";
 import BottomNavigation, {
   BottomNavigationButton
 } from "material-ui/BottomNavigation";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import removeFromProps from "../components/RemoveFromProps";
+import ChangeNameDialog from "../components/ChangeNameDialog";
+import AddForm from "../components/AddForm";
 
 const BottomNavigationLink = removeFromProps("showLabel")(Link);
 
@@ -72,23 +69,7 @@ const SortableList = SortableContainer(({ items, onClick, onRemove }) => {
 
 export class EditList extends Component {
   state = {
-    addText: "",
-    dialogId: null
-  };
-  onRequestAdd = () => {
-    this.setState({ addMode: true });
-  };
-  onAdd = e => {
-    e.preventDefault();
-    this.props.onAdd(this.state.addText);
-    this.setState(state => ({
-      addText: ""
-    }));
-  };
-  onChangeAddText = e => {
-    this.setState({
-      addText: e.target.value
-    });
+    dialogItem: null
   };
   onSortEndActive = ({ oldIndex, newIndex }) => {
     if (oldIndex === newIndex) return;
@@ -101,23 +82,17 @@ export class EditList extends Component {
     this.props.onToggle(item.uid);
   };
   handleDialogClose = () => {
-    this.setState({ dialogId: null });
+    this.setState({ dialogItem: null });
   };
   onItemClick = item => {
-    this.setState({ dialogId: item.uid, dialogText: item.name });
-  };
-  onChangeDialogText = e => {
-    this.setState({
-      dialogText: e.target.value
-    });
+    this.setState({ dialogItem: item });
   };
   onRemoveItem = item => {
     this.props.onToggle(item.uid);
   };
-  handleChangeItem = e => {
-    e.preventDefault();
-    this.props.onChangeItem(this.state.dialogId, this.state.dialogText);
-    this.setState({ dialogId: null, dialogText: "" });
+  handleChangeItem = text => {
+    this.props.onChangeItem(this.state.dialogItem.uid, text);
+    this.setState({ dialogItem: null });
   };
   render() {
     if (!this.props.uid) return <Redirect to="/" />;
@@ -135,25 +110,7 @@ export class EditList extends Component {
             </Typography>
           </Toolbar>
         </AppBar>
-        <form onSubmit={this.onAdd} style={{ margin: "10px" }}>
-          <FormControl fullWidth>
-            <Input
-              type="text"
-              autoFocus
-              placeholder="Neuer Eintrag"
-              value={this.state.addText}
-              onChange={this.onChangeAddText}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton onClick={this.onAdd}>
-                    <Send />
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-          </FormControl>
-        </form>
-
+        <AddForm placeholder="Neuer Eintrag" onSubmit={this.props.onAdd} />
         <SortableList
           items={this.props.activeItems}
           onSortEnd={this.onSortEndActive}
@@ -209,30 +166,13 @@ export class EditList extends Component {
             </BottomNavigationLink>
           </BottomNavigation>
         </Paper>
-        <Dialog
-          open={this.state.dialogId !== null}
-          onRequestClose={this.handleDialogClose}
-        >
-          <DialogContent>
-            <form onSubmit={this.handleChangeItem}>
-              <TextField
-                name="editField"
-                fullWidth
-                autoFocus
-                value={this.state.dialogText}
-                onChange={this.onChangeDialogText}
-              />
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button label="Abbrechen" onClick={this.handleDialogClose}>
-              Abbrechen
-            </Button>
-            <Button color="primary" onClick={this.handleChangeItem}>
-              Speichern
-            </Button>
-          </DialogActions>
-        </Dialog>
+        {this.state.dialogItem && (
+          <ChangeNameDialog
+            initialText={this.state.dialogItem.name}
+            onClose={this.handleDialogClose}
+            onSubmit={this.handleChangeItem}
+          />
+        )}
       </div>
     );
   }

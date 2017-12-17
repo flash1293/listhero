@@ -8,22 +8,18 @@ import {
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
-import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
 import ArrowBack from "material-ui-icons/ArrowBack";
 import DragHandle from "material-ui-icons/DragHandle";
 import Edit from "material-ui-icons/Edit";
 import Delete from "material-ui-icons/Delete";
-import Send from "material-ui-icons/Send";
-import Dialog, { DialogActions, DialogContent } from "material-ui/Dialog";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
-import TextField from "material-ui/TextField";
-import Input, { InputAdornment } from "material-ui/Input";
-import { FormControl } from "material-ui/Form";
 import { connect } from "react-redux";
 import uuid from "uuid/v4";
 
 import redirectToLogin from "../components/RedirectToLogin";
+import ChangeNameDialog from "../components/ChangeNameDialog";
+import AddForm from "../components/AddForm";
 
 const SortableDragHandle = SortableHandle(() => (
   <DragHandle style={{ float: "left", marginRight: "10px" }} />
@@ -70,21 +66,7 @@ const SortableList = SortableContainer(({ lists, onRemove, onEdit }) => {
 
 export class ListsEdit extends Component {
   state = {
-    addText: "",
-    dialogText: "",
-    dialogId: null
-  };
-  onAdd = e => {
-    e.preventDefault();
-    this.props.onAdd(this.state.addText);
-    this.setState(state => ({
-      addText: ""
-    }));
-  };
-  onChangeAddText = e => {
-    this.setState({
-      addText: e.target.value
-    });
+    dialogList: null
   };
   onSortEnd = ({ oldIndex, newIndex }) => {
     if (oldIndex === newIndex) return;
@@ -93,24 +75,15 @@ export class ListsEdit extends Component {
       this.props.lists[newIndex].uid
     );
   };
-  onListChange = ({ uid: dialogId, name: dialogText }) =>
-    this.setState({ dialogId, dialogText });
-
   handleDialogClose = () => {
-    this.setState({ dialogId: null });
+    this.setState({ dialogList: null });
   };
   onChangeList = list => {
-    this.setState({ dialogId: list.uid, dialogText: list.name });
+    this.setState({ dialogList: list });
   };
-  onChangeDialogText = e => {
-    this.setState({
-      dialogText: e.target.value
-    });
-  };
-  handleChangeList = e => {
-    e.preventDefault();
-    this.props.onChangeList(this.state.dialogId, this.state.dialogText);
-    this.setState({ dialogId: null, dialogText: "" });
+  handleChangeList = text => {
+    this.props.onChangeList(this.state.dialogList.uid, text);
+    this.setState({ dialogList: null });
   };
   render() {
     return (
@@ -127,53 +100,21 @@ export class ListsEdit extends Component {
             </Typography>
           </Toolbar>
         </AppBar>
-        <form onSubmit={this.onAdd} style={{ margin: "10px" }}>
-          <FormControl fullWidth>
-            <Input
-              type="text"
-              autoFocus
-              placeholder="Neue Liste"
-              value={this.state.addText}
-              onChange={this.onChangeAddText}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton onClick={this.onAdd}>
-                    <Send />
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-          </FormControl>
-        </form>
+        <AddForm placeholder="Neue Liste" onSubmit={this.props.onAdd} />
         <SortableList
           lists={this.props.lists}
           onRemove={this.props.onRemove}
-          onEdit={this.onListChange}
+          onEdit={this.onChangeList}
           onSortEnd={this.onSortEnd}
           useDragHandle
         />
-        <Dialog
-          open={this.state.dialogId !== null}
-          onRequestClose={this.handleDialogClose}
-        >
-          <DialogContent>
-            <form onSubmit={this.handleChangeList}>
-              <TextField
-                name="editField"
-                fullWidth
-                autoFocus
-                value={this.state.dialogText}
-                onChange={this.onChangeDialogText}
-              />
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleDialogClose}>Abbrechen</Button>
-            <Button color="primary" onClick={this.handleChangeList}>
-              Speichern
-            </Button>
-          </DialogActions>
-        </Dialog>
+        {this.state.dialogList && (
+          <ChangeNameDialog
+            initialText={this.state.dialogList.name}
+            onClose={this.handleDialogClose}
+            onSubmit={this.handleChangeList}
+          />
+        )}
       </div>
     );
   }

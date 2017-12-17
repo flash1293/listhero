@@ -1,29 +1,20 @@
-import { withReducer, withProps } from "recompose";
-import { compose } from "redux";
+import React from "react";
+import Dialog, { DialogActions, DialogContent } from "material-ui/Dialog";
+import Button from "material-ui/Button";
+import TextField from "material-ui/TextField";
+import inputForm from "./InputForm";
 
-const textHandler = withReducer(
-  "text",
-  "handleChangeText",
-  (_, e) => e.target.value,
-  ""
-);
-const submitHandler = withProps(ownerProps => ({
-  handleSubmit: () => ownerProps.onSubmit(ownerProps.text)
-}));
-
-const enhance = compose(textHandler, submitHandler);
-
-export default enhance(
-  ({ text, handleChangeText, dialogId, handleSubmit, onClose }) => (
-    <Dialog open={dialogId !== null} onRequestClose={onClose}>
+export default inputForm(
+  ({ text, initialText, handleChangeText, handleSubmit, onClose }) => (
+    <Dialog open={true} onRequestClose={onClose}>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <TextField
             name="editField"
             fullWidth
             autoFocus
-            value={text}
-            onChange={this.handleChangeText}
+            value={text !== undefined ? text : initialText || ""}
+            onChange={handleChangeText}
           />
         </form>
       </DialogContent>
