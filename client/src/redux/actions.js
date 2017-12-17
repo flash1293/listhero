@@ -7,7 +7,7 @@ export default handlerMakers => (dispatch, ownProps) =>
 export const addItem = (dispatch, ownProps) => name =>
   dispatch({
     type: "ADD_ITEM",
-    list: ownProps.match.params.id,
+    list: ownProps.listId,
     uid: uuid(),
     name
   });
@@ -15,36 +15,36 @@ export const addItem = (dispatch, ownProps) => name =>
 export const removeDoneItems = (dispatch, ownProps) => () =>
   dispatch({
     type: "REMOVE_DONE",
-    list: ownProps.match.params.id
+    list: ownProps.listId
   });
 
 export const editItem = (dispatch, ownProps) => (item, name) =>
   dispatch({
     type: "EDIT_ITEM",
-    list: ownProps.match.params.id,
-    item,
+    list: ownProps.listId,
+    item: item.uid,
     name
   });
 
 export const moveItem = (dispatch, ownProps) => (oldId, newId) =>
   dispatch({
     type: "MOVE_ITEM",
-    list: ownProps.match.params.id,
+    list: ownProps.listId,
     oldId,
     newId
   });
 
-export const toggleItem = (dispatch, ownProps) => index =>
+export const toggleItem = (dispatch, ownProps) => item =>
   dispatch({
     type: "TOGGLE_ITEM",
-    list: ownProps.match.params.id,
-    item: index
+    list: ownProps.listId,
+    item: item.uid
   });
 
 export const addStackableItem = (dispatch, ownProps) => name =>
   dispatch({
     type: "ADD_ITEM",
-    list: ownProps.match.params.id,
+    list: ownProps.listId,
     uid: uuid(),
     stackIfPossible: true,
     name
@@ -67,14 +67,14 @@ export const moveList = dispatch => (oldId, newId) =>
 export const editList = dispatch => (list, name) =>
   dispatch({
     type: "EDIT_LIST",
-    list,
+    list: list.uid,
     name
   });
 
 export const removeList = dispatch => list =>
   dispatch({
     type: "REMOVE_LIST",
-    list
+    list: list.uid
   });
 
 export const requestLogin = dispatch => password => {

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
@@ -8,54 +8,54 @@ import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
 import ArrowBack from "material-ui-icons/ArrowBack";
 import { connect } from "react-redux";
-import { Redirect } from "react-router";
+import { compose } from "redux";
 
 import redirectToLogin from "../components/RedirectToLogin";
+import redirectToHome from "../components/RedirectToHome";
+import routeParam from "../components/RouteParam";
 import buildHandlers, { toggleItem } from "../redux/actions";
+import buildSelector, { list, activeItems } from "../redux/selectors";
 
-export class ViewList extends Component {
-  onToggle = item => {
-    this.props.toggleItem(item.uid);
-  };
-  render() {
-    if (!this.props.uid) return <Redirect to="/" />;
-    const activeItems = this.props.items.filter(i => !i.done);
-    return (
-      <div>
-        <AppBar position="static" color="primary">
-          <Toolbar>
-            <Link to="/">
-              <IconButton color="inherit">
-                <ArrowBack />
-              </IconButton>
-            </Link>
-            <Typography type="title" color="inherit" style={{ flex: 1 }}>
-              {this.props.name}
-            </Typography>
-            <Link to={`/lists/${this.props.match.params.id}/edit`}>
-              <Button color="inherit">Editieren</Button>
-            </Link>
-          </Toolbar>
-        </AppBar>
-        <List>
-          {activeItems.map((item, index) => (
-            <ListItem button key={index} onClick={() => this.onToggle(item)}>
-              <ListItemText primary={item.name} />
-            </ListItem>
-          ))}
-        </List>
-      </div>
-    );
-  }
-}
+export const ViewList = ({
+  list: { name },
+  activeItems,
+  listId,
+  toggleItem
+}) => (
+  <div>
+    <AppBar position="static" color="primary">
+      <Toolbar>
+        <Link to="/">
+          <IconButton color="inherit">
+            <ArrowBack />
+          </IconButton>
+        </Link>
+        <Typography type="title" color="inherit" style={{ flex: 1 }}>
+          {name}
+        </Typography>
+        <Link to={`/lists/${listId}/edit`}>
+          <Button color="inherit">Editieren</Button>
+        </Link>
+      </Toolbar>
+    </AppBar>
+    <List>
+      {activeItems.map((item, index) => (
+        <ListItem button key={index} onClick={() => toggleItem(item)}>
+          <ListItemText primary={item.name} />
+        </ListItem>
+      ))}
+    </List>
+  </div>
+);
 
-export default redirectToLogin(
+export default compose(
+  redirectToLogin,
+  routeParam("id", "listId"),
   connect(
-    (state, ownProps) => ({
-      ...state.lists.present.find(l => l.uid === ownProps.match.params.id)
-    }),
+    buildSelector({ list, activeItems }),
     buildHandlers({
       toggleItem
     })
-  )(ViewList)
-);
+  ),
+  redirectToHome
+)(ViewList);

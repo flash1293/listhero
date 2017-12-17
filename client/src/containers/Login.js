@@ -11,6 +11,7 @@ import { branch } from "recompose";
 import { compose } from "redux";
 
 import buildHandlers, { requestLogin } from "../redux/actions";
+import buildSelector, { user } from "../redux/selectors";
 import inputForm from "../components/InputForm";
 
 const Login = ({
@@ -66,16 +67,16 @@ const Login = ({
   </div>
 );
 
-const enhance = compose(
+export default compose(
   connect(
-    (state, ownProps) => ({
-      ...state.user
-    }),
+    buildSelector({ user }),
     buildHandlers({
       onSubmit: requestLogin
     })
   ),
-  branch(props => props.loggedIn, () => () => <Redirect to="/" />, inputForm)
-);
-
-export default enhance(Login);
+  branch(
+    props => props.user.loggedIn,
+    () => () => <Redirect to="/" />,
+    inputForm
+  )
+)(Login);
