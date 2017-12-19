@@ -44,7 +44,10 @@ const SortableDragHandle = SortableHandle(() => <DragHandle />);
 
 const SortableItem = SortableElement(
   withHandlers(({ item, onRemove, onClick }) => ({
-    onRemove: ({ onRemove, item }) => () => onRemove(item),
+    onRemove: ({ onRemove, item }) => e => {
+      e.stopPropagation();
+      onRemove(item);
+    },
     onClick: ({ onClick, item }) => () => onClick(item)
   }))(({ item, onRemove, onClick }) => {
     return (
@@ -68,11 +71,8 @@ const SortableList = SortableContainer(({ items, onClick, onRemove }) => {
         <SortableItem
           key={item.uid}
           index={index}
-          onClick={() => onClick(item)}
-          onRemove={e => {
-            e.stopPropagation();
-            onRemove(item);
-          }}
+          onClick={onClick}
+          onRemove={onRemove}
           item={item}
         />
       ))}
@@ -134,7 +134,7 @@ export const EditList = ({
       ))}
     </List>
     <AddItemNavigation uid={listId} />
-    {this.state.dialogItem && (
+    {dialogItem && (
       <ChangeNameDialog
         initialText={dialogItem.name}
         onClose={handleDialogClose}
@@ -162,6 +162,6 @@ export default compose(
     })
   ),
   redirectToHome,
-  editDialog("Item"),
+  editDialog("Item", "editItem"),
   moveObject("moveItem", (props, index) => props.activeItems[index].uid)
 )(EditList);

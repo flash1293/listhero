@@ -133,6 +133,6 @@ export default compose(
       editList
     })
   ),
-  editDialog("List"),
+  editDialog("List", "editList"),
   moveObject("moveList", (props, index) => props.lists[index].uid)
 )(ListsEdit);

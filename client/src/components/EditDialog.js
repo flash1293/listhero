@@ -8,8 +8,12 @@ export default (objectName, handlerProp) =>
       handleDialogClose: ({ setDialogObject }) => () => setDialogObject(null),
       handleDialogOpen: ({ setDialogObject }) => dialogObject =>
         setDialogObject(dialogObject),
-      handleDialogSubmit: ({ setDialogObject, ...ownProps }) => dialogData => {
-        ownProps[handlerProp](dialogData);
+      handleDialogSubmit: ({
+        setDialogObject,
+        dialogObject,
+        ...ownProps
+      }) => dialogData => {
+        ownProps[handlerProp](dialogObject, dialogData);
         setDialogObject(null);
       }
     }),
