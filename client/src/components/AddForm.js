@@ -19,7 +19,6 @@ export default inputForm(
       <FormControl fullWidth>
         <Input
           type="text"
-          autoFocus
           placeholder={placeholder}
           value={text !== undefined ? text : initialText || ""}
           onChange={handleChangeText}
