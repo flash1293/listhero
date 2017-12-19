@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
-import Button from "material-ui/Button";
+import IconButton from "material-ui/IconButton";
 import ActionList from "material-ui-icons/List";
+import Edit from "material-ui-icons/Edit";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
 import Paper from "material-ui/Paper";
 import { connect } from "react-redux";
@@ -23,7 +24,9 @@ export const Lists = ({ lists }) => (
           Alle Listen
         </Typography>
         <Link to="/edit">
-          <Button color="inherit">Editieren</Button>
+          <IconButton aria-label="Editieren" color="inherit">
+            <Edit />
+          </IconButton>
         </Link>
       </Toolbar>
     </AppBar>

@@ -4,8 +4,8 @@ import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
 import List, { ListItem, ListItemText } from "material-ui/List";
-import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
+import Edit from "material-ui-icons/Edit";
 import ArrowBack from "material-ui-icons/ArrowBack";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -34,7 +34,9 @@ export const ViewList = ({
           {name}
         </Typography>
         <Link to={`/lists/${listId}/edit`}>
-          <Button color="inherit">Editieren</Button>
+          <IconButton aria-label="Editieren" color="inherit">
+            <Edit />
+          </IconButton>
         </Link>
       </Toolbar>
     </AppBar>

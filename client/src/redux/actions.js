@@ -41,6 +41,20 @@ export const toggleItem = (dispatch, ownProps) => item =>
     item: item.uid
   });
 
+export const increaseItem = (dispatch, ownProps) => item =>
+  dispatch({
+    type: "INCREASE_ITEM",
+    list: ownProps.listId,
+    item: item.uid
+  });
+
+export const decreaseItem = (dispatch, ownProps) => item =>
+  dispatch({
+    type: "DECREASE_ITEM",
+    list: ownProps.listId,
+    item: item.uid
+  });
+
 export const addStackableItem = (dispatch, ownProps) => name =>
   dispatch({
     type: "ADD_ITEM",

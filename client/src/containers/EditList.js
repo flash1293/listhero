@@ -15,6 +15,7 @@ import ArrowBack from "material-ui-icons/ArrowBack";
 import DragHandle from "material-ui-icons/DragHandle";
 import Divider from "material-ui/Divider";
 import ContentRemove from "material-ui-icons/Remove";
+import Add from "material-ui-icons/Add";
 import { connect } from "react-redux";
 import compose from "ramda/src/compose";
 import { withHandlers } from "recompose";
@@ -30,6 +31,8 @@ import editDialog from "../components/EditDialog";
 import buildHandlers, {
   toggleItem,
   addItem,
+  increaseItem,
+  decreaseItem,
   removeDoneItems,
   editItem,
   moveItem
@@ -43,20 +46,31 @@ import buildSelector, {
 const SortableDragHandle = SortableHandle(() => <DragHandle />);
 
 const SortableItem = SortableElement(
-  withHandlers(({ item, onRemove, onClick }) => ({
+  withHandlers(() => ({
     onRemove: ({ onRemove, item }) => e => {
       e.stopPropagation();
       onRemove(item);
     },
+    onIncrease: ({ onIncrease, item }) => e => {
+      e.stopPropagation();
+      onIncrease(item);
+    },
+    onDecrease: ({ onDecrease, item }) => e => {
+      e.stopPropagation();
+      onDecrease(item);
+    },
     onClick: ({ onClick, item }) => () => onClick(item)
-  }))(({ item, onRemove, onClick }) => {
+  }))(({ item, onRemove, onIncrease, onDecrease, onClick }) => {
     return (
       <ListItem onClick={onClick} button>
         <ListItemIcon>
           <SortableDragHandle />
         </ListItemIcon>
         <ListItemText primary={item.name} />
-        <ListItemIcon onClick={onRemove}>
+        <ListItemIcon onClick={onIncrease}>
+          <Add />
+        </ListItemIcon>
+        <ListItemIcon onClick={item.stacked ? onDecrease : onRemove}>
           <ContentRemove />
         </ListItemIcon>
       </ListItem>
@@ -64,21 +78,25 @@ const SortableItem = SortableElement(
   })
 );
 
-const SortableList = SortableContainer(({ items, onClick, onRemove }) => {
-  return (
-    <List>
-      {items.map((item, index) => (
-        <SortableItem
-          key={item.uid}
-          index={index}
-          onClick={onClick}
-          onRemove={onRemove}
-          item={item}
-        />
-      ))}
-    </List>
-  );
-});
+const SortableList = SortableContainer(
+  ({ items, onClick, onIncrease, onDecrease, onRemove }) => {
+    return (
+      <List>
+        {items.map((item, index) => (
+          <SortableItem
+            key={item.uid}
+            index={index}
+            onClick={onClick}
+            onRemove={onRemove}
+            onIncrease={onIncrease}
+            onDecrease={onDecrease}
+            item={item}
+          />
+        ))}
+      </List>
+    );
+  }
+);
 
 export const EditList = ({
   list: { name },
@@ -88,6 +106,8 @@ export const EditList = ({
   onSortEnd,
   handleDialogOpen,
   toggleItem,
+  increaseItem,
+  decreaseItem,
   doneItems,
   removeDoneItems,
   dialogItem,
@@ -113,6 +133,8 @@ export const EditList = ({
       onSortEnd={onSortEnd}
       onClick={handleDialogOpen}
       onRemove={toggleItem}
+      onDecrease={decreaseItem}
+      onIncrease={increaseItem}
       useDragHandle
     />
     {doneItems.length > 0 && <Divider inset={true} />}
@@ -158,6 +180,8 @@ export default compose(
       removeDoneItems,
       editItem,
       moveItem,
+      increaseItem,
+      decreaseItem,
       toggleItem
     })
   ),
