@@ -8,7 +8,7 @@ import filter from "ramda/src/filter";
 import propEq from "ramda/src/propEq";
 
 const EMPTY_ARRAY = [];
-const EMPTY_OBJECT = [];
+const EMPTY_OBJECT = {};
 
 export default selectors => (state, ownProps) =>
   map(selector => selector(ownProps)(state), selectors);
