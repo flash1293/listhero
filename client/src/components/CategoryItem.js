@@ -8,7 +8,7 @@ import ExpandMore from "material-ui-icons/ExpandMore";
 import AddableItem from "./AddableItem";
 
 export default withHandlers({
-  handleRemove: ({ category, remove }) => () => remove(category)
+  handleRemove: ({ category, toggle }) => () => toggle(category)
 })(({ category, entries, handleRemove, listId, open }) => (
   <React.Fragment>
     <ListItem button onClick={handleRemove}>

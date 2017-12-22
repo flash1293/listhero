@@ -12,18 +12,17 @@ import { compose } from "redux";
 import redirectToLogin from "../components/RedirectToLogin";
 import redirectToHome from "../components/RedirectToHome";
 import routeParam from "../components/RouteParam";
+import routerContext from "../components/RouterContext";
 import buildSelector, { list } from "../redux/selectors";
 import AddableItem from "../components/AddableItem";
 
-export const RecentUsed = ({ listId, list: { recentItems } }) => (
+export const RecentUsed = ({ listId, list: { recentItems }, router }) => (
   <div>
     <AppBar position="static" color="primary">
       <Toolbar>
-        <Link to={`/lists/${listId}/edit`}>
-          <IconButton color="inherit">
-            <ArrowBack />
-          </IconButton>
-        </Link>
+        <IconButton onClick={router.history.goBack} color="inherit">
+          <ArrowBack />
+        </IconButton>
         <Typography type="title" color="inherit">
           Zuletzt verwendet
         </Typography>
@@ -41,5 +40,6 @@ export default compose(
   redirectToLogin,
   routeParam("id", "listId"),
   connect(buildSelector({ list })),
+  routerContext,
   redirectToHome
 )(RecentUsed);

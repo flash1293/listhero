@@ -15,19 +15,24 @@ import routeParam from "../components/RouteParam";
 import buildHandlers, { addStackableItem } from "../redux/actions";
 import collapsable from "../components/Collapsable";
 import buildSelector, { list } from "../redux/selectors";
+import routerContext from "../components/RouterContext";
 import CategoryItem from "../components/CategoryItem";
 
 import categoryList from "../data/categories.json";
 
-export const Categories = ({ open, remove, listId, addStackableItem }) => (
+export const Categories = ({
+  open,
+  toggle,
+  listId,
+  addStackableItem,
+  router
+}) => (
   <div>
     <AppBar position="static" color="primary">
       <Toolbar>
-        <Link to={`/lists/${listId}/edit`}>
-          <IconButton color="inherit">
-            <ArrowBack />
-          </IconButton>
-        </Link>
+        <IconButton onClick={router.history.goBack} color="inherit">
+          <ArrowBack />
+        </IconButton>
         <Typography type="title" color="inherit">
           Kategorien
         </Typography>
@@ -39,7 +44,7 @@ export const Categories = ({ open, remove, listId, addStackableItem }) => (
           listId={listId}
           category={category}
           open={open[category]}
-          remove={remove}
+          toggle={toggle}
           entries={entries}
           key={category}
         />
@@ -58,5 +63,6 @@ export default compose(
   ),
   redirectToLogin,
   redirectToHome,
+  routerContext,
   collapsable
 )(Categories);

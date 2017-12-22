@@ -16,6 +16,7 @@ import editDialog from "../components/EditDialog";
 import ContextDialog from "../components/ContextDialog";
 import redirectToLogin from "../components/RedirectToLogin";
 import redirectToHome from "../components/RedirectToHome";
+import AddItemNavigation from "../components/AddItemNavigation";
 import routeParam from "../components/RouteParam";
 import buildHandlers, { removeItem, moveItemToBottom } from "../redux/actions";
 import buildSelector, { list } from "../redux/selectors";
@@ -88,6 +89,7 @@ export const ViewList = ({
         />
       ))}
     </List>
+    <AddItemNavigation uid={listId} />
     {dialogItem && (
       <ItemContextDialog
         item={dialogItem}
