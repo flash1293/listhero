@@ -3,7 +3,6 @@ import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
 import { Link } from "react-router-dom";
-import Button from "material-ui/Button";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
 import {
   SortableContainer,
@@ -13,7 +12,6 @@ import {
 import IconButton from "material-ui/IconButton";
 import ArrowBack from "material-ui-icons/ArrowBack";
 import DragHandle from "material-ui-icons/DragHandle";
-import Divider from "material-ui/Divider";
 import ContentRemove from "material-ui-icons/Remove";
 import Add from "material-ui-icons/Add";
 import { connect } from "react-redux";
@@ -29,19 +27,14 @@ import AddForm from "../components/AddForm";
 import moveObject from "../components/MoveObject";
 import editDialog from "../components/EditDialog";
 import buildHandlers, {
-  toggleItem,
+  removeItem,
   addItem,
   increaseItem,
   decreaseItem,
-  removeDoneItems,
   editItem,
   moveItem
 } from "../redux/actions";
-import buildSelector, {
-  list,
-  doneItems,
-  activeItems
-} from "../redux/selectors";
+import buildSelector, { list } from "../redux/selectors";
 
 const SortableDragHandle = SortableHandle(() => <DragHandle />);
 
@@ -99,17 +92,14 @@ const SortableList = SortableContainer(
 );
 
 export const EditList = ({
-  list: { name },
+  list: { name, items },
   listId,
   addItem,
-  activeItems,
   onSortEnd,
   handleDialogOpen,
-  toggleItem,
+  removeItem,
   increaseItem,
   decreaseItem,
-  doneItems,
-  removeDoneItems,
   dialogItem,
   handleDialogClose,
   handleDialogSubmit
@@ -129,32 +119,14 @@ export const EditList = ({
     </AppBar>
     <AddForm placeholder="Neuer Eintrag" onSubmit={addItem} />
     <SortableList
-      items={activeItems}
+      items={items}
       onSortEnd={onSortEnd}
       onClick={handleDialogOpen}
-      onRemove={toggleItem}
+      onRemove={removeItem}
       onDecrease={decreaseItem}
       onIncrease={increaseItem}
       useDragHandle
     />
-    {doneItems.length > 0 && <Divider inset={true} />}
-    {doneItems.length > 0 && (
-      <Button style={{ fontSize: "0.7em" }} onClick={removeDoneItems}>
-        Erledigte Löschen
-      </Button>
-    )}
-    <List style={{ paddingBottom: "65px" }}>
-      {doneItems.map((item, index) => (
-        <ListItem
-          button
-          style={{ color: "#aaa" }}
-          key={item.uid}
-          onClick={() => toggleItem(item)}
-        >
-          <ListItemText primary={item.name} />
-        </ListItem>
-      ))}
-    </List>
     <AddItemNavigation uid={listId} />
     {dialogItem && (
       <ChangeNameDialog
@@ -171,21 +143,18 @@ export default compose(
   routeParam("id", "listId"),
   connect(
     buildSelector({
-      list,
-      doneItems,
-      activeItems
+      list
     }),
     buildHandlers({
       addItem,
-      removeDoneItems,
       editItem,
       moveItem,
       increaseItem,
       decreaseItem,
-      toggleItem
+      removeItem
     })
   ),
   redirectToHome,
   editDialog("Item", "editItem"),
-  moveObject("moveItem", (props, index) => props.activeItems[index].uid)
+  moveObject("moveItem", (props, index) => props.list.items[index].uid)
 )(EditList);

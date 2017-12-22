@@ -12,12 +12,6 @@ export const addItem = (dispatch, ownProps) => name =>
     name
   });
 
-export const removeDoneItems = (dispatch, ownProps) => () =>
-  dispatch({
-    type: "REMOVE_DONE",
-    list: ownProps.listId
-  });
-
 export const editItem = (dispatch, ownProps) => (item, name) =>
   dispatch({
     type: "EDIT_ITEM",
@@ -41,9 +35,9 @@ export const moveItemToBottom = (dispatch, ownProps) => item =>
     item: item.uid
   });
 
-export const toggleItem = (dispatch, ownProps) => item =>
+export const removeItem = (dispatch, ownProps) => item =>
   dispatch({
-    type: "TOGGLE_ITEM",
+    type: "REMOVE_ITEM",
     list: ownProps.listId,
     item: item.uid
   });

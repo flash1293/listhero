@@ -13,7 +13,7 @@ import { compose } from "redux";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import { Logo } from "../components/Logo";
-import buildSelector, { listsWithActiveItemCount } from "../redux/selectors";
+import buildSelector, { lists } from "../redux/selectors";
 
 export const Lists = ({ lists }) => (
   <div>
@@ -39,7 +39,7 @@ export const Lists = ({ lists }) => (
             </ListItemIcon>
             <ListItemText
               primary={list.name}
-              secondary={`${list.activeItemCount} Einträge `}
+              secondary={`${list.items.length} Einträge `}
             />
           </ListItem>
         </Link>
@@ -60,7 +60,7 @@ export default compose(
   redirectToLogin,
   connect(
     buildSelector({
-      lists: listsWithActiveItemCount
+      lists
     })
   )
 )(Lists);

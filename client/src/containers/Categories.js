@@ -19,7 +19,7 @@ import CategoryItem from "../components/CategoryItem";
 
 import categoryList from "../data/categories.json";
 
-export const Categories = ({ open, toggle, listId, addStackableItem }) => (
+export const Categories = ({ open, remove, listId, addStackableItem }) => (
   <div>
     <AppBar position="static" color="primary">
       <Toolbar>
@@ -39,7 +39,7 @@ export const Categories = ({ open, toggle, listId, addStackableItem }) => (
           listId={listId}
           category={category}
           open={open[category]}
-          toggle={toggle}
+          remove={remove}
           entries={entries}
           key={category}
         />

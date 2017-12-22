@@ -17,45 +17,44 @@ import ContextDialog from "../components/ContextDialog";
 import redirectToLogin from "../components/RedirectToLogin";
 import redirectToHome from "../components/RedirectToHome";
 import routeParam from "../components/RouteParam";
-import buildHandlers, { toggleItem, moveItemToBottom } from "../redux/actions";
-import buildSelector, { list, activeItems } from "../redux/selectors";
+import buildHandlers, { removeItem, moveItemToBottom } from "../redux/actions";
+import buildSelector, { list } from "../redux/selectors";
 
 const ViewListItem = withHandlers({
-  handleToggle: ownProps => () => ownProps.toggleItem(ownProps.item),
+  handleRemove: ownProps => () => ownProps.removeItem(ownProps.item),
   handleContextMenu: ownProps => () => ownProps.handleContextMenu(ownProps.item)
-})(({ item, handleToggle, handleContextMenu }) => (
+})(({ item, handleRemove, handleContextMenu }) => (
   <ClickNHold time={2} onClickNHold={handleContextMenu}>
-    <ListItem button onClick={handleToggle}>
+    <ListItem button onClick={handleRemove}>
       <ListItemText primary={item.name} />
     </ListItem>
   </ClickNHold>
 ));
 
 const ItemContextDialog = withHandlers({
-  handleToggle: ownProps => () => {
-    ownProps.toggleItem(ownProps.item);
+  handleRemove: ownProps => () => {
+    ownProps.removeItem(ownProps.item);
     ownProps.onClose();
   },
   handleSendToBottom: ownProps => () => {
     ownProps.moveToBottom(ownProps.item);
     ownProps.onClose();
   }
-})(({ item, handleSendToBottom, handleToggle, onClose }) => (
+})(({ item, handleSendToBottom, handleRemove, onClose }) => (
   <ContextDialog onClose={onClose}>
     <ListItem button onClick={handleSendToBottom}>
       <ListItemText primary="Nach unten verschieben" />
     </ListItem>
-    <ListItem button onClick={handleToggle}>
+    <ListItem button onClick={handleRemove}>
       <ListItemText primary="Abhaken" />
     </ListItem>
   </ContextDialog>
 ));
 
 export const ViewList = ({
-  list: { name },
-  activeItems,
+  list: { name, items },
   listId,
-  toggleItem,
+  removeItem,
   moveItemToBottom,
   dialogItem,
   handleDialogOpen,
@@ -80,11 +79,11 @@ export const ViewList = ({
       </Toolbar>
     </AppBar>
     <List>
-      {activeItems.map((item, index) => (
+      {items.map((item, index) => (
         <ViewListItem
           item={item}
           key={item.uid}
-          toggleItem={toggleItem}
+          removeItem={removeItem}
           handleContextMenu={handleDialogOpen}
         />
       ))}
@@ -93,7 +92,7 @@ export const ViewList = ({
       <ItemContextDialog
         item={dialogItem}
         onClose={handleDialogClose}
-        toggleItem={toggleItem}
+        removeItem={removeItem}
         moveToBottom={moveItemToBottom}
       />
     )}
@@ -104,9 +103,9 @@ export default compose(
   redirectToLogin,
   routeParam("id", "listId"),
   connect(
-    buildSelector({ list, activeItems }),
+    buildSelector({ list }),
     buildHandlers({
-      toggleItem,
+      removeItem,
       moveItemToBottom
     })
   ),

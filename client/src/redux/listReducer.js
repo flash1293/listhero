@@ -53,7 +53,6 @@ export default function reducer(state = initalState, action) {
                   {
                     name: action.name,
                     uid: action.uid,
-                    done: false,
                     stacked: isStacked(action.name)
                   },
                   ...list.items
@@ -129,23 +128,21 @@ export default function reducer(state = initalState, action) {
               };
         }
       );
-    case "TOGGLE_ITEM":
+    case "REMOVE_ITEM":
+    case "TOGGLE_ITEM": // downwards-compatibility
       return replaceByMap(
         state,
         l => l.uid === action.list,
         list => {
           const item = list.items.find(i => i.uid === action.item);
           if (item) {
-            const newItem = { ...item, done: !item.done };
             return {
               ...list,
-              items: list.items.map(i => (i === item ? newItem : i)),
-              recentItems: newItem.done
-                ? [
-                    item.name,
-                    ...list.recentItems.filter(i => i !== item.name)
-                  ].slice(0, 50)
-                : list.recentItems.filter(i => i !== item.name)
+              items: list.items.filter(i => i !== item),
+              recentItems: [
+                item.name,
+                ...list.recentItems.filter(i => i !== item.name)
+              ].slice(0, 50)
             };
           } else {
             return list;
@@ -176,15 +173,6 @@ export default function reducer(state = initalState, action) {
         list => ({
           ...list,
           name: action.name
-        })
-      );
-    case "REMOVE_DONE":
-      return replaceByMap(
-        state,
-        l => l.uid === action.list,
-        list => ({
-          ...list,
-          items: list.items.filter(i => !i.done)
         })
       );
     case "REMOVE_LIST":
