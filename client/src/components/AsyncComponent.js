@@ -13,9 +13,15 @@ export function asyncComponent(importComponent) {
     async componentDidMount() {
       const { default: component } = await importComponent();
 
-      this.setState({
-        component: component
-      });
+      if (!this._isUnmounted) {
+        this.setState({
+          component: component
+        });
+      }
+    }
+
+    componentWillUnmount() {
+      this._isUnmounted = true;
     }
 
     render() {
