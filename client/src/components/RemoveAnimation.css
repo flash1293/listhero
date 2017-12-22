@@ -1,0 +1,11 @@
+  .ekofe-leave {
+    opacity: 1;
+    clip-path: inset(0 0);
+  }
+  
+  .ekofe-leave.ekofe-leave-active {
+    opacity: 0.01;
+    /* transform: translateX(20px); */
+    clip-path: inset(100% 0);
+    transition: all 0.5s ease-out;
+  }

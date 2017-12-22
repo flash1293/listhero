@@ -17,17 +17,22 @@ import ContextDialog from "../components/ContextDialog";
 import redirectToLogin from "../components/RedirectToLogin";
 import redirectToHome from "../components/RedirectToHome";
 import AddItemNavigation from "../components/AddItemNavigation";
+import removeAnimation from "../components/RemoveAnimation";
 import routeParam from "../components/RouteParam";
 import buildHandlers, { removeItem, moveItemToBottom } from "../redux/actions";
 import buildSelector, { list } from "../redux/selectors";
 
-const ViewListItem = withHandlers({
-  handleRemove: ownProps => () => ownProps.removeItem(ownProps.item),
-  handleContextMenu: ownProps => () => ownProps.handleContextMenu(ownProps.item)
-})(({ item, handleRemove, handleContextMenu }) => (
+const ViewListItem = compose(
+  withHandlers({
+    handleRemove: ownProps => () => ownProps.removeItem(ownProps.item),
+    handleContextMenu: ownProps => () =>
+      ownProps.handleContextMenu(ownProps.item)
+  }),
+  removeAnimation("handleRemove")
+)(({ item, onRemoveDelayed, hideClassName, handleContextMenu }) => (
   <ClickNHold time={2} onClickNHold={handleContextMenu}>
-    <ListItem button onClick={handleRemove}>
-      <ListItemText primary={item.name} />
+    <ListItem button onClick={onRemoveDelayed}>
+      <ListItemText primary={item.name} className={hideClassName} />
     </ListItem>
   </ClickNHold>
 ));
