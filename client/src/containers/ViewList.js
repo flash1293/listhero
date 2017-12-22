@@ -9,18 +9,57 @@ import Edit from "material-ui-icons/Edit";
 import ArrowBack from "material-ui-icons/ArrowBack";
 import { connect } from "react-redux";
 import { compose } from "redux";
+import ClickNHold from "react-click-n-hold";
+import { withHandlers } from "recompose";
 
+import editDialog from "../components/EditDialog";
+import ContextDialog from "../components/ContextDialog";
 import redirectToLogin from "../components/RedirectToLogin";
 import redirectToHome from "../components/RedirectToHome";
 import routeParam from "../components/RouteParam";
-import buildHandlers, { toggleItem } from "../redux/actions";
+import buildHandlers, { toggleItem, moveItemToBottom } from "../redux/actions";
 import buildSelector, { list, activeItems } from "../redux/selectors";
+
+const ViewListItem = withHandlers({
+  handleToggle: ownProps => () => ownProps.toggleItem(ownProps.item),
+  handleContextMenu: ownProps => () => ownProps.handleContextMenu(ownProps.item)
+})(({ item, handleToggle, handleContextMenu }) => (
+  <ClickNHold time={2} onClickNHold={handleContextMenu}>
+    <ListItem button onClick={handleToggle}>
+      <ListItemText primary={item.name} />
+    </ListItem>
+  </ClickNHold>
+));
+
+const ItemContextDialog = withHandlers({
+  handleToggle: ownProps => () => {
+    ownProps.toggleItem(ownProps.item);
+    ownProps.onClose();
+  },
+  handleSendToBottom: ownProps => () => {
+    ownProps.moveToBottom(ownProps.item);
+    ownProps.onClose();
+  }
+})(({ item, handleSendToBottom, handleToggle, onClose }) => (
+  <ContextDialog onClose={onClose}>
+    <ListItem button onClick={handleSendToBottom}>
+      <ListItemText primary="Nach unten verschieben" />
+    </ListItem>
+    <ListItem button onClick={handleToggle}>
+      <ListItemText primary="Abhaken" />
+    </ListItem>
+  </ContextDialog>
+));
 
 export const ViewList = ({
   list: { name },
   activeItems,
   listId,
-  toggleItem
+  toggleItem,
+  moveItemToBottom,
+  dialogItem,
+  handleDialogOpen,
+  handleDialogClose
 }) => (
   <div>
     <AppBar position="static" color="primary">
@@ -42,11 +81,22 @@ export const ViewList = ({
     </AppBar>
     <List>
       {activeItems.map((item, index) => (
-        <ListItem button key={index} onClick={() => toggleItem(item)}>
-          <ListItemText primary={item.name} />
-        </ListItem>
+        <ViewListItem
+          item={item}
+          key={item.uid}
+          toggleItem={toggleItem}
+          handleContextMenu={handleDialogOpen}
+        />
       ))}
     </List>
+    {dialogItem && (
+      <ItemContextDialog
+        item={dialogItem}
+        onClose={handleDialogClose}
+        toggleItem={toggleItem}
+        moveToBottom={moveItemToBottom}
+      />
+    )}
   </div>
 );
 
@@ -56,8 +106,10 @@ export default compose(
   connect(
     buildSelector({ list, activeItems }),
     buildHandlers({
-      toggleItem
+      toggleItem,
+      moveItemToBottom
     })
   ),
+  editDialog("Item"),
   redirectToHome
 )(ViewList);

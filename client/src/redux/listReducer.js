@@ -114,6 +114,21 @@ export default function reducer(state = initalState, action) {
               };
         }
       );
+    case "MOVE_ITEM_TO_BOTTOM":
+      return replaceByMap(
+        state,
+        l => l.uid === action.list,
+        list => {
+          const oldIndex = list.items.findIndex(i => i.uid === action.item);
+          const newIndex = list.items.length - 1;
+          return oldIndex === -1
+            ? list
+            : {
+                ...list,
+                items: arrayMove(list.items, oldIndex, newIndex)
+              };
+        }
+      );
     case "TOGGLE_ITEM":
       return replaceByMap(
         state,

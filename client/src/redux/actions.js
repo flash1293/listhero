@@ -34,6 +34,13 @@ export const moveItem = (dispatch, ownProps) => (oldId, newId) =>
     newId
   });
 
+export const moveItemToBottom = (dispatch, ownProps) => item =>
+  dispatch({
+    type: "MOVE_ITEM_TO_BOTTOM",
+    list: ownProps.listId,
+    item: item.uid
+  });
+
 export const toggleItem = (dispatch, ownProps) => item =>
   dispatch({
     type: "TOGGLE_ITEM",
