@@ -26,16 +26,35 @@ const ViewListItem = compose(
   withHandlers({
     handleRemove: ownProps => () => ownProps.removeItem(ownProps.item),
     handleContextMenu: ownProps => () =>
-      ownProps.handleContextMenu(ownProps.item)
+      ownProps.handleContextMenu(ownProps.item),
+    handleLongPressEnd: () => (e, enough) => {
+      if (enough) {
+        // dont let the touch-end-event bubble as
+        // it will close the modal
+        e.preventDefault();
+      }
+    }
   }),
   removeAnimation("handleRemove")
-)(({ item, onRemoveDelayed, hideClassName, handleContextMenu }) => (
-  <ClickNHold time={2} onClickNHold={handleContextMenu}>
-    <ListItem button onClick={onRemoveDelayed}>
-      <ListItemText primary={item.name} className={hideClassName} />
-    </ListItem>
-  </ClickNHold>
-));
+)(
+  ({
+    item,
+    onRemoveDelayed,
+    hideClassName,
+    handleContextMenu,
+    handleLongPressEnd
+  }) => (
+    <ClickNHold
+      time={1}
+      onEnd={handleLongPressEnd}
+      onClickNHold={handleContextMenu}
+    >
+      <ListItem button onClick={onRemoveDelayed}>
+        <ListItemText primary={item.name} className={hideClassName} />
+      </ListItem>
+    </ClickNHold>
+  )
+);
 
 const ItemContextDialog = withHandlers({
   handleRemove: ownProps => () => {
