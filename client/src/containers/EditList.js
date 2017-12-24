@@ -127,6 +127,7 @@ export const EditList = ({
       onIncrease={increaseItem}
       useDragHandle
       useWindowAsScrollContainer
+      lockAxis="y"
     />
     <AddItemNavigation uid={listId} />
     {dialogItem && (
