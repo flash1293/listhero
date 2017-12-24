@@ -20,12 +20,12 @@ export const editItem = (dispatch, ownProps) => (item, name) =>
     name
   });
 
-export const moveItem = (dispatch, ownProps) => (oldId, newId) =>
+export const moveItem = (dispatch, ownProps) => (oldId, newIndex) =>
   dispatch({
     type: "MOVE_ITEM",
     list: ownProps.listId,
     oldId,
-    newId
+    newIndex
   });
 
 export const moveItemToBottom = (dispatch, ownProps) => item =>
@@ -72,11 +72,11 @@ export const addList = dispatch => name =>
     name
   });
 
-export const moveList = dispatch => (oldId, newId) =>
+export const moveList = dispatch => (oldId, newIndex) =>
   dispatch({
     type: "MOVE_LIST",
     oldId,
-    newId
+    newIndex
   });
 
 export const editList = dispatch => (list, name) =>

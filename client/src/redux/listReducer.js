@@ -96,7 +96,10 @@ export default function reducer(state = initalState, action) {
       );
     case "MOVE_LIST":
       const oldIndex = state.findIndex(i => i.uid === action.oldId);
-      const newIndex = state.findIndex(i => i.uid === action.newId);
+      const newIndex =
+        action.newIndex !== undefined
+          ? action.newIndex
+          : state.findIndex(i => i.uid === action.newId);
       return oldIndex === -1 ? state : arrayMove(state, oldIndex, newIndex);
     case "MOVE_ITEM":
       return replaceByMap(
@@ -104,7 +107,10 @@ export default function reducer(state = initalState, action) {
         l => l.uid === action.list,
         list => {
           const oldIndex = list.items.findIndex(i => i.uid === action.oldId);
-          const newIndex = list.items.findIndex(i => i.uid === action.newId);
+          const newIndex =
+            action.newIndex !== undefined
+              ? action.newIndex
+              : list.items.findIndex(i => i.uid === action.newId);
           return oldIndex === -1
             ? list
             : {
