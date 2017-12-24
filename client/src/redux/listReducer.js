@@ -1,4 +1,4 @@
-import { arrayMove } from "react-sortable-hoc";
+import { arrayMove } from "./utils";
 
 import {
   stackItemIndex,
