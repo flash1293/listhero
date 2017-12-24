@@ -27,6 +27,15 @@ export default store => next => {
       setTimeout(setupWs, 0);
     };
   };
+  setInterval(() => {
+    if (connection !== null && connection.readyState === 3) {
+      console.log(
+        "websocket connection got killed without onclose, restarting"
+      );
+      connection = null;
+      setupWs();
+    }
+  }, 2000);
   return action => {
     const result = next(action);
     if (
