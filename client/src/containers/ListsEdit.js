@@ -109,6 +109,7 @@ export const ListsEdit = ({
       onEdit={handleDialogOpen}
       onSortEnd={onSortEnd}
       useDragHandle
+      useWindowAsScrollContainer
     />
     {dialogList && (
       <ChangeNameDialog

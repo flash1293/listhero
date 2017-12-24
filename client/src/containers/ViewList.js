@@ -103,7 +103,7 @@ export const ViewList = ({
         </Link>
       </Toolbar>
     </AppBar>
-    <List>
+    <List style={{ marginBottom: 60 }}>
       {items.map((item, index) => (
         <ViewListItem
           item={item}

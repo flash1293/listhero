@@ -74,7 +74,7 @@ const SortableItem = SortableElement(
 const SortableList = SortableContainer(
   ({ items, onClick, onIncrease, onDecrease, onRemove }) => {
     return (
-      <List>
+      <List style={{ marginBottom: 60 }}>
         {items.map((item, index) => (
           <SortableItem
             key={item.uid}
@@ -126,6 +126,7 @@ export const EditList = ({
       onDecrease={decreaseItem}
       onIncrease={increaseItem}
       useDragHandle
+      useWindowAsScrollContainer
     />
     <AddItemNavigation uid={listId} />
     {dialogItem && (
