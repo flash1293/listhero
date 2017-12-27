@@ -1,5 +1,4 @@
 import React from "react";
-
 import { Link } from "react-router-dom";
 import {
   SortableContainer,
@@ -10,7 +9,6 @@ import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
 import IconButton from "material-ui/IconButton";
-import ActionList from "material-ui-icons/List";
 import Add from "material-ui-icons/Add";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
 import Paper from "material-ui/Paper";
@@ -21,6 +19,7 @@ import { withHandlers } from "recompose";
 import redirectToLogin from "../components/RedirectToLogin";
 import { Logo } from "../components/Logo";
 import buildSelector, { lists } from "../redux/selectors";
+import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import ListMenu from "../components/ListMenu";
 import ChangeNameDialog from "../components/ChangeNameDialog";
 import addDialog from "../components/AddDialog";
@@ -29,7 +28,9 @@ import moveObject from "../components/MoveObject";
 import buildHandlers, { addList, moveList } from "../redux/actions";
 import ListItemSecondaryAction from "material-ui/List/ListItemSecondaryAction";
 
-const SortableDragHandle = SortableHandle(() => <ActionList />);
+const SortableDragHandle = SortableHandle(({ name }) => (
+  <ListIcon name={name} />
+));
 
 const SortableItem = compose(
   SortableElement,
@@ -43,14 +44,14 @@ const SortableItem = compose(
   return (
     <ListItem button>
       <ListItemIcon>
-        <SortableDragHandle />
+        <SortableDragHandle name={list.name} />
       </ListItemIcon>
       <Link
         style={{ flex: 1, paddingLeft: 15 }}
         to={`/lists/${list.uid}/entries`}
       >
         <ListItemText
-          primary={list.name}
+          primary={filterLeadingEmoji(list.name)}
           secondary={`${list.items.length} Einträge `}
         />
         <ListItemSecondaryAction>
