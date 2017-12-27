@@ -92,6 +92,12 @@ export const removeList = dispatch => list =>
     list: list.uid
   });
 
+export const clearList = dispatch => list =>
+  dispatch({
+    type: "CLEAR_LIST",
+    list: list.uid
+  });
+
 export const requestLogin = dispatch => password => {
   dispatch({
     type: "LOGIN",

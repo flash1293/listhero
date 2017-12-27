@@ -24,6 +24,7 @@ import routeParam from "../components/RouteParam";
 import ChangeNameDialog from "../components/ChangeNameDialog";
 import AddItemNavigation from "../components/AddItemNavigation";
 import AddForm from "../components/AddForm";
+import ListMenu from "../components/ListMenu";
 import moveObject from "../components/MoveObject";
 import editDialog from "../components/EditDialog";
 import buildHandlers, {
@@ -92,7 +93,7 @@ const SortableList = SortableContainer(
 );
 
 export const EditList = ({
-  list: { name, items },
+  list,
   listId,
   addItem,
   onSortEnd,
@@ -107,19 +108,20 @@ export const EditList = ({
   <div>
     <AppBar position="static" color="primary">
       <Toolbar>
-        <Link to={`/lists/${listId}`}>
+        <Link to={`/lists/${listId}/entries`}>
           <IconButton color="inherit">
             <ArrowBack />
           </IconButton>
         </Link>
         <Typography type="title" color="inherit" style={{ flex: 1 }}>
-          {name} editieren
+          {list.name} editieren
         </Typography>
+        <ListMenu list={list} />
       </Toolbar>
     </AppBar>
     <AddForm placeholder="Neuer Eintrag" onSubmit={addItem} />
     <SortableList
-      items={items}
+      items={list.items}
       onSortEnd={onSortEnd}
       onClick={handleDialogOpen}
       onRemove={removeItem}

@@ -21,14 +21,14 @@ export default ({ uid }) => (
     elevation={1}
   >
     <BottomNavigation>
-      <BottomNavigationLink to={`/lists/${uid}/edit/last-used`}>
+      <BottomNavigationLink to={`/lists/${uid}/entries/last-used`}>
         <BottomNavigationButton
           showLabel
           label="Zuletzt verwendet"
           icon={<ActionHistory />}
         />
       </BottomNavigationLink>
-      <BottomNavigationLink to={`/lists/${uid}/edit/categories`}>
+      <BottomNavigationLink to={`/lists/${uid}/entries/categories`}>
         <BottomNavigationButton
           showLabel
           label="Kategorien"

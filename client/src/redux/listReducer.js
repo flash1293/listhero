@@ -1,3 +1,5 @@
+import uniq from "ramda/src/uniq";
+
 import { arrayMove } from "./utils";
 
 import {
@@ -153,6 +155,20 @@ export default function reducer(state = initalState, action) {
           } else {
             return list;
           }
+        }
+      );
+    case "CLEAR_LIST":
+      return replaceByMap(
+        state,
+        l => l.uid === action.list,
+        list => {
+          return {
+            ...list,
+            items: [],
+            recentItems: uniq(
+              list.items.map(item => item.name).concat(list.recentItems)
+            ).slice(0, 50)
+          };
         }
       );
     case "EDIT_ITEM":

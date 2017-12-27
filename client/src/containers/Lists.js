@@ -1,21 +1,90 @@
 import React from "react";
+
 import { Link } from "react-router-dom";
+import {
+  SortableContainer,
+  SortableElement,
+  SortableHandle
+} from "react-sortable-hoc";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
 import IconButton from "material-ui/IconButton";
 import ActionList from "material-ui-icons/List";
-import Edit from "material-ui-icons/Edit";
+import Add from "material-ui-icons/Add";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
 import Paper from "material-ui/Paper";
 import { connect } from "react-redux";
 import { compose } from "redux";
+import { withHandlers } from "recompose";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import { Logo } from "../components/Logo";
 import buildSelector, { lists } from "../redux/selectors";
+import ListMenu from "../components/ListMenu";
+import ChangeNameDialog from "../components/ChangeNameDialog";
+import addDialog from "../components/AddDialog";
+import routerContext from "../components/RouterContext";
+import moveObject from "../components/MoveObject";
+import buildHandlers, { addList, moveList } from "../redux/actions";
+import ListItemSecondaryAction from "material-ui/List/ListItemSecondaryAction";
 
-export const Lists = ({ lists }) => (
+const SortableDragHandle = SortableHandle(() => <ActionList />);
+
+const SortableItem = compose(
+  SortableElement,
+  withHandlers({
+    goToSettings: ({ history, list: { uid: listId } }) => e => {
+      e.preventDefault();
+      history.push(`/lists/${listId}/edit`);
+    }
+  })
+)(({ list, history, goToSettings }) => {
+  return (
+    <ListItem button>
+      <ListItemIcon>
+        <SortableDragHandle />
+      </ListItemIcon>
+      <Link
+        style={{ flex: 1, paddingLeft: 15 }}
+        to={`/lists/${list.uid}/entries`}
+      >
+        <ListItemText
+          primary={list.name}
+          secondary={`${list.items.length} Einträge `}
+        />
+        <ListItemSecondaryAction>
+          <ListMenu list={list} />
+        </ListItemSecondaryAction>
+      </Link>
+    </ListItem>
+  );
+});
+
+const SortableList = SortableContainer(({ lists, history }) => {
+  return (
+    <List>
+      {lists.map((list, index) => (
+        <SortableItem
+          key={list.uid}
+          index={index}
+          history={history}
+          list={list}
+        />
+      ))}
+    </List>
+  );
+});
+
+export const Lists = ({
+  lists,
+  isDialogOpen,
+  handleDialogOpen,
+  handleDialogClose,
+  handleDialogSubmit,
+  router,
+  onSortEnd
+}) => (
   <div>
     <AppBar position="static" color="primary">
       <Toolbar>
@@ -23,35 +92,37 @@ export const Lists = ({ lists }) => (
         <Typography type="title" color="inherit" style={{ flex: 1 }}>
           Alle Listen
         </Typography>
-        <Link to="/edit">
-          <IconButton aria-label="Editieren" color="inherit">
-            <Edit />
-          </IconButton>
-        </Link>
+        <IconButton
+          onClick={handleDialogOpen}
+          aria-label="Liste hinzufügen"
+          color="inherit"
+        >
+          <Add />
+        </IconButton>
       </Toolbar>
     </AppBar>
-    <List>
-      {lists.map(list => (
-        <Link key={list.uid} to={`/lists/${list.uid}`}>
-          <ListItem button>
-            <ListItemIcon>
-              <ActionList />
-            </ListItemIcon>
-            <ListItemText
-              primary={list.name}
-              secondary={`${list.items.length} Einträge `}
-            />
-          </ListItem>
-        </Link>
-      ))}
-    </List>
+    <SortableList
+      lists={lists}
+      onSortEnd={onSortEnd}
+      history={router.history}
+      useDragHandle
+      useWindowAsScrollContainer
+      lockAxis="y"
+    />
     {lists.length === 0 && (
       <Paper style={{ padding: "20px" }} elevation={2}>
         <Typography>
-          Noch keine Listen angelegt.<br />Tippe rechts oben "Editieren", um
-          eine Liste hinzuzufügen.
+          Noch keine Listen angelegt.<br />Tippe rechts oben "+", um eine Liste
+          hinzuzufügen.
         </Typography>
       </Paper>
+    )}
+    {isDialogOpen && (
+      <ChangeNameDialog
+        initialText=""
+        onSubmit={handleDialogSubmit}
+        onClose={handleDialogClose}
+      />
     )}
   </div>
 );
@@ -61,6 +132,13 @@ export default compose(
   connect(
     buildSelector({
       lists
+    }),
+    buildHandlers({
+      addList,
+      moveList
     })
-  )
+  ),
+  routerContext,
+  addDialog("addList"),
+  moveObject("moveList", (props, index) => props.lists[index].uid)
 )(Lists);

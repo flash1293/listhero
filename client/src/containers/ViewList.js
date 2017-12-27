@@ -96,7 +96,7 @@ export const ViewList = ({
         <Typography type="title" color="inherit" style={{ flex: 1 }}>
           {name}
         </Typography>
-        <Link to={`/lists/${listId}/edit`}>
+        <Link to={`/lists/${listId}/entries/edit`}>
           <IconButton aria-label="Editieren" color="inherit">
             <Edit />
           </IconButton>
