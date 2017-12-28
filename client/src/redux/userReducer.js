@@ -11,7 +11,6 @@ export default function reducer(state = initalState, action) {
       return {
         ...state,
         requesting: true,
-        failed: false,
         username: action.username || state.username,
         password: action.password || state.password
       };
@@ -19,10 +18,18 @@ export default function reducer(state = initalState, action) {
       return {
         ...state,
         requesting: false,
-        failed: false,
         loggedIn: true,
         token: action.token
       };
+    case "@@sync/SYNC_FAILED":
+      if (action.reason.message === "unauthorized") {
+        return {
+          ...state,
+          requesting: false,
+          loggedIn: false,
+          token: undefined
+        };
+      } else return state;
     default:
       return state;
   }

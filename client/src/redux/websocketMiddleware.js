@@ -24,7 +24,7 @@ export default store => next => {
     connection.onclose = () => {
       console.log("closed, restart websocket");
       connection = null;
-      setTimeout(setupWs, 0);
+      setTimeout(setupWs, 1000);
     };
   };
   setInterval(() => {

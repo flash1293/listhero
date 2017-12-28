@@ -22,6 +22,7 @@ const Login = () => (
         </Typography>
       </Toolbar>
     </AppBar>
+    {/* TODO make pretty */}
     <CircularProgress size={50} thickness={10} />
   </div>
 );
@@ -37,10 +38,11 @@ export default compose(
   branch(props => props.user.loggedIn, () => () => <Redirect to="/" />),
   lifecycle({
     componentDidMount() {
+      const { user, requestLogin, createLogin } = this.props;
       if (user.username) {
-        this.props.requestLogin(user.username, user.password);
+        requestLogin(user.username, user.password);
       } else {
-        this.props.createLogin();
+        createLogin();
       }
     }
   })

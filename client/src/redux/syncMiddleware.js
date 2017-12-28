@@ -11,12 +11,12 @@ const postActionCreator = store => req =>
       Authorization: `Bearer ${store.getState().user.token}`
     },
     body: JSON.stringify(req)
-  })
-    .then(res => res.json())
-    .catch(e => {
-      console.log(e);
-      throw e;
-    });
+  }).then(res => {
+    if (res.status === 401) {
+      throw new Error("unauthorized");
+    }
+    return res.json();
+  });
 
 const syncFilter = action => action.type !== "persist/REHYDRATE";
 

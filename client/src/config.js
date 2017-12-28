@@ -3,6 +3,7 @@ import storage from "redux-persist/es/storage";
 
 export const APP_VERSION = 5;
 
+// TODO dont forget credentials on new app version
 export const persistConfig = {
   key: `ekofe-${APP_VERSION}`,
   storage
