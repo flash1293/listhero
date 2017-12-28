@@ -7,20 +7,13 @@ import { connect } from "react-redux";
 import TextField from "material-ui/TextField";
 import { CircularProgress } from "material-ui/Progress";
 import { Redirect } from "react-router";
-import { branch } from "recompose";
+import { branch, lifecycle } from "recompose";
 import { compose } from "redux";
 
-import buildHandlers, { requestLogin } from "../redux/actions";
+import buildHandlers, { requestLogin, createLogin } from "../redux/actions";
 import buildSelector, { user } from "../redux/selectors";
-import inputForm from "../components/InputForm";
 
-const Login = ({
-  text,
-  handleChangeText,
-  handleSubmit,
-  requesting,
-  failed
-}) => (
+const Login = () => (
   <div>
     <AppBar position="static" color="primary">
       <Toolbar>
@@ -29,41 +22,7 @@ const Login = ({
         </Typography>
       </Toolbar>
     </AppBar>
-    <form onSubmit={handleSubmit} style={{ margin: "10px" }}>
-      <TextField
-        fullWidth
-        autoFocus
-        value={text !== undefined ? text : ""}
-        onChange={handleChangeText}
-        placeholder="Passwort"
-        type="password"
-        label={failed ? "Zugriff fehlgeschlagen" : ""}
-        error={failed}
-      />
-      <Button
-        raised
-        style={{ marginTop: "10px", position: "relative" }}
-        disabled={requesting}
-        color="primary"
-        type="submit"
-        onClick={handleSubmit}
-      >
-        Login
-        {requesting && (
-          <CircularProgress
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              marginTop: -11,
-              marginLeft: -11
-            }}
-            size={25}
-            thickness={4}
-          />
-        )}
-      </Button>
-    </form>
+    <CircularProgress size={50} thickness={10} />
   </div>
 );
 
@@ -71,12 +30,18 @@ export default compose(
   connect(
     buildSelector({ user }),
     buildHandlers({
-      onSubmit: requestLogin
+      requestLogin,
+      createLogin
     })
   ),
-  branch(
-    props => props.user.loggedIn,
-    () => () => <Redirect to="/" />,
-    inputForm
-  )
+  branch(props => props.user.loggedIn, () => () => <Redirect to="/" />),
+  lifecycle({
+    componentDidMount() {
+      if (user.username) {
+        this.props.requestLogin(user.username, user.password);
+      } else {
+        this.props.createLogin();
+      }
+    }
+  })
 )(Login);

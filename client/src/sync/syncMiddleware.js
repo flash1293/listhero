@@ -72,9 +72,10 @@ export default (postActionCreator, filter, key) => {
             requestInFlight = false;
           }
         })
-        .catch(() => {
+        .catch(reason => {
           next({
             type: "@@sync/SYNC_FAILED",
+            reason,
             key
           });
           // sync failed, prepend actions which were selected to sync back to the synclog and try again

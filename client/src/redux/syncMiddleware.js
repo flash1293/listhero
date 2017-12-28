@@ -8,10 +8,15 @@ const postActionCreator = store => req =>
       Accept: "application/json, text/plain, */*",
       "Content-Type": "application/json",
       "X-Sync-Session": clientSession,
-      Authorization: `Basic ${btoa("user:" + store.getState().user.password)}`
+      Authorization: `Bearer ${store.getState().user.token}`
     },
     body: JSON.stringify(req)
-  }).then(res => res.json());
+  })
+    .then(res => res.json())
+    .catch(e => {
+      console.log(e);
+      throw e;
+    });
 
 const syncFilter = action => action.type !== "persist/REHYDRATE";
 

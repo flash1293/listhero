@@ -12,7 +12,7 @@ export default store => next => {
       `ws${
         API_PROTOCOL === "https:" ? "s" : ""
       }://${API_HOST}/api/updates/${clientSession}`,
-      store.getState().user.password
+      store.getState().user.token
     );
     connection.onmessage = () => {
       console.log("update push received");

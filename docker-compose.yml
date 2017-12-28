@@ -10,8 +10,13 @@ services:
     build: ./server
     ports:
       - 3001:3001
-    volumes:
-      - "./data:/data"
+    links:
+      - db
     environment:
       - SEED=547645382715487
       - DATA_DIR=/data
+  db:
+    image: redis:3.2-alpine
+    volumes:
+      - "./data:/data"
+      

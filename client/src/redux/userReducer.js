@@ -12,31 +12,17 @@ export default function reducer(state = initalState, action) {
         ...state,
         requesting: true,
         failed: false,
-        password: action.password
+        username: action.username || state.username,
+        password: action.password || state.password
       };
-    case "@@sync/SYNC":
-    case "@@sync/MERGE":
-      if (state.requesting) {
-        return {
-          ...state,
-          requesting: false,
-          loggedIn: true,
-          failed: false
-        };
-      } else {
-        return state;
-      }
-    case "@@sync/SYNC_FAILED":
-      if (state.requesting) {
-        return {
-          ...state,
-          requesting: false,
-          loggedIn: false,
-          failed: true
-        };
-      } else {
-        return state;
-      }
+    case "LOGIN_SUCCESS":
+      return {
+        ...state,
+        requesting: false,
+        failed: false,
+        loggedIn: true,
+        token: action.token
+      };
     default:
       return state;
   }

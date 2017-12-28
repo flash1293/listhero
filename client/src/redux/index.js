@@ -8,6 +8,7 @@ import { persistConfig } from "../config";
 import websocketMiddleware from "./websocketMiddleware";
 import { refreshOnRehydrateMiddleware } from "./refreshOnRehydrateMiddleware";
 import syncMiddleware from "./syncMiddleware";
+import loginMiddleware from "./loginMiddleware";
 
 const persistentReducer = persistReducer(
   persistConfig,
@@ -20,6 +21,7 @@ export const store = createStore(
   persistentReducer,
   applyMiddleware(
     refreshOnRehydrateMiddleware,
+    loginMiddleware,
     websocketMiddleware,
     syncMiddleware
   )

@@ -1,7 +1,7 @@
 import uuid from "uuid/v4";
 import storage from "redux-persist/es/storage";
 
-export const APP_VERSION = 4;
+export const APP_VERSION = 5;
 
 export const persistConfig = {
   key: `ekofe-${APP_VERSION}`,

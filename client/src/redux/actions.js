@@ -98,14 +98,16 @@ export const clearList = dispatch => list =>
     list: list.uid
   });
 
-export const requestLogin = dispatch => password => {
+export const requestLogin = dispatch => (username, password) =>
   dispatch({
     type: "LOGIN",
+    username,
     password
   });
+
+export const createLogin = dispatch => () =>
   dispatch({
-    type: "@@sync/REQUEST_SYNC",
-    key: "lists",
-    skipRetry: true
+    type: "LOGIN",
+    username: uuid(),
+    password: uuid()
   });
-};

@@ -3,6 +3,11 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const fs = require("fs");
 const basicauth = require("basicauth-middleware");
+const Redis = require("ioredis");
+const redis = new Redis(6379, process.env.REDIS_HOST || "db");
+const jwt = require("jsonwebtoken");
+const jwtExpress = require("express-jwt");
+const scrypt = require("scrypt");
 
 const seed = process.env.SEED;
 
@@ -11,64 +16,103 @@ const expressWs = require("express-ws")(app);
 app.use(bodyParser.json({ type: "application/json" }));
 app.use(cors());
 
-const logFile = `${process.env.DATA_DIR}/${seed}.data`;
-const loadLog = () => {
-  if (fs.existsSync(logFile)) {
-    const serializedLog = fs.readFileSync(logFile);
-    return JSON.parse(serializedLog);
-  } else {
-    return [];
-  }
-};
+const clients = {};
 
-let actionLog = loadLog();
-let clients = [];
-let unflushedActions = false;
+const scryptParams = scrypt.paramsSync(1);
 
-const writeLog = () => {
-  if (!unflushedActions) return;
-  console.log("flusing actions to disk");
-  const serializedLog = JSON.stringify(actionLog);
-  fs.writeFile(logFile, serializedLog, () => {});
-  unflushedActions = false;
-};
+app.post("/token", (req, res) => {
+  const { username, password } = req.body;
 
-setInterval(writeLog, 10000);
+  redis.hexists("users", username).then(exists => {
+    if (exists) {
+      return redis
+        .hget("users", username)
+        .then(user => JSON.parse(user))
+        .then(user =>
+          scrypt.verifyKdf(new Buffer(user.kdf, "base64"), password)
+        )
+        .then(result => {
+          if (result) {
+            res.json(jwt.sign({ username: username }, process.env.SECRET));
+          } else {
+            res.send(401);
+          }
+        });
+    } else {
+      return scrypt
+        .kdf(password, scryptParams)
+        .then(kdf =>
+          redis.hset(
+            "users",
+            username,
+            JSON.stringify({ kdf: kdf.toString("base64") })
+          )
+        )
+        .then(() =>
+          res.json(jwt.sign({ username: username }, process.env.SECRET))
+        );
+    }
+  });
+});
 
-app.post("/api", basicauth("user", process.env.PASSWORD), (req, res) => {
+app.post("/api", jwtExpress({ secret: process.env.SECRET }), (req, res) => {
+  const stream = `stream-${req.user.username}`;
   const { startFrom, actions } = req.body;
-  const sequence = actionLog.length;
-  actionLog = actionLog.concat(actions);
-  if (startFrom < sequence) {
-    res.json({
-      replayFrom: startFrom,
-      replayLog: actionLog.slice(startFrom),
-      seed
-    });
-  } else {
-    res.json({
-      seed
-    });
-  }
+  const commands = [["llen", stream]];
   if (actions.length > 0) {
-    unflushedActions = true;
-    clients.forEach(
-      c => c.session !== req.headers["x-sync-session"] && c.ws.send("")
+    commands.push(
+      ["rpush", stream].concat(actions.map(action => JSON.stringify(action)))
     );
   }
-  console.log(`New action log length: ${actionLog.length}`);
+  commands.push(["lrange", stream, startFrom, -1]);
+  console.log(commands);
+  redis.multi(commands).exec((err, results) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    const sequence = results[0][1];
+    const newActions = actions.length > 0 ? results[2][1] : results[1][1];
+    console.log(sequence);
+    console.log(newActions);
+    if (startFrom < sequence) {
+      res.json({
+        replayFrom: startFrom,
+        replayLog: newActions,
+        seed
+      });
+    } else {
+      res.json({
+        seed
+      });
+    }
+    if (actions.length > 0) {
+      (clients[req.user.username] || []).forEach(
+        c => c.session !== req.headers["x-sync-session"] && c.ws.send("")
+      );
+    }
+    console.log(`New action log length: ${sequence + actions.length}`);
+  });
 });
 
 app.ws("/api/updates/:session", (ws, req) => {
-  if (req.headers["sec-websocket-protocol"] !== process.env.PASSWORD) {
-    ws.close();
-  } else {
+  const jwtTokenString = req.headers["sec-websocket-protocol"];
+  try {
+    const jwtToken = jwt.verify(jwtTokenString, process.env.SECRET);
     console.log("new update listener");
-    clients.push({ ws, session: req.params.session });
+    if (!clients[jwtToken.username]) {
+      clients[jwtToken.username] = [];
+    }
+    clients[jwtToken.username].push({ ws, session: req.params.session });
     ws.on("close", () => {
       console.log("update listener disconnected");
-      clients = clients.filter(c => c.ws !== ws);
+      clients[jwtToken.username] = clients[jwtToken.username].filter(
+        c => c.ws !== ws
+      );
     });
+  } catch (e) {
+    console.log(e);
+    ws.close();
   }
 });
 
