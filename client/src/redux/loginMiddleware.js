@@ -16,9 +16,8 @@ export default store => next => action => {
     performLogin(action.username, action.password).then(token => {
       next({ type: "LOGIN_SUCCESS", token: token });
       next({
-        type: "@@sync/REQUEST_SYNC",
-        key: "lists",
-        skipRetry: true
+        type: "@@sync/PURGE",
+        key: "lists"
       });
     });
   }

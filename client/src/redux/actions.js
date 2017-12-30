@@ -111,3 +111,14 @@ export const createLogin = dispatch => () =>
     username: uuid(),
     password: uuid()
   });
+
+export const refresh = dispatch => () =>
+  dispatch({
+    type: "@@sync/REQUEST_SYNC",
+    key: "lists"
+  });
+
+export const logout = dispatch => () =>
+  dispatch({
+    type: "LOGOUT"
+  });

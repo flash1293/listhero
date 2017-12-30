@@ -1,9 +1,12 @@
 import uuid from "uuid/v4";
 import storage from "redux-persist/es/storage";
 
+// cleans the client-state completely on update (including credentials)
 export const APP_VERSION = 5;
 
-// TODO dont forget credentials on new app version
+// issues a purge and re-sync from the server on update (only list-data)
+export const REDUCER_VERSION = 3;
+
 export const persistConfig = {
   key: `ekofe-${APP_VERSION}`,
   storage

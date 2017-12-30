@@ -9,24 +9,40 @@ import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
 import IconButton from "material-ui/IconButton";
+import Drawer from "material-ui/Drawer";
 import Add from "material-ui-icons/Add";
+import LinkIcon from "material-ui-icons/Link";
+import ChevronLeft from "material-ui-icons/ChevronLeft";
+import MenuIcon from "material-ui-icons/Menu";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
 import Paper from "material-ui/Paper";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withHandlers } from "recompose";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import SyncIcon from "material-ui-icons/Sync";
+import AccountCircleIcon from "material-ui-icons/AccountCircle";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import { Logo } from "../components/Logo";
-import buildSelector, { lists } from "../redux/selectors";
+import buildSelector, { lists, user } from "../redux/selectors";
+import syncLink from "../components/SyncLink";
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import ListMenu from "../components/ListMenu";
 import ChangeNameDialog from "../components/ChangeNameDialog";
 import addDialog from "../components/AddDialog";
+import drawer from "../components/Drawer";
 import routerContext from "../components/RouterContext";
 import moveObject from "../components/MoveObject";
-import buildHandlers, { addList, moveList } from "../redux/actions";
+import buildHandlers, {
+  addList,
+  moveList,
+  refresh,
+  logout
+} from "../redux/actions";
 import ListItemSecondaryAction from "material-ui/List/ListItemSecondaryAction";
+import Divider from "material-ui/Divider/Divider";
+import { REDUCER_VERSION } from "../config";
 
 const SortableDragHandle = SortableHandle(({ name }) => (
   <ListIcon name={name} />
@@ -84,11 +100,25 @@ export const Lists = ({
   handleDialogClose,
   handleDialogSubmit,
   router,
-  onSortEnd
+  isDrawerOpen,
+  toggleDrawer,
+  syncLink,
+  refresh,
+  logout,
+  onSortEnd,
+  user: { username }
 }) => (
   <div>
     <AppBar position="static" color="primary">
       <Toolbar>
+        <IconButton
+          style={{ marginLeft: -12, marginRight: 10 }}
+          color="contrast"
+          aria-label="Menu"
+          onClick={toggleDrawer}
+        >
+          <MenuIcon />
+        </IconButton>
         <Logo inverted />
         <Typography type="title" color="inherit" style={{ flex: 1 }}>
           Alle Listen
@@ -125,6 +155,53 @@ export const Lists = ({
         onClose={handleDialogClose}
       />
     )}
+    <Drawer open={isDrawerOpen} type="temporary" onClose={toggleDrawer}>
+      <div role="button">
+        <List>
+          <ListItem>
+            <ListItemIcon>
+              <Logo />
+            </ListItemIcon>
+            <ListItemText
+              primary={`Listhero Version ${REDUCER_VERSION}`}
+              secondary={`Account-ID: ${username}`}
+            />
+            <ListItemSecondaryAction>
+              <IconButton onClick={toggleDrawer}>
+                <ChevronLeft />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+          <Divider />
+          <CopyToClipboard text={syncLink}>
+            <ListItem button>
+              <ListItemIcon>
+                <LinkIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary="Sync-Link kopieren"
+                secondary="Dieser Link gibt Zugriff auf deinen Account"
+              />
+            </ListItem>
+          </CopyToClipboard>
+          <ListItem button onClick={refresh}>
+            <ListItemIcon>
+              <SyncIcon />
+            </ListItemIcon>
+            <ListItemText primary="Neu synchronisieren" />
+          </ListItem>
+          <ListItem button onClick={logout}>
+            <ListItemIcon>
+              <AccountCircleIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Neuen Account erstellen"
+              secondary="Ohne Sync-Link geht dein aktueller Account verloren"
+            />
+          </ListItem>
+        </List>
+      </div>
+    </Drawer>
   </div>
 );
 
@@ -132,14 +209,19 @@ export default compose(
   redirectToLogin,
   connect(
     buildSelector({
-      lists
+      lists,
+      user
     }),
     buildHandlers({
       addList,
-      moveList
+      moveList,
+      refresh,
+      logout
     })
   ),
   routerContext,
   addDialog("addList"),
+  drawer,
+  syncLink,
   moveObject("moveList", (props, index) => props.lists[index].uid)
 )(Lists);

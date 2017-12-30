@@ -2,6 +2,7 @@ const initalState = {
   loggedIn: false,
   requesting: false,
   failed: false,
+  username: "",
   password: ""
 };
 
@@ -13,6 +14,10 @@ export default function reducer(state = initalState, action) {
         requesting: true,
         username: action.username || state.username,
         password: action.password || state.password
+      };
+    case "LOGOUT":
+      return {
+        ...initalState
       };
     case "LOGIN_SUCCESS":
       return {

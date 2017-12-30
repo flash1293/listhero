@@ -1,6 +1,6 @@
 import { isNumber } from "util";
 
-export default (postActionCreator, filter, key) => {
+export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
   let syncLog;
   const saveSyncLog = () => {
     localStorage.setItem(`sync-log:${key}`, JSON.stringify(syncLog));
@@ -12,19 +12,6 @@ export default (postActionCreator, filter, key) => {
     } else {
       syncLog = [];
     }
-  };
-  const checkAndUpdateSeed = seed => {
-    const storageKey = `sync-seed:${key}`;
-    const savedSeed = localStorage.getItem(storageKey);
-    if (savedSeed) {
-      const isCorrect = seed === savedSeed;
-      if (!isCorrect) {
-        localStorage.setItem(storageKey, seed);
-      }
-      return isCorrect;
-    }
-    localStorage.setItem(storageKey, seed);
-    return true;
   };
   let requestInFlight = false;
   loadSyncLog();
@@ -48,6 +35,7 @@ export default (postActionCreator, filter, key) => {
               type: "@@sync/PURGE",
               key
             });
+            requestInFlight = false;
             startSync();
           } else if (isNumber(res.replayFrom)) {
             next({
@@ -95,7 +83,11 @@ export default (postActionCreator, filter, key) => {
     return action => {
       const oldState = getSyncState();
       const result = next(action);
-      if (action.type === "@@sync/REQUEST_SYNC" && action.key === key) {
+      if (
+        (action.type === "@@sync/REQUEST_SYNC" ||
+          action.type === "@@sync/PURGE") &&
+        action.key === key
+      ) {
         startSync({ skipRetry: action.skipRetry });
       } else {
         if (oldState !== getSyncState() && filter(action)) {
