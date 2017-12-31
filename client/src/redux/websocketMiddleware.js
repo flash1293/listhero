@@ -1,6 +1,11 @@
 import { clientSession, API_PROTOCOL, API_HOST } from "../config";
 
-const syncActions = ["persist/REHYDRATE", "@@sync/SYNC", "@@sync/MERGE"];
+const syncActions = [
+  "persist/REHYDRATE",
+  "@@sync/SYNC",
+  "@@sync/MERGE",
+  "LOGIN_SUCCESS"
+];
 
 export default store => next => {
   const dispatchRefresh = () =>
