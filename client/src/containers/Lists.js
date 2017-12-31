@@ -12,6 +12,7 @@ import IconButton from "material-ui/IconButton";
 import Drawer from "material-ui/Drawer";
 import Add from "material-ui-icons/Add";
 import LinkIcon from "material-ui-icons/Link";
+import PhotoCameraIcon from "material-ui-icons/PhotoCamera";
 import ChevronLeft from "material-ui-icons/ChevronLeft";
 import MenuIcon from "material-ui-icons/Menu";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
@@ -184,12 +185,21 @@ export const Lists = ({
               />
             </ListItem>
           </CopyToClipboard>
+          <Link to="/qr">
+            <ListItem button>
+              <ListItemIcon>
+                <PhotoCameraIcon />
+              </ListItemIcon>
+              <ListItemText primary="Sync-Link als Qr Code anzeigen" />
+            </ListItem>
+          </Link>
           <ListItem button onClick={refresh}>
             <ListItemIcon>
               <SyncIcon />
             </ListItemIcon>
             <ListItemText primary="Neu synchronisieren" />
           </ListItem>
+          <Divider />
           <ListItem button onClick={logout}>
             <ListItemIcon>
               <AccountCircleIcon />
