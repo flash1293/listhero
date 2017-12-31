@@ -28,7 +28,7 @@ export default function reducer(state = initalState, action) {
         ...state
       ];
     case "ADD_ITEM":
-      if (action.name === "") return state;
+      if (!action.name) return state;
       return replaceByMap(
         state,
         l => l.uid === action.list,
