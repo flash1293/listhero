@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "aes-js": "^3.1.0",
     "material-ui": "^v1.0.0-beta.23",
     "material-ui-icons": "^1.0.0-beta.17",
     "qrcode.react": "^0.7.2",

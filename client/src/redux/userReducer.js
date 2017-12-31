@@ -13,7 +13,8 @@ export default function reducer(state = initalState, action) {
         ...state,
         requesting: true,
         username: action.username || state.username,
-        password: action.password || state.password
+        password: action.password || state.password,
+        encryptionKey: action.encryptionKey || state.encryptionKey
       };
     case "LOGOUT":
       return {

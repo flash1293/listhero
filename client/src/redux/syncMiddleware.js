@@ -1,3 +1,6 @@
+import aes from "aes-js";
+import compose from "ramda/src/compose";
+
 import {
   API_PROTOCOL,
   API_HOST,
@@ -21,6 +24,24 @@ const checkAndUpdateSeed = seed => {
   return true;
 };
 
+const encrypt = (data, key) => {
+  const crypt = new aes.ModeOfOperation.ctr(key, new aes.Counter(1));
+  return compose(
+    aes.utils.hex.fromBytes,
+    crypt.encrypt.bind(crypt),
+    aes.utils.utf8.toBytes
+  )(data);
+};
+
+const decrypt = (data, key) => {
+  const crypt = new aes.ModeOfOperation.ctr(key, new aes.Counter(1));
+  return compose(
+    aes.utils.utf8.fromBytes,
+    crypt.decrypt.bind(crypt),
+    aes.utils.hex.toBytes
+  )(data);
+};
+
 const postActionCreator = store => req =>
   fetch(`${API_PROTOCOL}//${API_HOST}/api`, {
     method: "post",
@@ -30,7 +51,12 @@ const postActionCreator = store => req =>
       "X-Sync-Session": clientSession,
       Authorization: `Bearer ${store.getState().user.token}`
     },
-    body: JSON.stringify(req)
+    body: JSON.stringify({
+      ...req,
+      actions: req.actions.map(action =>
+        encrypt(JSON.stringify(action), store.getState().user.encryptionKey)
+      )
+    })
   })
     .then(res => {
       if (res.status === 401) {
@@ -40,7 +66,9 @@ const postActionCreator = store => req =>
     })
     .then(jsonRes => {
       if (jsonRes.replayLog) {
-        jsonRes.replayLog = jsonRes.replayLog.map(action => JSON.parse(action));
+        jsonRes.replayLog = jsonRes.replayLog.map(action =>
+          JSON.parse(decrypt(action, store.getState().user.encryptionKey))
+        );
       }
       return jsonRes;
     });

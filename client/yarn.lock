@@ -51,6 +51,10 @@ address@1.0.3, address@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/address/-/address-1.0.3.tgz#b5f50631f8d6cec8bd20c963963afb55e06cbce9"
 
+aes-js@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/aes-js/-/aes-js-3.1.0.tgz#f5f7588494526997cc635cc334c8bb8e967a5d82"
+
 ajv-keywords@^2.0.0, ajv-keywords@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-2.1.1.tgz#617997fc5f60576894c435f940d819e135b80762"
@@ -6417,6 +6421,10 @@ test-exclude@^4.1.1:
     object-assign "^4.1.0"
     read-pkg-up "^1.0.1"
     require-main-filename "^1.0.1"
+
+text-encoding@^0.6.4:
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/text-encoding/-/text-encoding-0.6.4.tgz#e399a982257a276dae428bb92845cb71bdc26d19"
 
 text-table@0.2.0, text-table@~0.2.0:
   version "0.2.0"

@@ -1,5 +1,6 @@
 import map from "ramda/src/map";
 import uuid from "uuid/v4";
+import { getRandomData, arrayToBase64String, uint8ArrayToArray } from "./utils";
 
 export default handlerMakers => (dispatch, ownProps) =>
   map(handler => handler(dispatch, ownProps), handlerMakers);
@@ -98,18 +99,22 @@ export const clearList = dispatch => list =>
     list: list.uid
   });
 
-export const requestLogin = dispatch => (username, password) =>
-  dispatch({
+export const requestLogin = dispatch => (username, password, encryptionKey) => {
+  debugger;
+  return dispatch({
     type: "LOGIN",
     username,
-    password
+    password,
+    encryptionKey
   });
+};
 
 export const createLogin = dispatch => () =>
   dispatch({
     type: "LOGIN",
     username: uuid(),
-    password: uuid()
+    password: arrayToBase64String(uint8ArrayToArray(getRandomData(256))),
+    encryptionKey: uint8ArrayToArray(getRandomData(256))
   });
 
 export const refresh = dispatch => () =>

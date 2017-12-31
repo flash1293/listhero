@@ -61,7 +61,7 @@ app.post("/api", jwtExpress({ secret: process.env.SECRET }), (req, res) => {
   const commands = [["llen", stream]];
   if (actions.length > 0) {
     commands.push(
-      ["rpush", stream].concat(actions.map(action => JSON.stringify(action)))
+      ["rpush", stream].concat(actions.map(action => String(action)))
     );
   }
   commands.push(["lrange", stream, startFrom, -1]);

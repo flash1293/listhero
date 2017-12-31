@@ -15,6 +15,7 @@ import SyncIcon from "material-ui-icons/Sync";
 import buildHandlers, { requestLogin, createLogin } from "../redux/actions";
 import buildSelector, { user } from "../redux/selectors";
 import syncLink from "../components/SyncLink";
+import { base64StringToArray } from "../redux/utils";
 
 const Login = ({
   loginWithLinkData,
@@ -84,8 +85,9 @@ export default compose(
   withHandlers({
     loginWithLinkData: ({
       requestLogin,
-      match: { params: { username, password } }
-    }) => () => requestLogin(username, password)
+      match: { params: { username, password, encryptionKey } }
+    }) => () =>
+      requestLogin(username, password, base64StringToArray(encryptionKey))
   }),
   lifecycle({
     componentDidMount() {
@@ -93,14 +95,13 @@ export default compose(
         user,
         requestLogin,
         createLogin,
-        match: {
-          params: { username: linkDataUsername, password: linkDataPassword }
-        }
+        loginWithLinkData,
+        match: { params: { username: linkDataUsername } }
       } = this.props;
       if (linkDataUsername && !user.username) {
-        requestLogin(linkDataUsername, linkDataPassword);
+        loginWithLinkData();
       } else if (user.username && !linkDataUsername) {
-        requestLogin(user.username, user.password);
+        requestLogin(user.username, user.password, user.encryptionKey);
       } else if (!linkDataUsername) {
         createLogin();
       }
