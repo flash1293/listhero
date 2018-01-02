@@ -1,23 +1,25 @@
 import { withProps } from "recompose";
 import compose from "ramda/src/compose";
 import { connect } from "react-redux";
+import aes from "aes-js";
 
 import buildSelector, { user } from "../redux/selectors";
-import { arrayToBase64String } from "../redux/utils";
 
 export default compose(
   connect(buildSelector({ user })),
-  withProps(({ user: { username, password, encryptionKey } }) => {
-    const { origin, pathname } = window.location;
-    let url = `${origin}${pathname}#/`;
+  withProps(
+    ({ user: { username, password, encryptionKey, serverPassword } }) => {
+      const { origin, pathname } = window.location;
+      let url = `${origin}${pathname}#/`;
 
-    if (username) {
-      url += `login/${username}/${password}/${arrayToBase64String(
-        encryptionKey
-      )}`;
+      if (username) {
+        url += `login/${username}/${password}/${aes.utils.hex.fromBytes(
+          encryptionKey
+        )}/${serverPassword}`;
+      }
+      return {
+        syncLink: url
+      };
     }
-    return {
-      syncLink: url
-    };
-  })
+  )
 );

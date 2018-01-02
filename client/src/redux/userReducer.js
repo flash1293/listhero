@@ -3,7 +3,8 @@ const initalState = {
   requesting: false,
   failed: false,
   username: "",
-  password: ""
+  password: "",
+  serverPassword: ""
 };
 
 export default function reducer(state = initalState, action) {
@@ -11,10 +12,12 @@ export default function reducer(state = initalState, action) {
     case "LOGIN":
       return {
         ...state,
+        failed: false,
         requesting: true,
         username: action.username || state.username,
         password: action.password || state.password,
-        encryptionKey: action.encryptionKey || state.encryptionKey
+        encryptionKey: action.encryptionKey || state.encryptionKey,
+        serverPassword: action.serverPassword || state.serverPassword
       };
     case "LOGOUT":
       return {
@@ -26,6 +29,13 @@ export default function reducer(state = initalState, action) {
         requesting: false,
         loggedIn: true,
         token: action.token
+      };
+    case "LOGIN_FAILURE":
+      return {
+        ...state,
+        requesting: false,
+        loggedIn: false,
+        failed: true
       };
     case "@@sync/SYNC_FAILED":
       if (action.reason.message === "unauthorized") {

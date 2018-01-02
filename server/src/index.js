@@ -20,7 +20,7 @@ const clients = {};
 
 const scryptParams = scrypt.paramsSync(1);
 
-app.post("/token", (req, res) => {
+app.post("/token", basicauth("user", process.env.PASSWORD), (req, res) => {
   const { username, password } = req.body;
 
   redis.hexists("users", username).then(exists => {

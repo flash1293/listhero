@@ -6,7 +6,7 @@
   "author": "Johannes Reuter <flash1293@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "DATA_DIR=/tmp SEED=58787657876 REDIS_HOST=localhost SECRET=test12 nodemon src/index.js"
+    "start": "DATA_DIR=/tmp SEED=58787657876 REDIS_HOST=localhost SECRET=test123 PASSWORD=test123 nodemon src/index.js"
   },
   "dependencies": {
     "basicauth-middleware": "^3.0.0",

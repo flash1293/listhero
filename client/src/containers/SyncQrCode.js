@@ -2,20 +2,14 @@ import React from "react";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
-import List from "material-ui/List";
 import IconButton from "material-ui/IconButton";
 import ArrowBack from "material-ui-icons/ArrowBack";
-import { connect } from "react-redux";
 import { compose } from "redux";
 import QRCode from "qrcode.react";
 
 import redirectToLogin from "../components/RedirectToLogin";
-import redirectToHome from "../components/RedirectToHome";
-import routeParam from "../components/RouteParam";
 import routerContext from "../components/RouterContext";
 import syncLink from "../components/SyncLink";
-import buildSelector, { list } from "../redux/selectors";
-import AddableItem from "../components/AddableItem";
 
 export const SyncQrCode = ({ syncLink, router }) => (
   <div>

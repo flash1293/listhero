@@ -30,7 +30,7 @@ const PreloadedRouter = preloader({
         <Route exact path="/login" component={Login} />
         <Route
           exact
-          path="/login/:username/:password/:encryptionKey"
+          path="/login/:username/:password/:encryptionKey/:serverPassword"
           component={Login}
         />
         <Route exact path="/qr" component={syncQrCode} />

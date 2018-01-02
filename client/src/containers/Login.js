@@ -10,17 +10,20 @@ import { branch, lifecycle, withHandlers } from "recompose";
 import { compose } from "redux";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import LinkIcon from "material-ui-icons/Link";
+import ErrorIcon from "material-ui-icons/Error";
 import SyncIcon from "material-ui-icons/Sync";
+import aes from "aes-js";
 
 import buildHandlers, { requestLogin, createLogin } from "../redux/actions";
 import buildSelector, { user } from "../redux/selectors";
 import syncLink from "../components/SyncLink";
-import { base64StringToArray } from "../redux/utils";
+import ServerPassword from "../components/ServerPassword";
 
 const Login = ({
   loginWithLinkData,
+  submitServerPassword,
   syncLink,
-  user: { requesting, username },
+  user: { requesting, username, serverPassword, failed },
   match: { params: { username: linkDataUsername } }
 }) => (
   <div>
@@ -31,8 +34,33 @@ const Login = ({
         </Typography>
       </Toolbar>
     </AppBar>
-    {/* TODO make pretty */}
+    {!requesting &&
+      failed && (
+        <Typography
+          style={{
+            margin: "20px auto",
+            maxWidth: 400,
+            display: "flex",
+            alignItems: "center"
+          }}
+        >
+          <ErrorIcon style={{ paddingRight: 15 }} />
+          <span>
+            Die Anmeldung konnte nicht durchgeführt werden.{" "}
+            {!linkDataUsername && "Überprüfe das Server-Passwort."}
+          </span>
+        </Typography>
+      )}
+    {!requesting &&
+      !linkDataUsername && (
+        <ServerPassword
+          initialText={serverPassword}
+          onSubmit={submitServerPassword}
+          buttonLabel={username ? "Login" : "Account erstellen"}
+        />
+      )}
     {linkDataUsername &&
+      !failed &&
       !requesting && (
         <div style={{ padding: 20 }}>
           <Typography>
@@ -85,9 +113,30 @@ export default compose(
   withHandlers({
     loginWithLinkData: ({
       requestLogin,
-      match: { params: { username, password, encryptionKey } }
+      match: { params: { username, password, encryptionKey, serverPassword } }
     }) => () =>
-      requestLogin(username, password, base64StringToArray(encryptionKey))
+      requestLogin(
+        username,
+        password,
+        aes.utils.hex.toBytes(encryptionKey),
+        serverPassword
+      ),
+    submitServerPassword: ({
+      createLogin,
+      requestLogin,
+      user
+    }) => serverPassword => {
+      if (user.username) {
+        requestLogin(
+          user.username,
+          user.password,
+          user.encryptionKey,
+          serverPassword
+        );
+      } else {
+        createLogin(serverPassword);
+      }
+    }
   }),
   lifecycle({
     componentDidMount() {
@@ -98,11 +147,19 @@ export default compose(
         loginWithLinkData,
         match: { params: { username: linkDataUsername } }
       } = this.props;
-      if (linkDataUsername && !user.username) {
+      if (
+        linkDataUsername &&
+        (!user.username || user.username === linkDataUsername)
+      ) {
         loginWithLinkData();
       } else if (user.username && !linkDataUsername) {
-        requestLogin(user.username, user.password, user.encryptionKey);
-      } else if (!linkDataUsername) {
+        requestLogin(
+          user.username,
+          user.password,
+          user.encryptionKey,
+          user.serverPassword
+        );
+      } else if (!linkDataUsername && user.serverPassword) {
         createLogin();
       }
     }
