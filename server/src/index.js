@@ -13,7 +13,7 @@ const seed = process.env.SEED;
 
 const app = express();
 const expressWs = require("express-ws")(app);
-app.use(bodyParser.json({ type: "application/json" }));
+app.use(bodyParser.json({ type: "application/json", limit: "2mb" }));
 app.use(cors());
 
 const clients = {};
