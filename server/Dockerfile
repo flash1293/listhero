@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node
 
 ADD src /app
 ADD package.json /app/
