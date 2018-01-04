@@ -5,7 +5,7 @@ import storage from "redux-persist/es/storage";
 export const APP_VERSION = 5;
 
 // issues a purge and re-sync from the server on update (only list-data)
-export const REDUCER_VERSION = 3;
+export const REDUCER_VERSION = 4;
 
 export const persistConfig = {
   key: `ekofe-${APP_VERSION}`,

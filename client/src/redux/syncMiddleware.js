@@ -29,13 +29,15 @@ const encrypt = (data, key) => {
   return compose(
     aes.utils.hex.fromBytes,
     crypt.encrypt.bind(crypt),
-    aes.utils.utf8.toBytes
+    aes.utils.utf8.toBytes,
+    escape
   )(data);
 };
 
 const decrypt = (data, key) => {
   const crypt = new aes.ModeOfOperation.ctr(key, new aes.Counter(1));
   return compose(
+    unescape,
     aes.utils.utf8.fromBytes,
     crypt.decrypt.bind(crypt),
     aes.utils.hex.toBytes
