@@ -1,10 +1,8 @@
 import React from "react";
 import ActionList from "material-ui-icons/List";
+import emojiRegex from "emoji-regex";
 
-const isEmoji = str =>
-  str.match(
-    /^(\ud83c[\udf00-\udfff]|\ud83d[\udc00-\ude4f]|\ud83d[\ude80-\udeff]).*/
-  );
+const isEmoji = str => !!emojiRegex().exec(getWholeChar(str, 0));
 
 function getWholeChar(str, i) {
   var code = str.charCodeAt(i);
@@ -24,10 +22,7 @@ function getWholeChar(str, i) {
 }
 
 export const filterLeadingEmoji = name =>
-  name.replace(
-    /^(\ud83c[\udf00-\udfff]|\ud83d[\udc00-\ude4f]|\ud83d[\ude80-\udeff])/,
-    ""
-  );
+  isEmoji(name) ? name.replace(emojiRegex().exec(name), "") : name;
 
 export default ({ name }) => (
   <span>
