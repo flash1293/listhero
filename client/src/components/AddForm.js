@@ -1,6 +1,6 @@
 import React from "react";
 import Input, { InputAdornment } from "material-ui/Input";
-import List, { ListItem } from "material-ui/List";
+import List from "material-ui/List";
 import { FormControl } from "material-ui/Form";
 import IconButton from "material-ui/IconButton";
 import Send from "material-ui-icons/Send";
