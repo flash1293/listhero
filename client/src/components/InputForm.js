@@ -10,7 +10,8 @@ const submitHandler = withProps(ownerProps => ({
   },
   handleChangeText: e => {
     ownerProps.storeText(e.target.value);
-  }
+  },
+  clearText: () => ownerProps.storeText("")
 }));
 
 export default compose(textHandler, submitHandler);

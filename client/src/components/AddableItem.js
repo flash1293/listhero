@@ -27,6 +27,9 @@ export default compose(
     })
   ),
   withHandlers({
-    addItem: ({ addStackableItem, entry }) => () => addStackableItem(entry)
+    addItem: ({ addStackableItem, entry, onAdd }) => e => {
+      addStackableItem(entry);
+      if (typeof onAdd === "function") onAdd(entry);
+    }
   })
 )(AddableItem);

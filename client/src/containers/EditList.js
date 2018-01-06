@@ -119,7 +119,12 @@ export const EditList = ({
         <ListMenu list={list} />
       </Toolbar>
     </AppBar>
-    <AddForm placeholder="Neuer Eintrag" onSubmit={addItem} />
+    <AddForm
+      placeholder="Neuer Eintrag"
+      recentItems={list.recentItems}
+      listId={listId}
+      onSubmit={addItem}
+    />
     <SortableList
       items={list.items}
       onSortEnd={onSortEnd}
