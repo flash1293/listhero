@@ -17,6 +17,7 @@ import Add from "material-ui-icons/Add";
 import { connect } from "react-redux";
 import compose from "ramda/src/compose";
 import { withHandlers } from "recompose";
+import { I18n } from "react-i18next";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import redirectToHome from "../components/RedirectToHome";
@@ -39,7 +40,8 @@ import buildSelector, { list } from "../redux/selectors";
 
 const SortableDragHandle = SortableHandle(() => <DragHandle />);
 
-const SortableItem = SortableElement(
+const SortableItem = compose(
+  SortableElement,
   withHandlers(() => ({
     onRemove: ({ onRemove, item }) => e => {
       e.stopPropagation();
@@ -54,23 +56,37 @@ const SortableItem = SortableElement(
       onDecrease(item);
     },
     onClick: ({ onClick, item }) => () => onClick(item)
-  }))(({ item, onRemove, onIncrease, onDecrease, onClick }) => {
-    return (
-      <ListItem onClick={onClick} button>
+  }))
+)(({ item, onRemove, onIncrease, onDecrease, onClick }) => {
+  return (
+    <ListItem
+      style={item.marker ? { backgroundColor: "#eee" } : undefined}
+      onClick={item.marker ? undefined : onClick}
+      button={!item.marker}
+    >
+      {!item.marker && (
         <ListItemIcon>
           <SortableDragHandle />
         </ListItemIcon>
+      )}
+      {item.label ? (
+        <I18n>{t => <ListItemText primary={t(item.label)} />}</I18n>
+      ) : (
         <ListItemText primary={item.name} />
-        <ListItemIcon onClick={onIncrease}>
-          <Add />
-        </ListItemIcon>
-        <ListItemIcon onClick={item.stacked ? onDecrease : onRemove}>
-          <ContentRemove />
-        </ListItemIcon>
-      </ListItem>
-    );
-  })
-);
+      )}
+      {!item.marker && (
+        <React.Fragment>
+          <ListItemIcon onClick={onIncrease}>
+            <Add />
+          </ListItemIcon>
+          <ListItemIcon onClick={item.stacked ? onDecrease : onRemove}>
+            <ContentRemove />
+          </ListItemIcon>
+        </React.Fragment>
+      )}
+    </ListItem>
+  );
+});
 
 const SortableList = SortableContainer(
   ({ items, onClick, onIncrease, onDecrease, onRemove }) => {
@@ -78,7 +94,7 @@ const SortableList = SortableContainer(
       <List style={{ marginBottom: 60 }}>
         {items.map((item, index) => (
           <SortableItem
-            key={item.uid}
+            key={item.uid ? item.uid : item.label}
             index={index}
             onClick={onClick}
             onRemove={onRemove}

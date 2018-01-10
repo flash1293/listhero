@@ -69,7 +69,7 @@ const SortableItem = compose(
       >
         <ListItemText
           primary={filterLeadingEmoji(list.name)}
-          secondary={`${list.items.length} Einträge `}
+          secondary={`${list.itemCount} Einträge `}
         />
         <ListItemSecondaryAction>
           <ListMenu list={list} />

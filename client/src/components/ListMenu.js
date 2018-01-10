@@ -9,6 +9,7 @@ import Menu, { MenuItem } from "material-ui/Menu";
 import buildHandlers, {
   removeList,
   editList,
+  createWeekplan,
   clearList
 } from "../redux/actions";
 import ChangeNameDialog from "../components/ChangeNameDialog";
@@ -20,7 +21,8 @@ export default compose(
     buildHandlers({
       editList,
       removeList,
-      clearList
+      clearList,
+      createWeekplan
     })
   ),
   editDialog("List", "editList"),
@@ -44,6 +46,9 @@ export default compose(
       setOpen(false);
       clearList(list);
     },
+    handleWeekplan: ({ createWeekplan, list }) => () => {
+      createWeekplan(list);
+    },
     stopPropagation: () => e => {
       e.preventDefault();
       e.stopPropagation();
@@ -62,6 +67,7 @@ export default compose(
     handleDialogClose,
     handleDialogSubmit,
     handleDialogOpen,
+    handleWeekplan,
     stopPropagation
   }) => (
     <div onClick={stopPropagation}>
@@ -83,6 +89,8 @@ export default compose(
         <MenuItem onClick={handleDialogOpen}>Umbenennen</MenuItem>
         <MenuItem onClick={handleClear}>Leeren</MenuItem>
         <MenuItem onClick={handleRemove}>Löschen</MenuItem>
+        {/* TODO Rückwärtsrichtung */}
+        <MenuItem onClick={handleWeekplan}>In Wochenplan umwandeln</MenuItem>
       </Menu>
       {dialogList && (
         <ChangeNameDialog

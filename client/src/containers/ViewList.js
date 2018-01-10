@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import ClickNHold from "react-click-n-hold";
 import { withHandlers } from "recompose";
+import { I18n } from "react-i18next";
 
 import editDialog from "../components/EditDialog";
 import ContextDialog from "../components/ContextDialog";
@@ -49,8 +50,16 @@ const ViewListItem = compose(
       onEnd={handleLongPressEnd}
       onClickNHold={handleContextMenu}
     >
-      <ListItem button onClick={onRemoveDelayed}>
-        <ListItemText primary={item.name} className={hideClassName} />
+      <ListItem
+        style={item.marker ? { backgroundColor: "#eee" } : undefined}
+        button={!item.marker}
+        onClick={item.marker ? undefined : onRemoveDelayed}
+      >
+        {item.label ? (
+          <I18n>{t => <ListItemText primary={t(item.label)} />}</I18n>
+        ) : (
+          <ListItemText primary={item.name} className={hideClassName} />
+        )}
       </ListItem>
     </ClickNHold>
   )
@@ -107,7 +116,7 @@ export const ViewList = ({
       {items.map((item, index) => (
         <ViewListItem
           item={item}
-          key={item.uid}
+          key={item.uid ? item.uid : item.label}
           removeItem={removeItem}
           handleContextMenu={handleDialogOpen}
         />

@@ -1,4 +1,6 @@
 import uniq from "ramda/src/uniq";
+import flatten from "ramda/src/flatten";
+import zip from "ramda/src/zip";
 
 import { arrayMove } from "./utils";
 
@@ -113,7 +115,7 @@ export default function reducer(state = initalState, action) {
             action.newIndex !== undefined
               ? action.newIndex
               : list.items.findIndex(i => i.uid === action.newId);
-          return oldIndex === -1
+          return oldIndex === -1 || (list.isWeekplan && newIndex === 0)
             ? list
             : {
                 ...list,
@@ -137,7 +139,6 @@ export default function reducer(state = initalState, action) {
         }
       );
     case "REMOVE_ITEM":
-    case "TOGGLE_ITEM": // downwards-compatibility
       return replaceByMap(
         state,
         l => l.uid === action.list,
@@ -195,6 +196,33 @@ export default function reducer(state = initalState, action) {
         list => ({
           ...list,
           name: action.name
+        })
+      );
+    case "CREATE_WEEKPLAN":
+      return replaceByMap(
+        state,
+        l => l.uid === action.list,
+        list => ({
+          ...list,
+          isWeekplan: true,
+          items: flatten(
+            zip(
+              [
+                "weekday_0",
+                "weekday_1",
+                "weekday_2",
+                "weekday_3",
+                "weekday_4",
+                "weekday_5",
+                "weekday_6",
+                "weekday_other"
+              ].map(label => ({
+                label,
+                marker: true
+              })),
+              list.items
+            )
+          )
         })
       );
     case "REMOVE_LIST":

@@ -74,6 +74,12 @@ export const addList = dispatch => name =>
     name
   });
 
+export const createWeekplan = dispatch => list =>
+  dispatch({
+    type: "CREATE_WEEKPLAN",
+    list: list.uid
+  });
+
 export const moveList = dispatch => (oldId, newIndex) =>
   dispatch({
     type: "MOVE_LIST",
