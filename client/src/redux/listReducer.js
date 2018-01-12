@@ -14,6 +14,20 @@ import {
 // TODO: lists-wrapper hier rausnehmen
 const initalState = [];
 
+const weekplanItems = [
+  "weekday_0",
+  "weekday_1",
+  "weekday_2",
+  "weekday_3",
+  "weekday_4",
+  "weekday_5",
+  "weekday_6",
+  "weekday_other"
+].map(label => ({
+  label,
+  marker: true
+}));
+
 function replaceByMap(list, pred, map) {
   const newList = [...list];
   const index = list.findIndex(pred);
@@ -165,9 +179,12 @@ export default function reducer(state = initalState, action) {
         list => {
           return {
             ...list,
-            items: [],
+            items: list.items.filter(item => item.marker),
             recentItems: uniq(
-              list.items.map(item => item.name).concat(list.recentItems)
+              list.items
+                .filter(item => !item.marker)
+                .map(item => item.name)
+                .concat(list.recentItems)
             ).slice(0, 50)
           };
         }
@@ -205,24 +222,21 @@ export default function reducer(state = initalState, action) {
         list => ({
           ...list,
           isWeekplan: true,
-          items: flatten(
-            zip(
-              [
-                "weekday_0",
-                "weekday_1",
-                "weekday_2",
-                "weekday_3",
-                "weekday_4",
-                "weekday_5",
-                "weekday_6",
-                "weekday_other"
-              ].map(label => ({
-                label,
-                marker: true
-              })),
-              list.items
-            )
+          items: flatten(zip(weekplanItems, list.items)).concat(
+            list.items.length > 8
+              ? list.items.slice(8)
+              : weekplanItems.slice(list.items.length)
           )
+        })
+      );
+    case "CREATE_NORMAL_LIST":
+      return replaceByMap(
+        state,
+        l => l.uid === action.list,
+        list => ({
+          ...list,
+          isWeekplan: false,
+          items: list.items.filter(item => !item.marker)
         })
       );
     case "REMOVE_LIST":

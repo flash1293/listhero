@@ -10,6 +10,7 @@ import buildHandlers, {
   removeList,
   editList,
   createWeekplan,
+  createNormalList,
   clearList
 } from "../redux/actions";
 import ChangeNameDialog from "../components/ChangeNameDialog";
@@ -22,7 +23,8 @@ export default compose(
       editList,
       removeList,
       clearList,
-      createWeekplan
+      createWeekplan,
+      createNormalList
     })
   ),
   editDialog("List", "editList"),
@@ -49,6 +51,9 @@ export default compose(
     handleWeekplan: ({ createWeekplan, list }) => () => {
       createWeekplan(list);
     },
+    handleNormalList: ({ createNormalList, list }) => () => {
+      createNormalList(list);
+    },
     stopPropagation: () => e => {
       e.preventDefault();
       e.stopPropagation();
@@ -68,6 +73,7 @@ export default compose(
     handleDialogSubmit,
     handleDialogOpen,
     handleWeekplan,
+    handleNormalList,
     stopPropagation
   }) => (
     <div onClick={stopPropagation}>
@@ -90,7 +96,14 @@ export default compose(
         <MenuItem onClick={handleClear}>Leeren</MenuItem>
         <MenuItem onClick={handleRemove}>Löschen</MenuItem>
         {/* TODO Rückwärtsrichtung */}
-        <MenuItem onClick={handleWeekplan}>In Wochenplan umwandeln</MenuItem>
+        {!list.isWeekplan && (
+          <MenuItem onClick={handleWeekplan}>In Wochenplan umwandeln</MenuItem>
+        )}
+        {list.isWeekplan && (
+          <MenuItem onClick={handleNormalList}>
+            In Einkaufsliste umwandeln
+          </MenuItem>
+        )}
       </Menu>
       {dialogList && (
         <ChangeNameDialog

@@ -21,7 +21,7 @@ import AddItemNavigation from "../components/AddItemNavigation";
 import removeAnimation from "../components/RemoveAnimation";
 import routeParam from "../components/RouteParam";
 import buildHandlers, { removeItem, moveItemToBottom } from "../redux/actions";
-import buildSelector, { list } from "../redux/selectors";
+import buildSelector, { list, filteredItems } from "../redux/selectors";
 
 const ViewListItem = compose(
   withHandlers({
@@ -51,12 +51,16 @@ const ViewListItem = compose(
       onClickNHold={handleContextMenu}
     >
       <ListItem
-        style={item.marker ? { backgroundColor: "#eee" } : undefined}
+        style={
+          item.marker
+            ? { backgroundColor: "#eee", paddingTop: 5, paddingBottom: 5 }
+            : undefined
+        }
         button={!item.marker}
         onClick={item.marker ? undefined : onRemoveDelayed}
       >
         {item.label ? (
-          <I18n>{t => <ListItemText primary={t(item.label)} />}</I18n>
+          <I18n>{t => <ListItemText secondary={t(item.label)} />}</I18n>
         ) : (
           <ListItemText primary={item.name} className={hideClassName} />
         )}
@@ -86,7 +90,8 @@ const ItemContextDialog = withHandlers({
 ));
 
 export const ViewList = ({
-  list: { name, items },
+  list: { name },
+  filteredItems: items,
   listId,
   removeItem,
   moveItemToBottom,
@@ -138,7 +143,7 @@ export default compose(
   redirectToLogin,
   routeParam("id", "listId"),
   connect(
-    buildSelector({ list }),
+    buildSelector({ list, filteredItems }),
     buildHandlers({
       removeItem,
       moveItemToBottom

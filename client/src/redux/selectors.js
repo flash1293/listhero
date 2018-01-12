@@ -39,3 +39,19 @@ export const list = ownProps =>
 export const listItems = ownProps => compose(prop("items"), list(ownProps));
 
 export const user = () => compose(defaultTo(EMPTY_OBJECT), prop("user"));
+
+export const filteredItems = ownProps =>
+  compose(
+    items =>
+      items.filter(
+        (item, index, items) =>
+          !(
+            item.marker &&
+            (index === items.length - 1 || items[index + 1].marker)
+          )
+      ),
+    defaultTo(EMPTY_ARRAY),
+    prop("items"),
+    find(propEq("uid", ownProps.listId)),
+    lists()
+  );

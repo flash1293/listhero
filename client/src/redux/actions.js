@@ -80,6 +80,12 @@ export const createWeekplan = dispatch => list =>
     list: list.uid
   });
 
+export const createNormalList = dispatch => list =>
+  dispatch({
+    type: "CREATE_NORMAL_LIST",
+    list: list.uid
+  });
+
 export const moveList = dispatch => (oldId, newIndex) =>
   dispatch({
     type: "MOVE_LIST",
