@@ -24,6 +24,7 @@
     "recompose": "^0.26.0",
     "redux": "^3.7.2",
     "redux-persist": "^5.4.0",
+    "redux-persist-transform-compress": "^4.2.0",
     "reselect": "^3.0.1",
     "source-map-explorer": "^1.5.0",
     "uuid": "^3.1.0"
