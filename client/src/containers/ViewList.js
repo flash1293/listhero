@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
+import Divider from "material-ui/Divider";
 import Typography from "material-ui/Typography";
 import List, { ListItem, ListItemText } from "material-ui/List";
 import IconButton from "material-ui/IconButton";
@@ -118,14 +119,19 @@ export const ViewList = ({
       </Toolbar>
     </AppBar>
     <List style={{ marginBottom: 60 }}>
-      {items.map((item, index) => (
-        <ViewListItem
-          item={item}
-          key={item.uid ? item.uid : item.label}
-          removeItem={removeItem}
-          handleContextMenu={handleDialogOpen}
-        />
-      ))}
+      {items.map(
+        (item, index) =>
+          item.isDivider ? (
+            <Divider key={`divider-${index}`} />
+          ) : (
+            <ViewListItem
+              item={item}
+              key={item.uid ? item.uid : item.label}
+              removeItem={removeItem}
+              handleContextMenu={handleDialogOpen}
+            />
+          )
+      )}
     </List>
     <AddItemNavigation uid={listId} />
     {dialogItem && (

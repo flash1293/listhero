@@ -42,6 +42,10 @@ export const user = () => compose(defaultTo(EMPTY_OBJECT), prop("user"));
 
 export const filteredItems = ownProps =>
   compose(
+    map(item => ({
+      ...item,
+      isDivider: /^-{4,}$/.test(item.name)
+    })),
     items =>
       items.filter(
         (item, index, items) =>
