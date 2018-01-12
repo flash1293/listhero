@@ -14,6 +14,8 @@ import {
 // TODO: lists-wrapper hier rausnehmen
 const initalState = [];
 
+const RECENT_ITEMS_LENGTH = 200;
+
 const weekplanItems = [
   "weekday_0",
   "weekday_1",
@@ -165,7 +167,7 @@ export default function reducer(state = initalState, action) {
               recentItems: [
                 item.name,
                 ...list.recentItems.filter(i => i !== item.name)
-              ].slice(0, 50)
+              ].slice(0, RECENT_ITEMS_LENGTH)
             };
           } else {
             return list;
@@ -185,7 +187,7 @@ export default function reducer(state = initalState, action) {
                 .filter(item => !item.marker)
                 .map(item => item.name)
                 .concat(list.recentItems)
-            ).slice(0, 50)
+            ).slice(0, RECENT_ITEMS_LENGTH)
           };
         }
       );
