@@ -39,7 +39,15 @@ import buildHandlers, {
 } from "../redux/actions";
 import buildSelector, { list } from "../redux/selectors";
 
-const SortableDragHandle = SortableHandle(() => <DragHandle />);
+const SortableDragHandle = SortableHandle(() => (
+  <DragHandle
+    style={{
+      paddingLeft: 16,
+      paddingTop: 12,
+      paddingBottom: 12
+    }}
+  />
+));
 
 const SortableItem = compose(
   SortableElement,
@@ -61,7 +69,7 @@ const SortableItem = compose(
 )(({ item, onRemove, onIncrease, onDecrease, onClick }) => {
   return (
     <ListItem
-      style={item.marker ? { backgroundColor: "#eee" } : undefined}
+      style={item.marker ? { backgroundColor: "#eee" } : { padding: 0 }}
       onClick={item.marker ? undefined : onClick}
       button={!item.marker}
     >
@@ -78,10 +86,24 @@ const SortableItem = compose(
       {!item.marker && (
         <React.Fragment>
           <ListItemIcon onClick={onIncrease}>
-            <Add />
+            <IconButton
+              style={{
+                height: 48,
+                width: 30
+              }}
+            >
+              <Add />
+            </IconButton>
           </ListItemIcon>
           <ListItemIcon onClick={item.stacked ? onDecrease : onRemove}>
-            <ContentRemove />
+            <IconButton
+              style={{
+                height: 48,
+                width: 30
+              }}
+            >
+              <ContentRemove />
+            </IconButton>
           </ListItemIcon>
         </React.Fragment>
       )}

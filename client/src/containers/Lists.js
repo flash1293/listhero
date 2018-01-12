@@ -64,7 +64,14 @@ const SortableItem = compose(
         <SortableDragHandle name={list.name} />
       </ListItemIcon>
       <Link
-        style={{ flex: 1, paddingLeft: 15 }}
+        style={{
+          flex: 1,
+          paddingLeft: 15,
+          marginTop: "-12px",
+          marginBottom: "-12px",
+          paddingTop: 12,
+          paddingBottom: 12
+        }}
         to={`/lists/${list.uid}/entries`}
       >
         <ListItemText
