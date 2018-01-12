@@ -18,6 +18,7 @@ import { connect } from "react-redux";
 import compose from "ramda/src/compose";
 import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
+import ActionShoppingBasket from "material-ui-icons/ShoppingBasket";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import redirectToHome from "../components/RedirectToHome";
@@ -132,6 +133,11 @@ export const EditList = ({
         <Typography type="title" color="inherit" style={{ flex: 1 }}>
           {list.name} editieren
         </Typography>
+        <Link to={`/lists/${listId}/entries/categories`}>
+          <IconButton color="inherit" aria-label="Kategorien">
+            <ActionShoppingBasket />
+          </IconButton>
+        </Link>
         <ListMenu list={list} />
       </Toolbar>
     </AppBar>
