@@ -13,18 +13,41 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
       syncLog = [];
     }
   };
+  const setLengthInFlight = len => {
+    localStorage.setItem(`currently-syncing:${key}`, len);
+  };
+  const getLengthInFlight = () => {
+    return Number(localStorage.getItem(`currently-syncing:${key}`));
+  };
   let requestInFlight = false;
   loadSyncLog();
   return store => next => {
     const postAction = postActionCreator(store);
     const getSyncState = () => store.getState()[key];
-    const startSync = (options = { skipRetry: false }) => {
+    const startSync = (
+      options = { skipRetry: false, dontMarkNewSync: false }
+    ) => {
       if (requestInFlight) return;
-      console.log("attempting sync");
       requestInFlight = true;
-      const actionsToSync = syncLog.splice(0, syncLog.length);
+      const persistedLengthInFlight = getLengthInFlight();
+      console.log(
+        `attempting sync, ${persistedLengthInFlight} marked for syncing`
+      );
+      if (persistedLengthInFlight === 0 && !options.dontMarkNewSync) {
+        next({
+          type: "@@sync/START_SYNC",
+          key
+        });
+      }
+      const actionsToSync = syncLog.splice(
+        0,
+        persistedLengthInFlight === 0 ? syncLog.length : persistedLengthInFlight
+      );
+      setLengthInFlight(actionsToSync.length);
+      console.log(`syncing ${actionsToSync.length} actions`);
       postAction({
-        startFrom: getSyncState().sequence - actionsToSync.length,
+        startFrom:
+          getSyncState().sequence - syncLog.length - actionsToSync.length,
         actions: actionsToSync
       })
         .then(res => {
@@ -42,6 +65,7 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
               type: "@@sync/MERGE",
               key,
               undo: getSyncState().sequence - res.replayFrom,
+              localLogLength: syncLog.length ? syncLog.length : 0,
               replayLog: res.replayLog.concat(syncLog)
             });
           } else {
@@ -50,10 +74,13 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
               key
             });
           }
+          // no requests in flight any more
+          setLengthInFlight(0);
           if (syncLog.length > 0) {
             console.log("sync completed, restarting for new changes");
             saveSyncLog();
-            startSync();
+            requestInFlight = false;
+            startSync({ dontMarkNewSync: true });
           } else {
             console.log("sync completed");
             saveSyncLog();
@@ -66,6 +93,7 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
             reason,
             key
           });
+          // TODO recover actionsToSync if app is quit during an ongoing sync (can this even happen in modern browsers?)
           // sync failed, prepend actions which were selected to sync back to the synclog and try again
           syncLog = actionsToSync.concat(syncLog);
           if (options.skipRetry) {
@@ -86,7 +114,8 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
       if (
         (action.type === "@@sync/REQUEST_SYNC" ||
           action.type === "@@sync/PURGE") &&
-        action.key === key
+        action.key === key &&
+        !requestInFlight
       ) {
         startSync({ skipRetry: action.skipRetry });
       } else {
