@@ -13,6 +13,7 @@ import { compose } from "redux";
 import ClickNHold from "react-click-n-hold";
 import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
+import ReactList from "react-list";
 
 import editDialog from "../components/EditDialog";
 import ContextDialog from "../components/ContextDialog";
@@ -119,19 +120,22 @@ export const ViewList = ({
       </Toolbar>
     </AppBar>
     <List style={{ marginBottom: 60 }}>
-      {items.map(
-        (item, index) =>
-          item.isDivider ? (
-            <Divider key={`divider-${index}`} />
+      <ReactList
+        itemRenderer={(index, key) =>
+          items[index].isDivider ? (
+            <Divider key={key} />
           ) : (
             <ViewListItem
-              item={item}
-              key={item.uid ? item.uid : item.label}
+              item={items[index]}
+              key={key}
               removeItem={removeItem}
               handleContextMenu={handleDialogOpen}
             />
           )
-      )}
+        }
+        length={items.length}
+        type="uniform"
+      />
     </List>
     <AddItemNavigation uid={listId} />
     {dialogItem && (
