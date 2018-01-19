@@ -153,8 +153,11 @@ export const Lists = ({
     {lists.length === 0 && (
       <Paper style={{ padding: "20px" }} elevation={2}>
         <Typography>
-          Noch keine Listen angelegt.<br />Tippe rechts oben "+", um eine Liste
-          hinzuzufügen.
+          Noch keine Listen angelegt.<br />
+          Tippe rechts oben "+", um eine Liste hinzuzufügen.<br />
+          <br />
+          Einträge können über mehrere Geräte synchronisiert werden.<br />
+          Öffne Links oben das Menü, um den Sync-Code zu kopieren.
         </Typography>
       </Paper>
     )}

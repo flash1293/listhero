@@ -22,7 +22,7 @@ export default compose(inputForm, suggestionEngine)(
     listId,
     onClose
   }) => (
-    <React.Fragment>
+    <div>
       <form onSubmit={handleSubmit} style={{ margin: "10px" }}>
         <FormControl fullWidth>
           <Input
@@ -60,6 +60,6 @@ export default compose(inputForm, suggestionEngine)(
           ))}
         </List>
       )}
-    </React.Fragment>
+    </div>
   )
 );

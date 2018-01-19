@@ -22,6 +22,7 @@ import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
 import ActionShoppingBasket from "material-ui-icons/ShoppingBasket";
 import windowSize from "react-window-size";
+import Sticky from "react-sticky-el";
 
 import preferredView from "../components/PreferredView";
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
@@ -161,7 +162,7 @@ export const EditList = ({
           </IconButton>
         </Link>
         <Typography type="title" color="inherit" style={{ flex: 1 }}>
-          {list.name} editieren
+          {list.name}
         </Typography>
         <Link
           style={{
@@ -246,12 +247,21 @@ export const EditList = ({
           </List>
         )}
       <div style={{ flex: "5 1 auto" }}>
-        <AddForm
-          placeholder="Neuer Eintrag"
-          recentItems={list.recentItems}
-          listId={listId}
-          onSubmit={addItem}
-        />
+        <Sticky
+          stickyStyle={{
+            backgroundColor: "white",
+            zIndex: 5,
+            boxShadow: "rgba(0, 0, 0, 0.5) 0px 3px 5px -3px"
+          }}
+          scrollElement="body"
+        >
+          <AddForm
+            placeholder="Neuer Eintrag"
+            recentItems={list.recentItems}
+            listId={listId}
+            onSubmit={addItem}
+          />
+        </Sticky>
         <SortableList
           items={list.items}
           onSortEnd={onSortEnd}
