@@ -15,16 +15,24 @@ import ClickNHold from "react-click-n-hold";
 import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
+import Eye from "material-ui-icons/RemoveRedEye";
+import ActionShoppingBasket from "material-ui-icons/ShoppingBasket";
 
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import editDialog from "../components/EditDialog";
+import preferredView from "../components/PreferredView";
 import ContextDialog from "../components/ContextDialog";
 import redirectToLogin from "../components/RedirectToLogin";
 import redirectToHome from "../components/RedirectToHome";
+import ListMenu from "../components/ListMenu";
 import AddItemNavigation from "../components/AddItemNavigation";
 import removeAnimation from "../components/RemoveAnimation";
 import routeParam from "../components/RouteParam";
-import buildHandlers, { removeItem, moveItemToBottom } from "../redux/actions";
+import buildHandlers, {
+  removeItem,
+  moveItemToBottom,
+  setPreferredView
+} from "../redux/actions";
 import buildSelector, { list, lists, filteredItems } from "../redux/selectors";
 
 const ViewListItem = compose(
@@ -116,11 +124,39 @@ export const ViewList = ({
         <Typography type="title" color="inherit" style={{ flex: 1 }}>
           {name}
         </Typography>
-        <Link to={`/lists/${listId}/entries/edit`}>
+        <Link
+          style={{
+            borderLeft: "1px solid white",
+            borderTop: "1px solid white",
+            borderBottom: "1px solid white",
+            borderRadius: "10px 0 0 10px"
+          }}
+          to={`/lists/${listId}/entries`}
+        >
+          <IconButton color="inherit" aria-label="Einkaufs-Ansicht">
+            <Eye />
+          </IconButton>
+        </Link>
+        <Link
+          style={{
+            borderRight: "1px solid white",
+            borderTop: "1px solid white",
+            borderBottom: "1px solid white",
+            borderRadius: "0 10px 10px 0",
+            color: "rgba(255,255,255,0.2)"
+          }}
+          to={`/lists/${listId}/entries/edit`}
+        >
           <IconButton aria-label="Editieren" color="inherit">
             <Edit />
           </IconButton>
         </Link>
+        <Link to={`/lists/${listId}/entries/categories`}>
+          <IconButton color="inherit" aria-label="Kategorien">
+            <ActionShoppingBasket />
+          </IconButton>
+        </Link>
+        <ListMenu list={list} />
       </Toolbar>
     </AppBar>
     <div
@@ -140,7 +176,11 @@ export const ViewList = ({
             }}
           >
             {lists.map((list, index) => (
-              <ListItem button>
+              <ListItem
+                key={list.uid}
+                button
+                style={list.uid === listId ? { backgroundColor: "#bbb" } : {}}
+              >
                 <ListItemIcon>
                   <ListIcon name={list.name} />
                 </ListItemIcon>
@@ -153,7 +193,9 @@ export const ViewList = ({
                     paddingTop: 12,
                     paddingBottom: 12
                   }}
-                  to={`/lists/${list.uid}/entries`}
+                  to={`/lists/${list.uid}/entries${
+                    list.preferredView === "edit" ? "/edit" : ""
+                  }`}
                 >
                   <ListItemText
                     primary={filterLeadingEmoji(list.name)}
@@ -224,10 +266,12 @@ export default compose(
     buildSelector({ lists, list, filteredItems }),
     buildHandlers({
       removeItem,
-      moveItemToBottom
+      moveItemToBottom,
+      setPreferredView
     })
   ),
   editDialog("Item"),
   redirectToHome,
-  windowSize
+  windowSize,
+  preferredView("shop")
 )(ViewList);

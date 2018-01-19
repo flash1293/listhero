@@ -80,6 +80,13 @@ export const createWeekplan = dispatch => list =>
     list: list.uid
   });
 
+export const setPreferredView = dispatch => (list, view) =>
+  dispatch({
+    type: "PREFERRED_VIEW",
+    list: list.uid,
+    view
+  });
+
 export const createNormalList = dispatch => list =>
   dispatch({
     type: "CREATE_NORMAL_LIST",

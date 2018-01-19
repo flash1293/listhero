@@ -72,7 +72,9 @@ const SortableItem = compose(
           paddingTop: 12,
           paddingBottom: 12
         }}
-        to={`/lists/${list.uid}/entries`}
+        to={`/lists/${list.uid}/entries${
+          list.preferredView === "edit" ? "/edit" : ""
+        }`}
       >
         <ListItemText
           primary={filterLeadingEmoji(list.name)}
