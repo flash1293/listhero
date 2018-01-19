@@ -19,7 +19,9 @@ import compose from "ramda/src/compose";
 import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
 import ActionShoppingBasket from "material-ui-icons/ShoppingBasket";
+import windowSize from "react-window-size";
 
+import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import redirectToLogin from "../components/RedirectToLogin";
 import redirectToHome from "../components/RedirectToHome";
 import routeParam from "../components/RouteParam";
@@ -37,7 +39,7 @@ import buildHandlers, {
   editItem,
   moveItem
 } from "../redux/actions";
-import buildSelector, { list } from "../redux/selectors";
+import buildSelector, { list, lists } from "../redux/selectors";
 
 const SortableDragHandle = SortableHandle(() => (
   <DragHandle
@@ -142,7 +144,9 @@ export const EditList = ({
   decreaseItem,
   dialogItem,
   handleDialogClose,
-  handleDialogSubmit
+  handleDialogSubmit,
+  windowWidth,
+  lists
 }) => (
   <div>
     <AppBar position="static" color="primary">
@@ -163,23 +167,67 @@ export const EditList = ({
         <ListMenu list={list} />
       </Toolbar>
     </AppBar>
-    <AddForm
-      placeholder="Neuer Eintrag"
-      recentItems={list.recentItems}
-      listId={listId}
-      onSubmit={addItem}
-    />
-    <SortableList
-      items={list.items}
-      onSortEnd={onSortEnd}
-      onClick={handleDialogOpen}
-      onRemove={removeItem}
-      onDecrease={decreaseItem}
-      onIncrease={increaseItem}
-      useDragHandle
-      useWindowAsScrollContainer
-      lockAxis="y"
-    />
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row"
+      }}
+    >
+      {windowWidth > 700 &&
+        lists.length > 1 && (
+          <List
+            style={{
+              flex: "1 1 auto",
+              boxShadow: "inset 0 0 25px rgba(0,0,0,0.3)",
+              backgroundColor: "#f5f5f5",
+              minHeight: "calc(100vh - 80px)"
+            }}
+          >
+            {lists.map((list, index) => (
+              <ListItem button>
+                <ListItemIcon>
+                  <ListIcon name={list.name} />
+                </ListItemIcon>
+                <Link
+                  style={{
+                    flex: 1,
+                    paddingLeft: 15,
+                    marginTop: "-12px",
+                    marginBottom: "-12px",
+                    paddingTop: 12,
+                    paddingBottom: 12
+                  }}
+                  to={`/lists/${list.uid}/entries`}
+                >
+                  <ListItemText
+                    primary={filterLeadingEmoji(list.name)}
+                    secondary={`${list.itemCount} Einträge `}
+                  />
+                </Link>
+              </ListItem>
+            ))}
+          </List>
+        )}
+      <div style={{ flex: "5 1 auto" }}>
+        <AddForm
+          placeholder="Neuer Eintrag"
+          recentItems={list.recentItems}
+          listId={listId}
+          onSubmit={addItem}
+        />
+        <SortableList
+          items={list.items}
+          onSortEnd={onSortEnd}
+          onClick={handleDialogOpen}
+          onRemove={removeItem}
+          onDecrease={decreaseItem}
+          onIncrease={increaseItem}
+          useDragHandle
+          useWindowAsScrollContainer
+          lockAxis="y"
+        />
+      </div>
+    </div>
     <AddItemNavigation uid={listId} />
     {dialogItem && (
       <ChangeNameDialog
@@ -196,7 +244,8 @@ export default compose(
   routeParam("id", "listId"),
   connect(
     buildSelector({
-      list
+      list,
+      lists
     }),
     buildHandlers({
       addItem,
@@ -209,5 +258,6 @@ export default compose(
   ),
   redirectToHome,
   editDialog("Item", "editItem"),
-  moveObject("moveItem", (props, index) => props.list.items[index].uid)
+  moveObject("moveItem", (props, index) => props.list.items[index].uid),
+  windowSize
 )(EditList);

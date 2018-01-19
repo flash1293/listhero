@@ -4,16 +4,19 @@ import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Divider from "material-ui/Divider";
 import Typography from "material-ui/Typography";
-import List, { ListItem, ListItemText } from "material-ui/List";
+import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
 import IconButton from "material-ui/IconButton";
 import Edit from "material-ui-icons/Edit";
+import DoneAll from "material-ui-icons/DoneAll";
 import ArrowBack from "material-ui-icons/ArrowBack";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import ClickNHold from "react-click-n-hold";
 import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
+import windowSize from "react-window-size";
 
+import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import editDialog from "../components/EditDialog";
 import ContextDialog from "../components/ContextDialog";
 import redirectToLogin from "../components/RedirectToLogin";
@@ -22,7 +25,7 @@ import AddItemNavigation from "../components/AddItemNavigation";
 import removeAnimation from "../components/RemoveAnimation";
 import routeParam from "../components/RouteParam";
 import buildHandlers, { removeItem, moveItemToBottom } from "../redux/actions";
-import buildSelector, { list, filteredItems } from "../redux/selectors";
+import buildSelector, { list, lists, filteredItems } from "../redux/selectors";
 
 const ViewListItem = compose(
   withHandlers({
@@ -93,12 +96,14 @@ const ItemContextDialog = withHandlers({
 export const ViewList = ({
   list: { name },
   filteredItems: items,
+  lists,
   listId,
   removeItem,
   moveItemToBottom,
   dialogItem,
   handleDialogOpen,
-  handleDialogClose
+  handleDialogClose,
+  windowWidth
 }) => (
   <div>
     <AppBar position="static" color="primary">
@@ -118,21 +123,88 @@ export const ViewList = ({
         </Link>
       </Toolbar>
     </AppBar>
-    <List style={{ marginBottom: 60 }}>
-      {items.map(
-        (item, index) =>
-          item.isDivider ? (
-            <Divider key={`divider-${index}`} />
-          ) : (
-            <ViewListItem
-              item={item}
-              key={item.uid ? item.uid : item.label}
-              removeItem={removeItem}
-              handleContextMenu={handleDialogOpen}
-            />
-          )
-      )}
-    </List>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row"
+      }}
+    >
+      {windowWidth > 700 &&
+        lists.length > 1 && (
+          <List
+            style={{
+              flex: "1 1 auto",
+              boxShadow: "inset 0 0 25px rgba(0,0,0,0.3)",
+              backgroundColor: "#f5f5f5",
+              minHeight: "calc(100vh - 80px)"
+            }}
+          >
+            {lists.map((list, index) => (
+              <ListItem button>
+                <ListItemIcon>
+                  <ListIcon name={list.name} />
+                </ListItemIcon>
+                <Link
+                  style={{
+                    flex: 1,
+                    paddingLeft: 15,
+                    marginTop: "-12px",
+                    marginBottom: "-12px",
+                    paddingTop: 12,
+                    paddingBottom: 12
+                  }}
+                  to={`/lists/${list.uid}/entries`}
+                >
+                  <ListItemText
+                    primary={filterLeadingEmoji(list.name)}
+                    secondary={`${list.itemCount} Einträge `}
+                  />
+                </Link>
+              </ListItem>
+            ))}
+          </List>
+        )}
+      <div
+        style={{
+          marginBottom: 60,
+          flex: "5 1 auto",
+          display: "flex",
+          justifyContent: "center"
+        }}
+      >
+        {items.length > 0 ? (
+          <List style={{ marginBottom: 60 }}>
+            {items.map(
+              (item, index) =>
+                item.isDivider ? (
+                  <Divider key={`divider-${index}`} />
+                ) : (
+                  <ViewListItem
+                    item={item}
+                    key={item.uid ? item.uid : item.label}
+                    removeItem={removeItem}
+                    handleContextMenu={handleDialogOpen}
+                  />
+                )
+            )}
+          </List>
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              alignSelf: "center",
+              color: "#aaa",
+              marginTop: "50px"
+            }}
+          >
+            <DoneAll />
+            <Typography color="inherit">Alles erledigt!</Typography>
+          </div>
+        )}
+      </div>
+    </div>
     <AddItemNavigation uid={listId} />
     {dialogItem && (
       <ItemContextDialog
@@ -149,12 +221,13 @@ export default compose(
   redirectToLogin,
   routeParam("id", "listId"),
   connect(
-    buildSelector({ list, filteredItems }),
+    buildSelector({ lists, list, filteredItems }),
     buildHandlers({
       removeItem,
       moveItemToBottom
     })
   ),
   editDialog("Item"),
-  redirectToHome
+  redirectToHome,
+  windowSize
 )(ViewList);
