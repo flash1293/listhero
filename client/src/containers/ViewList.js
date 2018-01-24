@@ -236,7 +236,6 @@ export const ViewList = ({
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              alignSelf: "center",
               color: "#aaa",
               marginTop: "50px"
             }}
