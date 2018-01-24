@@ -121,7 +121,7 @@ const SortableItem = compose(
 const SortableList = SortableContainer(
   ({ items, onClick, onIncrease, onDecrease, onRemove }) => {
     return (
-      <List style={{ marginBottom: 60 }}>
+      <List style={{ marginBottom: 60, zIndex: -1 }}>
         {items.map((item, index) => (
           <SortableItem
             key={item.uid ? item.uid : item.label}
