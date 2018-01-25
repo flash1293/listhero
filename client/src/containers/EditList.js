@@ -121,7 +121,7 @@ const SortableItem = compose(
 const SortableList = SortableContainer(
   ({ items, onClick, onIncrease, onDecrease, onRemove }) => {
     return (
-      <List style={{ marginBottom: 60, zIndex: -1 }}>
+      <List style={{ marginBottom: 60 }}>
         {items.map((item, index) => (
           <SortableItem
             key={item.uid ? item.uid : item.label}
@@ -248,6 +248,10 @@ export const EditList = ({
         )}
       <div style={{ flex: "5 1 auto" }}>
         <Sticky
+          style={{
+            position: "relative",
+            zIndex: 1
+          }}
           stickyStyle={{
             backgroundColor: "white",
             zIndex: 5,
