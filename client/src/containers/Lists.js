@@ -1,10 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {
-  SortableContainer,
-  SortableElement,
-  SortableHandle
-} from "react-sortable-hoc";
+import { SortableContainer, SortableElement } from "react-sortable-hoc";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
@@ -45,10 +41,6 @@ import ListItemSecondaryAction from "material-ui/List/ListItemSecondaryAction";
 import Divider from "material-ui/Divider/Divider";
 import { REDUCER_VERSION } from "../config";
 
-const SortableDragHandle = SortableHandle(({ name }) => (
-  <ListIcon name={name} />
-));
-
 const SortableItem = compose(
   SortableElement,
   withHandlers({
@@ -61,7 +53,7 @@ const SortableItem = compose(
   return (
     <ListItem button>
       <ListItemIcon>
-        <SortableDragHandle name={list.name} />
+        <ListIcon name={list.name} />
       </ListItemIcon>
       <Link
         style={{
@@ -146,8 +138,8 @@ export const Lists = ({
       lists={lists}
       onSortEnd={onSortEnd}
       history={router.history}
-      useDragHandle
       useWindowAsScrollContainer
+      pressDelay={200}
       lockAxis="y"
     />
     {lists.length === 0 && (
