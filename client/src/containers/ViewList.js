@@ -35,6 +35,9 @@ import buildHandlers, {
 } from "../redux/actions";
 import buildSelector, { list, lists, filteredItems } from "../redux/selectors";
 
+const labelColor = label =>
+  label === `weekday_${new Date().getDay() - 1}` ? "#bbb" : "#eee";
+
 const ViewListItem = compose(
   withHandlers({
     handleRemove: ownProps => () => ownProps.removeItem(ownProps.item),
@@ -65,7 +68,11 @@ const ViewListItem = compose(
       <ListItem
         style={
           item.marker
-            ? { backgroundColor: "#eee", paddingTop: 5, paddingBottom: 5 }
+            ? {
+                backgroundColor: labelColor(item.label),
+                paddingTop: 5,
+                paddingBottom: 5
+              }
             : undefined
         }
         button={!item.marker}
