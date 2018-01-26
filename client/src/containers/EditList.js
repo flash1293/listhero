@@ -164,36 +164,19 @@ export const EditList = ({
         <Typography type="title" color="inherit" style={{ flex: 1 }}>
           {list.name}
         </Typography>
-        <Link
-          style={{
-            borderLeft: "1px solid white",
-            borderTop: "1px solid white",
-            borderBottom: "1px solid white",
-            borderRadius: "10px 0 0 10px",
-            color: "rgba(255,255,255,0.2)"
-          }}
-          to={`/lists/${listId}/entries`}
-        >
+        <Link to={`/lists/${listId}/entries`}>
           <IconButton color="inherit" aria-label="Einkaufs-Ansicht">
             <Eye />
           </IconButton>
         </Link>
         <Link
           style={{
-            borderRight: "1px solid white",
-            borderTop: "1px solid white",
-            borderBottom: "1px solid white",
-            borderRadius: "0 10px 10px 0"
+            color: "rgba(255,255,255,0.4)"
           }}
           to={`/lists/${listId}/entries/edit`}
         >
           <IconButton aria-label="Editieren" color="inherit">
             <Edit />
-          </IconButton>
-        </Link>
-        <Link to={`/lists/${listId}/entries/categories`}>
-          <IconButton color="inherit" aria-label="Kategorien">
-            <ActionShoppingBasket />
           </IconButton>
         </Link>
         <ListMenu list={list} />

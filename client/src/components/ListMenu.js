@@ -1,10 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import MoreVertIcon from "material-ui-icons/MoreVert";
 import compose from "ramda/src/compose";
 import { withState, withHandlers } from "recompose";
 import { connect } from "react-redux";
 import IconButton from "material-ui/IconButton";
 import Menu, { MenuItem } from "material-ui/Menu";
+import { withRouter } from "react-router-dom";
 
 import buildHandlers, {
   removeList,
@@ -15,6 +17,7 @@ import buildHandlers, {
 } from "../redux/actions";
 import ChangeNameDialog from "../components/ChangeNameDialog";
 import editDialog from "../components/EditDialog";
+import Divider from "material-ui/Divider/Divider";
 
 export default compose(
   connect(
@@ -30,6 +33,7 @@ export default compose(
   editDialog("List", "editList"),
   withState("anchorEl", "setAnchorEl", null),
   withState("isOpen", "setOpen", false),
+  withRouter,
   withHandlers({
     handleOpen: ({ setOpen, setAnchorEl }) => e => {
       setAnchorEl(e.currentTarget);
@@ -54,6 +58,8 @@ export default compose(
     handleNormalList: ({ createNormalList, list }) => () => {
       createNormalList(list);
     },
+    handleCategoryPage: ({ history, list }) => () =>
+      history.push(`/lists/${list.uid}/entries/categories`),
     stopPropagation: () => e => {
       e.preventDefault();
       e.stopPropagation();
@@ -74,7 +80,8 @@ export default compose(
     handleDialogOpen,
     handleWeekplan,
     handleNormalList,
-    stopPropagation
+    stopPropagation,
+    handleCategoryPage
   }) => (
     <div onClick={stopPropagation}>
       <IconButton
@@ -95,7 +102,6 @@ export default compose(
         <MenuItem onClick={handleDialogOpen}>Umbenennen</MenuItem>
         <MenuItem onClick={handleClear}>Leeren</MenuItem>
         <MenuItem onClick={handleRemove}>Löschen</MenuItem>
-        {/* TODO Rückwärtsrichtung */}
         {!list.isWeekplan && (
           <MenuItem onClick={handleWeekplan}>In Wochenplan umwandeln</MenuItem>
         )}
@@ -104,6 +110,8 @@ export default compose(
             In Einkaufsliste umwandeln
           </MenuItem>
         )}
+        <Divider />
+        <MenuItem onClick={handleCategoryPage}>Kategorien</MenuItem>
       </Menu>
       {dialogList && (
         <ChangeNameDialog

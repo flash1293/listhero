@@ -102,7 +102,7 @@ const ItemContextDialog = withHandlers({
 ));
 
 export const ViewList = ({
-  list: { name },
+  list,
   filteredItems: items,
   lists,
   listId,
@@ -122,14 +122,11 @@ export const ViewList = ({
           </IconButton>
         </Link>
         <Typography type="title" color="inherit" style={{ flex: 1 }}>
-          {name}
+          {list.name}
         </Typography>
         <Link
           style={{
-            borderLeft: "1px solid white",
-            borderTop: "1px solid white",
-            borderBottom: "1px solid white",
-            borderRadius: "10px 0 0 10px"
+            color: "rgba(255,255,255,0.4)"
           }}
           to={`/lists/${listId}/entries`}
         >
@@ -137,23 +134,9 @@ export const ViewList = ({
             <Eye />
           </IconButton>
         </Link>
-        <Link
-          style={{
-            borderRight: "1px solid white",
-            borderTop: "1px solid white",
-            borderBottom: "1px solid white",
-            borderRadius: "0 10px 10px 0",
-            color: "rgba(255,255,255,0.2)"
-          }}
-          to={`/lists/${listId}/entries/edit`}
-        >
+        <Link to={`/lists/${listId}/entries/edit`}>
           <IconButton aria-label="Editieren" color="inherit">
             <Edit />
-          </IconButton>
-        </Link>
-        <Link to={`/lists/${listId}/entries/categories`}>
-          <IconButton color="inherit" aria-label="Kategorien">
-            <ActionShoppingBasket />
           </IconButton>
         </Link>
         <ListMenu list={list} />
