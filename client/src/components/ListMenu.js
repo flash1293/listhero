@@ -1,11 +1,13 @@
 import React from "react";
 import MoreVertIcon from "material-ui-icons/MoreVert";
 import compose from "ramda/src/compose";
-import { withState, withHandlers } from "recompose";
+import { withState, withHandlers, mapProps } from "recompose";
 import { connect } from "react-redux";
 import IconButton from "material-ui/IconButton";
 import Menu, { MenuItem } from "material-ui/Menu";
 import { withRouter } from "react-router-dom";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { translate } from "react-i18next";
 
 import buildHandlers, {
   removeList,
@@ -63,7 +65,14 @@ export default compose(
       e.preventDefault();
       e.stopPropagation();
     }
-  })
+  }),
+  translate("translations"),
+  mapProps(props => ({
+    ...props,
+    listAsText: props.list.items
+      .map(item => (item.label ? props.t(item.label) : item.name))
+      .join("\n")
+  }))
 )(
   ({
     anchorEl,
@@ -71,6 +80,7 @@ export default compose(
     handleClose,
     isOpen,
     list,
+    listAsText,
     dialogList,
     handleRemove,
     handleClear,
@@ -111,6 +121,9 @@ export default compose(
         )}
         <Divider />
         <MenuItem onClick={handleCategoryPage}>Kategorien</MenuItem>
+        <CopyToClipboard text={listAsText}>
+          <MenuItem>In Zwischenablage kopieren</MenuItem>
+        </CopyToClipboard>
       </Menu>
       {dialogList && (
         <ChangeNameDialog
