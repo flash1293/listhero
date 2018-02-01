@@ -26,7 +26,7 @@ import AccountCircleIcon from "material-ui-icons/AccountCircle";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import { Logo } from "../components/Logo";
-import buildSelector, { lists, user } from "../redux/selectors";
+import buildSelector, { lists, user, merged } from "../redux/selectors";
 import syncLink from "../components/SyncLink";
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import ListMenu from "../components/ListMenu";
@@ -115,6 +115,7 @@ export const Lists = ({
   syncLink,
   refresh,
   logout,
+  merged,
   onSortEnd,
   user: { username }
 }) => (
@@ -129,7 +130,7 @@ export const Lists = ({
         >
           <MenuIcon />
         </IconButton>
-        <Logo inverted />
+        <Logo inverted showSyncMarker={!merged} />
         <Typography type="title" color="inherit" style={{ flex: 1 }}>
           Alle Listen
         </Typography>
@@ -232,7 +233,8 @@ export default compose(
   connect(
     buildSelector({
       lists,
-      user
+      user,
+      merged
     }),
     buildHandlers({
       addList,

@@ -1,12 +1,32 @@
 import React from "react";
+import SyncIcon from "material-ui-icons/Sync";
 
 import logoSvgInverted from "../svg/logo_inverted.svg";
 import logoSvg from "../svg/logo.svg";
 
-export const Logo = ({ inverted }) => (
-  <img
-    style={{ width: 30, marginRight: 15, display: "inline-block" }}
-    alt="Logo"
-    src={inverted ? logoSvgInverted : logoSvg}
-  />
+const DomainMarker = ({ emoji }) => (
+  <span style={{ position: "absolute", right: 5, bottom: -5 }}>{emoji}</span>
+);
+
+export const Logo = ({ inverted, showSyncMarker }) => (
+  <span style={{ position: "relative" }}>
+    <img
+      style={{ width: 30, marginRight: 15, display: "inline-block" }}
+      alt="Logo"
+      src={inverted ? logoSvgInverted : logoSvg}
+    />
+    {!showSyncMarker &&
+      window.location.host.split(".")[0] === "work" && (
+        <DomainMarker emoji="💼" />
+      )}
+    {!showSyncMarker &&
+      window.location.host.split(".")[0] === "shopping" && (
+        <DomainMarker emoji="🛍️" />
+      )}
+    {showSyncMarker && (
+      <SyncIcon
+        style={{ position: "absolute", right: 10, bottom: -5, width: 15 }}
+      />
+    )}
+  </span>
 );

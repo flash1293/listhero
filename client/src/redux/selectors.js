@@ -59,3 +59,5 @@ export const filteredItems = ownProps =>
     find(propEq("uid", ownProps.listId)),
     lists()
   );
+
+export const merged = () => compose(prop("merged"), prop("lists"));
