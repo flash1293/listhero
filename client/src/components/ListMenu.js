@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import MoreVertIcon from "material-ui-icons/MoreVert";
 import compose from "ramda/src/compose";
 import { withState, withHandlers } from "recompose";

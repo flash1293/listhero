@@ -20,6 +20,7 @@ import { connect } from "react-redux";
 import compose from "ramda/src/compose";
 import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
+import ActionShoppingBasket from "material-ui-icons/ShoppingBasket";
 import windowSize from "react-window-size";
 import Sticky from "react-sticky-el";
 

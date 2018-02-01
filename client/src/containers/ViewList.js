@@ -16,6 +16,7 @@ import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
 import Eye from "material-ui-icons/RemoveRedEye";
+import ActionShoppingBasket from "material-ui-icons/ShoppingBasket";
 
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import editDialog from "../components/EditDialog";
