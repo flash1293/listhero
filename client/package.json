@@ -21,7 +21,6 @@
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.17",
     "react-sortable-hoc": "^0.6.8",
-    "react-sticky-el": "^1.0.16",
     "react-window-size": "^1.0.1",
     "recompose": "^0.26.0",
     "redux": "^3.7.2",

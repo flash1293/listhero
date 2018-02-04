@@ -21,7 +21,6 @@ import compose from "ramda/src/compose";
 import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
-import Sticky from "react-sticky-el";
 
 import preferredView from "../components/PreferredView";
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
@@ -76,6 +75,7 @@ const SortableItem = compose(
   return (
     <ListItem
       style={item.marker ? { backgroundColor: "#eee" } : { padding: 0 }}
+      onFocus={() => console.log(`${item.name} focused`)}
       onClick={item.marker ? undefined : onClick}
       button={!item.marker}
     >
@@ -229,25 +229,12 @@ export const EditList = ({
           </List>
         )}
       <div style={{ flex: "5 1 auto" }}>
-        <Sticky
-          style={{
-            position: "relative",
-            zIndex: 1
-          }}
-          stickyStyle={{
-            backgroundColor: "white",
-            zIndex: 5,
-            boxShadow: "rgba(0, 0, 0, 0.5) 0px 3px 5px -3px"
-          }}
-          scrollElement="body"
-        >
-          <AddForm
-            placeholder="Neuer Eintrag"
-            recentItems={list.recentItems}
-            listId={listId}
-            onSubmit={addItem}
-          />
-        </Sticky>
+        <AddForm
+          placeholder="Neuer Eintrag"
+          recentItems={list.recentItems}
+          listId={listId}
+          onSubmit={addItem}
+        />
         <SortableList
           items={list.items}
           onSortEnd={onSortEnd}
