@@ -3,6 +3,9 @@ import { HashRouter as Router, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/es/integration/react";
 import { I18nextProvider } from "react-i18next";
+import { ShortcutManager } from "react-shortcuts";
+import { withContext } from "recompose";
+import PropTypes from "prop-types";
 
 import i18n from "../i18n";
 import { store, persistor } from "../redux";
@@ -10,6 +13,10 @@ import preloader from "../components/Preloader";
 import ThemeProvider from "../components/ThemeProvider";
 import Lists from "./Lists";
 import Login from "./Login";
+
+import keymap from "../keymap";
+
+const shortcutManager = new ShortcutManager(keymap);
 
 const PreloadedRouter = preloader({
   viewList: () => import("./ViewList"),
@@ -53,7 +60,9 @@ const PreloadedRouter = preloader({
   )
 );
 
-export default () => (
+export default withContext({ shortcuts: PropTypes.object.isRequired }, () => ({
+  shortcuts: shortcutManager
+}))(() => (
   <I18nextProvider i18n={i18n}>
     <PersistGate persistor={persistor}>
       <Provider store={store}>
@@ -63,4 +72,4 @@ export default () => (
       </Provider>
     </PersistGate>
   </I18nextProvider>
-);
+));

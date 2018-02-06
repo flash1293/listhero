@@ -16,6 +16,8 @@ import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
 import Eye from "material-ui-icons/RemoveRedEye";
+import routerContext from "../components/RouterContext";
+import { Shortcuts } from "react-shortcuts";
 
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import editDialog from "../components/EditDialog";
@@ -117,12 +119,19 @@ export const ViewList = ({
   dialogItem,
   handleDialogOpen,
   handleDialogClose,
-  windowWidth
+  windowWidth,
+  handleShortcuts
 }) => (
   <div>
     <AppBar position="static" color="primary">
+      <Shortcuts
+        name="EDIT_VIEW"
+        stopPropagation={false}
+        targetNodeSelector="body"
+        handler={handleShortcuts}
+      />
       <Toolbar>
-        <Link to="/">
+        <Link tabIndex={-1} to="/">
           <IconButton color="inherit">
             <ArrowBack />
           </IconButton>
@@ -134,13 +143,18 @@ export const ViewList = ({
           style={{
             color: "rgba(255,255,255,0.4)"
           }}
+          tabIndex={-1}
           to={`/lists/${listId}/entries`}
         >
-          <IconButton color="inherit" aria-label="Einkaufs-Ansicht">
+          <IconButton
+            tabIndex={-1}
+            color="inherit"
+            aria-label="Einkaufs-Ansicht"
+          >
             <Eye />
           </IconButton>
         </Link>
-        <Link to={`/lists/${listId}/entries/edit`}>
+        <Link tabIndex={-1} to={`/lists/${listId}/entries/edit`}>
           <IconButton aria-label="Editieren" color="inherit">
             <Edit />
           </IconButton>
@@ -167,6 +181,7 @@ export const ViewList = ({
             {lists.map((list, index) => (
               <ListItem
                 key={list.uid}
+                tabIndex={-1}
                 button
                 style={list.uid === listId ? { backgroundColor: "#bbb" } : {}}
               >
@@ -261,5 +276,15 @@ export default compose(
   editDialog("Item"),
   redirectToHome,
   windowSize,
-  preferredView("shop")
+  preferredView("shop"),
+  routerContext,
+  withHandlers({
+    handleShortcuts: ({ router: { history }, listId }) => action => {
+      switch (action) {
+        case "EDIT_MODE":
+          history.push(`/lists/${listId}/entries/edit`);
+          break;
+      }
+    }
+  })
 )(ViewList);

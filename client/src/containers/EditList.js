@@ -21,6 +21,8 @@ import compose from "ramda/src/compose";
 import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
+import { Shortcuts } from "react-shortcuts";
+import routerContext from "../components/RouterContext";
 
 import preferredView from "../components/PreferredView";
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
@@ -69,66 +71,116 @@ const SortableItem = compose(
       e.stopPropagation();
       onDecrease(item);
     },
+    onMoveUp: ({ onMove, item, itemIndex }) => () =>
+      itemIndex > 0 && onMove(item.uid, itemIndex - 1),
+    onMoveDown: ({ onMove, item, itemIndex }) => () =>
+      onMove(item.uid, itemIndex + 1),
     onClick: ({ onClick, item }) => () => onClick(item)
+  })),
+  withHandlers(() => ({
+    handleShortcuts: ({
+      item,
+      onIncrease,
+      onDecrease,
+      onRemove,
+      onClick,
+      onMoveUp,
+      onMoveDown
+    }) => (action, event) => {
+      switch (action) {
+        case "MOVE_UP":
+          onMoveUp();
+          break;
+        case "MOVE_DOWN":
+          onMoveDown();
+          break;
+        case "INCREMENT":
+          onIncrease(event);
+          break;
+        case "EDIT":
+          event.stopPropagation();
+          event.preventDefault();
+          onClick(item);
+          break;
+        case "DECREMENT":
+          item.stacked ? onDecrease(event) : onRemove(event);
+          break;
+      }
+    }
   }))
-)(({ item, onRemove, onIncrease, onDecrease, onClick }) => {
+)(({ item, onRemove, onIncrease, onDecrease, handleShortcuts, onClick }) => {
   return (
-    <ListItem
-      style={item.marker ? { backgroundColor: "#eee" } : { padding: 0 }}
-      onFocus={() => console.log(`${item.name} focused`)}
-      onClick={item.marker ? undefined : onClick}
-      button={!item.marker}
+    <Shortcuts
+      tabIndex={0}
+      stopPropagation={false}
+      name="TODO_ITEM"
+      handler={handleShortcuts}
     >
-      {!item.marker && (
-        <ListItemIcon>
-          <SortableDragHandle />
-        </ListItemIcon>
-      )}
-      {item.label ? (
-        <I18n>{t => <ListItemText primary={t(item.label)} />}</I18n>
-      ) : (
-        <ListItemText primary={item.name} />
-      )}
-      {!item.marker && (
-        <React.Fragment>
-          <ListItemIcon onClick={onIncrease}>
-            <IconButton
-              style={{
-                height: 48,
-                width: 30
-              }}
-            >
-              <Add />
-            </IconButton>
+      <ListItem
+        ref={el => {
+          window.el = el;
+        }}
+        style={item.marker ? { backgroundColor: "#eee" } : { padding: 0 }}
+        onClick={item.marker ? undefined : onClick}
+        button={!item.marker}
+        tabIndex={-1}
+      >
+        {!item.marker && (
+          <ListItemIcon>
+            <SortableDragHandle />
           </ListItemIcon>
-          <ListItemIcon onClick={item.stacked ? onDecrease : onRemove}>
-            <IconButton
-              style={{
-                height: 48,
-                width: 30
-              }}
+        )}
+        {item.label ? (
+          <I18n>{t => <ListItemText primary={t(item.label)} />}</I18n>
+        ) : (
+          <ListItemText primary={item.name} />
+        )}
+        {!item.marker && (
+          <React.Fragment>
+            <ListItemIcon tabIndex="-1" onClick={onIncrease}>
+              <IconButton
+                style={{
+                  height: 48,
+                  width: 30
+                }}
+              >
+                <Add />
+              </IconButton>
+            </ListItemIcon>
+            <ListItemIcon
+              tabIndex="-1"
+              onClick={item.stacked ? onDecrease : onRemove}
             >
-              <ContentRemove />
-            </IconButton>
-          </ListItemIcon>
-        </React.Fragment>
-      )}
-    </ListItem>
+              <IconButton
+                style={{
+                  height: 48,
+                  width: 30
+                }}
+              >
+                <ContentRemove />
+              </IconButton>
+            </ListItemIcon>
+          </React.Fragment>
+        )}
+      </ListItem>
+    </Shortcuts>
   );
 });
 
 const SortableList = SortableContainer(
-  ({ items, onClick, onIncrease, onDecrease, onRemove }) => {
+  ({ items, onClick, onIncrease, onDecrease, onRemove, onSortEnd, onMove }) => {
     return (
       <List style={{ marginBottom: 60 }}>
         {items.map((item, index) => (
           <SortableItem
             key={item.uid ? item.uid : item.label}
             index={index}
+            itemIndex={index}
             onClick={onClick}
             onRemove={onRemove}
             onIncrease={onIncrease}
             onDecrease={onDecrease}
+            onMove={onMove}
             item={item}
           />
         ))}
@@ -144,18 +196,26 @@ export const EditList = ({
   onSortEnd,
   handleDialogOpen,
   removeItem,
+  moveItem,
   increaseItem,
   decreaseItem,
   dialogItem,
   handleDialogClose,
   handleDialogSubmit,
   windowWidth,
+  handleShortcuts,
   lists
 }) => (
   <div>
     <AppBar position="static" color="primary">
+      <Shortcuts
+        name="EDIT_VIEW"
+        stopPropagation={false}
+        targetNodeSelector="body"
+        handler={handleShortcuts}
+      />
       <Toolbar>
-        <Link to="/">
+        <Link tabIndex={-1} to="/">
           <IconButton color="inherit">
             <ArrowBack />
           </IconButton>
@@ -163,18 +223,19 @@ export const EditList = ({
         <Typography type="title" color="inherit" style={{ flex: 1 }}>
           {list.name}
         </Typography>
-        <Link to={`/lists/${listId}/entries`}>
+        <Link tabIndex={-1} to={`/lists/${listId}/entries`}>
           <IconButton color="inherit" aria-label="Einkaufs-Ansicht">
             <Eye />
           </IconButton>
         </Link>
         <Link
+          tabIndex={-1}
           style={{
             color: "rgba(255,255,255,0.4)"
           }}
           to={`/lists/${listId}/entries/edit`}
         >
-          <IconButton aria-label="Editieren" color="inherit">
+          <IconButton tabIndex={-1} aria-label="Editieren" color="inherit">
             <Edit />
           </IconButton>
         </Link>
@@ -200,6 +261,7 @@ export const EditList = ({
             {lists.map((list, index) => (
               <ListItem
                 key={list.uid}
+                tabIndex={-1}
                 button
                 style={list.uid === listId ? { backgroundColor: "#bbb" } : {}}
               >
@@ -238,6 +300,7 @@ export const EditList = ({
         <SortableList
           items={list.items}
           onSortEnd={onSortEnd}
+          onMove={moveItem}
           onClick={handleDialogOpen}
           onRemove={removeItem}
           onDecrease={decreaseItem}
@@ -281,5 +344,15 @@ export default compose(
   editDialog("Item", "editItem"),
   moveObject("moveItem", (props, index) => props.list.items[index].uid),
   windowSize,
+  routerContext,
+  withHandlers({
+    handleShortcuts: ({ router: { history }, listId }) => action => {
+      switch (action) {
+        case "SHOPPING_MODE":
+          history.push(`/lists/${listId}/entries`);
+          break;
+      }
+    }
+  }),
   preferredView("edit")
 )(EditList);

@@ -4,13 +4,28 @@ import List from "material-ui/List";
 import { FormControl } from "material-ui/Form";
 import IconButton from "material-ui/IconButton";
 import Send from "material-ui-icons/Send";
+import { withState, withHandlers } from "recompose";
 import compose from "ramda/src/compose";
+import { Shortcuts } from "react-shortcuts";
 
 import suggestionEngine from "./SuggestionEngine";
 import inputForm from "./InputForm";
 import AddableItem from "./AddableItem";
 
-export default compose(inputForm, suggestionEngine)(
+export default compose(
+  inputForm,
+  withState("inputRef", "setInputRef"),
+  withHandlers({
+    handleShortcuts: ({ inputRef }) => (action, event) => {
+      switch (action) {
+        case "FOCUS_INPUT":
+          inputRef.focus();
+          break;
+      }
+    }
+  }),
+  suggestionEngine
+)(
   ({
     text,
     initialText,
@@ -20,19 +35,27 @@ export default compose(inputForm, suggestionEngine)(
     suggestions,
     clearText,
     listId,
-    onClose
+    onClose,
+    handleShortcuts,
+    setInputRef
   }) => (
-    <div>
+    <Shortcuts
+      name="EDIT_VIEW"
+      stopPropagation={false}
+      targetNodeSelector="body"
+      handler={handleShortcuts}
+    >
       <form onSubmit={handleSubmit} style={{ margin: "10px" }}>
         <FormControl fullWidth>
           <Input
             type="text"
+            inputRef={setInputRef}
             placeholder={placeholder}
             value={text !== undefined ? text : initialText || ""}
             onChange={handleChangeText}
             endAdornment={
               <InputAdornment position="end">
-                <IconButton onClick={handleSubmit}>
+                <IconButton tabIndex={-1} onClick={handleSubmit}>
                   <Send />
                 </IconButton>
               </InputAdornment>
@@ -60,6 +83,6 @@ export default compose(inputForm, suggestionEngine)(
           ))}
         </List>
       )}
-    </div>
+    </Shortcuts>
   )
 );
