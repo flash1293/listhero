@@ -105,6 +105,8 @@ const SortableItem = compose(
         case "DECREMENT":
           item.stacked ? onDecrease(event) : onRemove(event);
           break;
+        default:
+          break;
       }
     }
   }))
@@ -346,10 +348,33 @@ export default compose(
   windowSize,
   routerContext,
   withHandlers({
-    handleShortcuts: ({ router: { history }, listId }) => action => {
+    handleShortcuts: ({ router: { history }, listId, lists }) => action => {
       switch (action) {
         case "SHOPPING_MODE":
           history.push(`/lists/${listId}/entries`);
+          break;
+        case "NEXT_LIST":
+          const nextList = lists[lists.findIndex(l => l.uid === listId) + 1];
+          if (nextList) {
+            history.push(
+              `/lists/${nextList.uid}/entries${
+                nextList.preferredView === "edit" ? "/edit" : ""
+              }`
+            );
+          }
+          break;
+        case "PREVIOUS_LIST":
+          const previousList =
+            lists[lists.findIndex(l => l.uid === listId) - 1];
+          if (previousList) {
+            history.push(
+              `/lists/${previousList.uid}/entries${
+                previousList.preferredView === "edit" ? "/edit" : ""
+              }`
+            );
+          }
+          break;
+        default:
           break;
       }
     }

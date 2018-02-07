@@ -21,6 +21,8 @@ export default compose(
         case "FOCUS_INPUT":
           inputRef.focus();
           break;
+        default:
+          break;
       }
     }
   }),

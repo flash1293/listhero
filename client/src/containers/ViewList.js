@@ -125,7 +125,7 @@ export const ViewList = ({
   <div>
     <AppBar position="static" color="primary">
       <Shortcuts
-        name="EDIT_VIEW"
+        name="SHOPPING_VIEW"
         stopPropagation={false}
         targetNodeSelector="body"
         handler={handleShortcuts}
@@ -279,10 +279,33 @@ export default compose(
   preferredView("shop"),
   routerContext,
   withHandlers({
-    handleShortcuts: ({ router: { history }, listId }) => action => {
+    handleShortcuts: ({ router: { history }, listId, lists }) => action => {
       switch (action) {
         case "EDIT_MODE":
           history.push(`/lists/${listId}/entries/edit`);
+          break;
+        case "NEXT_LIST":
+          const nextList = lists[lists.findIndex(l => l.uid === listId) + 1];
+          if (nextList) {
+            history.push(
+              `/lists/${nextList.uid}/entries${
+                nextList.preferredView === "edit" ? "/edit" : ""
+              }`
+            );
+          }
+          break;
+        case "PREVIOUS_LIST":
+          const previousList =
+            lists[lists.findIndex(l => l.uid === listId) - 1];
+          if (previousList) {
+            history.push(
+              `/lists/${previousList.uid}/entries${
+                previousList.preferredView === "edit" ? "/edit" : ""
+              }`
+            );
+          }
+          break;
+        default:
           break;
       }
     }

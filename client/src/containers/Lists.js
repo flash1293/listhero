@@ -59,7 +59,7 @@ const SortableItem = compose(
   })
 )(({ list, history, goToSettings }) => {
   return (
-    <ListItem button>
+    <ListItem button tabIndex={-1}>
       <ListItemIcon>
         <SortableDragHandle name={list.name} />
       </ListItemIcon>
