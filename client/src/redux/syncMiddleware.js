@@ -25,23 +25,28 @@ const checkAndUpdateSeed = seed => {
 };
 
 const encrypt = (data, key) => {
-  const crypt = new aes.ModeOfOperation.ctr(key, new aes.Counter(1));
-  return compose(
+  const seed = Math.floor(Math.random() * (Math.pow(2, 40) - 1));
+  const crypt = new aes.ModeOfOperation.ctr(key, new aes.Counter(seed));
+  return `${seed};${compose(
     aes.utils.hex.fromBytes,
     crypt.encrypt.bind(crypt),
     aes.utils.utf8.toBytes,
     escape
-  )(data);
+  )(data)}`;
 };
 
 const decrypt = (data, key) => {
-  const crypt = new aes.ModeOfOperation.ctr(key, new aes.Counter(1));
+  const [seed, seededData] = data.split(";");
+  const crypt = new aes.ModeOfOperation.ctr(
+    key,
+    new aes.Counter(seededData ? Number(seed) : 1)
+  );
   return compose(
     unescape,
     aes.utils.utf8.fromBytes,
     crypt.decrypt.bind(crypt),
     aes.utils.hex.toBytes
-  )(data);
+  )(seededData ? seededData : data);
 };
 
 const postActionCreator = store => req =>

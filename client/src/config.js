@@ -6,7 +6,7 @@ import createCompressor from "redux-persist-transform-compress";
 export const APP_VERSION = 5;
 
 // issues a purge and re-sync from the server on update (only list-data)
-export const REDUCER_VERSION = 5;
+export const REDUCER_VERSION = 6;
 
 const compressor = createCompressor();
 export const persistConfig = {
