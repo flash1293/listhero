@@ -18,7 +18,7 @@ app.use(cors());
 
 const clients = {};
 
-const scryptParams = scrypt.paramsSync(1);
+const scryptParams = scrypt.paramsSync(0.2);
 
 app.post("/token", basicauth("user", process.env.PASSWORD), (req, res) => {
   const { username, password } = req.body;
