@@ -51,10 +51,13 @@ const ViewListItem = compose(
   withHandlers({
     handleRemove: ownProps => () => ownProps.removeItem(ownProps.item),
     handleContextMenu: ownProps => () =>
-      ownProps.handleContextMenu(ownProps.item)
+      ownProps.handleContextMenu(ownProps.item),
+    handleTouchEnd: ownProps => e => {
+      e.stopPropagation();
+    }
   }),
   removeAnimation("handleRemove")
-)(({ item, onRemoveDelayed, hideClassName, handleContextMenu }) => {
+)(({ item, onRemoveDelayed, hideClassName, handleContextMenu, onTouchEnd }) => {
   const element = (
     <ListItem
       style={
@@ -78,7 +81,11 @@ const ViewListItem = compose(
   );
 
   return touchSupport ? (
-    <LongPress time={1000} onLongPress={handleContextMenu}>
+    <LongPress
+      time={1000}
+      onTouchEnd={onTouchEnd}
+      onLongPress={handleContextMenu}
+    >
       {element}
     </LongPress>
   ) : (

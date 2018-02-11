@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@johannes.reuter/react-long@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@johannes.reuter/react-long/-/react-long-1.1.3.tgz#692def350b96ba4c0389f56b01a4e305f7675282"
+
 abab@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/abab/-/abab-1.0.4.tgz#5faad9c2c07f60dd76770f71cf025b62a63cfd4e"
@@ -5504,10 +5508,6 @@ react-jss@^8.1.0:
     jss-preset-default "^4.0.1"
     prop-types "^15.6.0"
     theming "^1.2.1"
-
-react-long@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/react-long/-/react-long-1.1.4.tgz#9e701a55260598f58f9242b8cd4d21f19ea2a132"
 
 react-popper@^0.7.4:
   version "0.7.4"
