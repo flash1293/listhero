@@ -16,14 +16,25 @@ export default compose(
   inputForm,
   withState("inputRef", "setInputRef"),
   withHandlers({
-    handleShortcuts: ({ inputRef }) => (action, event) => {
+    focusInput: ({ inputRef }) => () => inputRef.focus()
+  }),
+  withHandlers({
+    handleShortcuts: ({ focusInput }) => (action, event) => {
       switch (action) {
         case "FOCUS_INPUT":
-          inputRef.focus();
+          focusInput();
           break;
         default:
           break;
       }
+    },
+    onAddSuggestion: ({ focusInput, clearText }) => () => {
+      clearText();
+      focusInput();
+    },
+    onSubmitText: ({ focusInput, handleSubmit }) => e => {
+      handleSubmit(e);
+      focusInput();
     }
   }),
   suggestionEngine
@@ -33,9 +44,9 @@ export default compose(
     initialText,
     placeholder,
     handleChangeText,
-    handleSubmit,
+    onSubmitText,
     suggestions,
-    clearText,
+    onAddSuggestion,
     listId,
     onClose,
     handleShortcuts,
@@ -47,7 +58,7 @@ export default compose(
       targetNodeSelector="body"
       handler={handleShortcuts}
     >
-      <form onSubmit={handleSubmit} style={{ margin: "10px" }}>
+      <form onSubmit={onSubmitText} style={{ margin: "10px" }}>
         <FormControl fullWidth>
           <Input
             type="text"
@@ -57,7 +68,7 @@ export default compose(
             onChange={handleChangeText}
             endAdornment={
               <InputAdornment position="end">
-                <IconButton tabIndex={-1} onClick={handleSubmit}>
+                <IconButton tabIndex={-1} onClick={onSubmitText}>
                   <Send />
                 </IconButton>
               </InputAdornment>
@@ -77,7 +88,7 @@ export default compose(
         >
           {suggestions.map(suggestion => (
             <AddableItem
-              onAdd={clearText}
+              onAdd={onAddSuggestion}
               listId={listId}
               key={suggestion}
               entry={suggestion}
