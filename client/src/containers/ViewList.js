@@ -11,7 +11,7 @@ import DoneAll from "material-ui-icons/DoneAll";
 import ArrowBack from "material-ui-icons/ArrowBack";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import LongPress from "react-long";
+import LongPress from "@johannes.reuter/react-long";
 import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
@@ -52,46 +52,56 @@ const ViewListItem = compose(
     handleRemove: ownProps => () => ownProps.removeItem(ownProps.item),
     handleContextMenu: ownProps => () =>
       ownProps.handleContextMenu(ownProps.item),
-    handleTouchEnd: ownProps => e => {
-      e.stopPropagation();
+    handleTouchEnd: ({ isDialogOpen }) => e => {
+      if (isDialogOpen) {
+        e.preventDefault();
+      }
     }
   }),
   removeAnimation("handleRemove")
-)(({ item, onRemoveDelayed, hideClassName, handleContextMenu, onTouchEnd }) => {
-  const element = (
-    <ListItem
-      style={
-        item.marker
-          ? {
-              backgroundColor: labelColor(item.label),
-              paddingTop: 5,
-              paddingBottom: 5
-            }
-          : undefined
-      }
-      button={!item.marker}
-      onClick={item.marker ? undefined : onRemoveDelayed}
-    >
-      {item.label ? (
-        <I18n>{t => <ListItemText secondary={t(item.label)} />}</I18n>
-      ) : (
-        <ListItemText primary={item.name} className={hideClassName} />
-      )}
-    </ListItem>
-  );
+)(
+  ({
+    item,
+    onRemoveDelayed,
+    hideClassName,
+    handleContextMenu,
+    handleTouchEnd
+  }) => {
+    const element = (
+      <ListItem
+        style={
+          item.marker
+            ? {
+                backgroundColor: labelColor(item.label),
+                paddingTop: 5,
+                paddingBottom: 5
+              }
+            : undefined
+        }
+        button={!item.marker}
+        onClick={item.marker ? undefined : onRemoveDelayed}
+      >
+        {item.label ? (
+          <I18n>{t => <ListItemText secondary={t(item.label)} />}</I18n>
+        ) : (
+          <ListItemText primary={item.name} className={hideClassName} />
+        )}
+      </ListItem>
+    );
 
-  return touchSupport ? (
-    <LongPress
-      time={1000}
-      onTouchEnd={onTouchEnd}
-      onLongPress={handleContextMenu}
-    >
-      {element}
-    </LongPress>
-  ) : (
-    element
-  );
-});
+    return touchSupport ? (
+      <LongPress
+        time={1000}
+        onTouchEnd={handleTouchEnd}
+        onLongPress={handleContextMenu}
+      >
+        {element}
+      </LongPress>
+    ) : (
+      element
+    );
+  }
+);
 
 const ItemContextDialog = withHandlers({
   handleRemove: ownProps => () => {
@@ -233,6 +243,7 @@ export const ViewList = ({
                     item={item}
                     key={item.uid ? item.uid : item.label}
                     removeItem={removeItem}
+                    isDialogOpen={Boolean(dialogItem)}
                     handleContextMenu={handleDialogOpen}
                   />
                 )
