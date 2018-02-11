@@ -174,17 +174,6 @@ export default function reducer(state = initalState, action) {
           }
         }
       );
-    case "PREFERRED_VIEW":
-      return replaceByMap(
-        state,
-        l => l.uid === action.list,
-        list => {
-          return {
-            ...list,
-            preferredView: action.view
-          };
-        }
-      );
     case "CLEAR_LIST":
       return replaceByMap(
         state,

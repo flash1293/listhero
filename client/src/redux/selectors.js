@@ -16,13 +16,19 @@ const EMPTY_OBJECT = {};
 export default selectors => (state, ownProps) =>
   map(selector => selector(ownProps)(state), selectors);
 
-export const lists = () =>
+export const lists = () => state =>
   compose(
+    map(addPreferredView(state.preferredView)),
     map(addListItemCount),
     defaultTo(EMPTY_ARRAY),
     prop("present"),
     prop("lists")
-  );
+  )(state);
+
+const addPreferredView = preferredView => list => ({
+  ...list,
+  preferredView: preferredView[list.uid]
+});
 
 const addListItemCount = mappedAssoc(
   "itemCount",
@@ -39,6 +45,8 @@ export const list = ownProps =>
 export const listItems = ownProps => compose(prop("items"), list(ownProps));
 
 export const user = () => compose(defaultTo(EMPTY_OBJECT), prop("user"));
+
+export const preferredView = () => prop("preferredView");
 
 export const filteredItems = ownProps =>
   compose(
