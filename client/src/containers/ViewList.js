@@ -11,7 +11,7 @@ import DoneAll from "material-ui-icons/DoneAll";
 import ArrowBack from "material-ui-icons/ArrowBack";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import ClickNHold from "react-click-n-hold";
+import LongPress from "react-long";
 import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
@@ -39,55 +39,52 @@ import buildSelector, { list, lists, filteredItems } from "../redux/selectors";
 const labelColor = label =>
   label === `weekday_${new Date().getDay() - 1}` ? "#bbb" : "#eee";
 
+// touch-support feature detection
+let touchSupport = true;
+try {
+  document.createEvent("TouchEvent");
+} catch (e) {
+  touchSupport = false;
+}
+
 const ViewListItem = compose(
   withHandlers({
     handleRemove: ownProps => () => ownProps.removeItem(ownProps.item),
     handleContextMenu: ownProps => () =>
-      ownProps.handleContextMenu(ownProps.item),
-    handleLongPressEnd: () => (e, enough) => {
-      if (enough) {
-        // dont let the touch-end-event bubble as
-        // it will close the modal
-        e.preventDefault();
-      }
-    }
+      ownProps.handleContextMenu(ownProps.item)
   }),
   removeAnimation("handleRemove")
-)(
-  ({
-    item,
-    onRemoveDelayed,
-    hideClassName,
-    handleContextMenu,
-    handleLongPressEnd
-  }) => (
-    <ClickNHold
-      time={1}
-      onEnd={handleLongPressEnd}
-      onClickNHold={handleContextMenu}
+)(({ item, onRemoveDelayed, hideClassName, handleContextMenu }) => {
+  const element = (
+    <ListItem
+      style={
+        item.marker
+          ? {
+              backgroundColor: labelColor(item.label),
+              paddingTop: 5,
+              paddingBottom: 5
+            }
+          : undefined
+      }
+      button={!item.marker}
+      onClick={item.marker ? undefined : onRemoveDelayed}
     >
-      <ListItem
-        style={
-          item.marker
-            ? {
-                backgroundColor: labelColor(item.label),
-                paddingTop: 5,
-                paddingBottom: 5
-              }
-            : undefined
-        }
-        button={!item.marker}
-        onClick={item.marker ? undefined : onRemoveDelayed}
-      >
-        {item.label ? (
-          <I18n>{t => <ListItemText secondary={t(item.label)} />}</I18n>
-        ) : (
-          <ListItemText primary={item.name} className={hideClassName} />
-        )}
-      </ListItem>
-    </ClickNHold>
-  )
-);
+      {item.label ? (
+        <I18n>{t => <ListItemText secondary={t(item.label)} />}</I18n>
+      ) : (
+        <ListItemText primary={item.name} className={hideClassName} />
+      )}
+    </ListItem>
+  );
+
+  return touchSupport ? (
+    <LongPress time={1000} onLongPress={handleContextMenu}>
+      {element}
+    </LongPress>
+  ) : (
+    element
+  );
+});
 
 const ItemContextDialog = withHandlers({
   handleRemove: ownProps => () => {
