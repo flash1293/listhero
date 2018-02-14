@@ -4,6 +4,7 @@ import { createStore, combineReducers, applyMiddleware } from "redux";
 import syncReducer from "../sync/syncReducer";
 import listReducer from "./listReducer";
 import preferredViewReducer from "./preferredViewReducer";
+import enteredTextReducer from "./enteredTextReducer";
 import userReducer from "./userReducer";
 import { persistConfig } from "../config";
 import websocketMiddleware from "./websocketMiddleware";
@@ -16,7 +17,8 @@ const persistentReducer = persistReducer(
   combineReducers({
     lists: syncReducer(listReducer, "lists"),
     user: userReducer,
-    preferredView: preferredViewReducer
+    preferredView: preferredViewReducer,
+    enteredText: enteredTextReducer
   })
 );
 export const store = createStore(

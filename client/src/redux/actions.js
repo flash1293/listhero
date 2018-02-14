@@ -30,6 +30,13 @@ export const moveItem = (dispatch, ownProps) => (oldId, newIndex) =>
     newIndex
   });
 
+export const changeEnteredText = (dispatch, ownProps) => text =>
+  dispatch({
+    type: "CHANGE_ENTERED_TEXT",
+    list: ownProps.listId,
+    text
+  });
+
 export const moveItemToBottom = (dispatch, ownProps) => item =>
   dispatch({
     type: "MOVE_ITEM_TO_BOTTOM",

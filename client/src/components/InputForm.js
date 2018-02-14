@@ -5,7 +5,7 @@ const textHandler = withState("text", "storeText", undefined);
 const submitHandler = withProps(ownerProps => ({
   handleSubmit: e => {
     e.preventDefault();
-    ownerProps.onSubmit(ownerProps.text);
+    ownerProps.onSubmit(ownerProps.text || ownerProps.initialText);
     ownerProps.storeText(ownerProps.initialText || "");
   },
   handleChangeText: e => {

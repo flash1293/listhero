@@ -42,7 +42,8 @@ import buildHandlers, {
   decreaseItem,
   editItem,
   moveItem,
-  setPreferredView
+  setPreferredView,
+  changeEnteredText
 } from "../redux/actions";
 import buildSelector, { list, lists } from "../redux/selectors";
 
@@ -201,6 +202,7 @@ export const EditList = ({
   moveItem,
   increaseItem,
   decreaseItem,
+  changeEnteredText,
   dialogItem,
   handleDialogClose,
   handleDialogSubmit,
@@ -298,6 +300,8 @@ export const EditList = ({
           recentItems={list.recentItems}
           listId={listId}
           onSubmit={addItem}
+          onChange={changeEnteredText}
+          initialText={list.enteredText}
         />
         <SortableList
           items={list.items}
@@ -338,6 +342,7 @@ export default compose(
       moveItem,
       increaseItem,
       decreaseItem,
+      changeEnteredText,
       removeItem,
       setPreferredView
     })

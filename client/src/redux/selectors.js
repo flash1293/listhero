@@ -18,6 +18,7 @@ export default selectors => (state, ownProps) =>
 
 export const lists = () => state =>
   compose(
+    map(addEnteredText(state.enteredText)),
     map(addPreferredView(state.preferredView)),
     map(addListItemCount),
     defaultTo(EMPTY_ARRAY),
@@ -28,6 +29,11 @@ export const lists = () => state =>
 const addPreferredView = preferredView => list => ({
   ...list,
   preferredView: preferredView[list.uid]
+});
+
+const addEnteredText = enteredText => list => ({
+  ...list,
+  enteredText: enteredText[list.uid]
 });
 
 const addListItemCount = mappedAssoc(

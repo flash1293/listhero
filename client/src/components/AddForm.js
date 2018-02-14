@@ -32,9 +32,14 @@ export default compose(
       clearText();
       focusInput();
     },
-    onSubmitText: ({ focusInput, handleSubmit }) => e => {
+    onSubmitText: ({ focusInput, clearText, handleSubmit }) => e => {
       handleSubmit(e);
       focusInput();
+      clearText();
+    },
+    handleChangeText: ({ handleChangeText, onChange, initialText }) => e => {
+      handleChangeText(e);
+      onChange(e.target.value || initialText);
     }
   }),
   suggestionEngine
