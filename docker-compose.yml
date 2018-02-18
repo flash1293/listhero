@@ -14,7 +14,7 @@ services:
       - db
     environment:
       - SEED=547645382715487
-      - DATA_DIR=/data
+      - SECRET=hfekjsdhfhdsfhksdlf
       - PASSWORD=test123
   db:
     image: redis:3.2-alpine
