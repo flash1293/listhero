@@ -50,6 +50,7 @@ export default (reducer, key) => {
         if (action.key !== key) return state;
         return {
           ...state,
+          merged: false,
           // remember past if sync starts (because we may have to revert to this position in the next sync)
           past: [...past, present]
         };

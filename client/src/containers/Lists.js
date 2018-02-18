@@ -16,6 +16,7 @@ import PhotoCameraIcon from "material-ui-icons/PhotoCamera";
 import ChevronLeft from "material-ui-icons/ChevronLeft";
 import MenuIcon from "material-ui-icons/Menu";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
+import { CircularProgress } from "material-ui/Progress";
 import Paper from "material-ui/Paper";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -151,7 +152,7 @@ export const Lists = ({
       useWindowAsScrollContainer
       lockAxis="y"
     />
-    {lists.length === 0 && (
+    {lists.length === 0 && merged && (
       <Paper style={{ padding: "20px" }} elevation={2}>
         <Typography>
           Noch keine Listen angelegt.<br />
@@ -161,6 +162,17 @@ export const Lists = ({
           Öffne Links oben das Menü, um den Sync-Code zu kopieren.
         </Typography>
       </Paper>
+    )}
+    {lists.length === 0 && !merged && (
+      <CircularProgress
+        style={{
+          margin: "0 auto",
+          display: "block",
+          marginTop: 50
+        }}
+        size={80}
+        thickness={4}
+      />
     )}
     {isDialogOpen && (
       <ChangeNameDialog
