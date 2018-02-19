@@ -232,17 +232,6 @@ export const EditList = ({
             <Eye />
           </IconButton>
         </Link>
-        <Link
-          tabIndex={-1}
-          style={{
-            color: "rgba(255,255,255,0.4)"
-          }}
-          to={`/lists/${listId}/entries/edit`}
-        >
-          <IconButton tabIndex={-1} aria-label="Editieren" color="inherit">
-            <Edit />
-          </IconButton>
-        </Link>
         <ListMenu list={list} />
       </Toolbar>
     </AppBar>

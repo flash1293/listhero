@@ -153,21 +153,6 @@ export const ViewList = ({
         <Typography type="title" color="inherit" style={{ flex: 1 }}>
           {list.name}
         </Typography>
-        <Link
-          style={{
-            color: "rgba(255,255,255,0.4)"
-          }}
-          tabIndex={-1}
-          to={`/lists/${listId}/entries`}
-        >
-          <IconButton
-            tabIndex={-1}
-            color="inherit"
-            aria-label="Einkaufs-Ansicht"
-          >
-            <Eye />
-          </IconButton>
-        </Link>
         <Link tabIndex={-1} to={`/lists/${listId}/entries/edit`}>
           <IconButton aria-label="Editieren" color="inherit">
             <Edit />
