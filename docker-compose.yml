@@ -13,6 +13,7 @@ services:
     links:
       - db
     environment:
+      - DEBUG=trace,info,error
       - SEED=547645382715487
       - SECRET=hfekjsdhfhdsfhksdlf
       - PASSWORD=test123

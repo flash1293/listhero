@@ -8,6 +8,9 @@ const redis = new Redis(6379, process.env.REDIS_HOST || "db");
 const jwt = require("jsonwebtoken");
 const jwtExpress = require("express-jwt");
 const scrypt = require("scrypt");
+const trace = require('debug')('trace');
+const info = require('debug')('info');
+const error = require('debug')('error');
 
 const seed = process.env.SEED;
 
@@ -52,6 +55,9 @@ app.post("/token", basicauth("user", process.env.PASSWORD), (req, res) => {
           res.json(jwt.sign({ username: username }, process.env.SECRET))
         );
     }
+  }).catch(err => {
+    error(err);
+    res.status(500).end(err);
   });
 });
 
@@ -65,16 +71,17 @@ app.post("/api", jwtExpress({ secret: process.env.SECRET }), (req, res) => {
     );
   }
   commands.push(["lrange", stream, startFrom, -1]);
-  console.log(commands);
+  trace(commands);
   redis.multi(commands).exec((err, results) => {
     if (err) {
-      console.log(err);
+      error(err);
+      res.status(500).end(err);
       return;
     }
     const sequence = results[0][1];
     const newActions = actions.length > 0 ? results[2][1] : results[1][1];
-    console.log(sequence);
-    console.log(newActions);
+    trace(sequence);
+    trace(newActions);
     if (startFrom < sequence) {
       res.json({
         replayFrom: startFrom,
@@ -91,7 +98,7 @@ app.post("/api", jwtExpress({ secret: process.env.SECRET }), (req, res) => {
         c => c.session !== req.headers["x-sync-session"] && c.ws.send("")
       );
     }
-    console.log(`New action log length: ${sequence + actions.length}`);
+    info(`New action log length: ${sequence + actions.length}`);
   });
 });
 
@@ -99,25 +106,25 @@ app.ws("/api/updates/:session", (ws, req) => {
   const jwtTokenString = req.headers["sec-websocket-protocol"];
   try {
     const jwtToken = jwt.verify(jwtTokenString, process.env.SECRET);
-    console.log("new update listener");
+    info("new update listener");
     if (!clients[jwtToken.username]) {
       clients[jwtToken.username] = [];
     }
     clients[jwtToken.username].push({ ws, session: req.params.session });
     ws.on("close", () => {
-      console.log("update listener disconnected");
+      info("update listener disconnected");
       clients[jwtToken.username] = clients[jwtToken.username].filter(
         c => c.ws !== ws
       );
     });
-  } catch (e) {
-    console.log(e);
+  } catch (err) {
+    error(err);
     ws.close();
   }
 });
 
 const server = app.listen(3001, () =>
-  console.log("Ekofe server listening on port 3001!")
+  info("Ekofe server listening on port 3001!")
 );
 
 process.on("SIGTERM", function() {
