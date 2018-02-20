@@ -15,7 +15,6 @@ import LongPress from "@johannes.reuter/react-long";
 import { withHandlers } from "recompose";
 import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
-import Eye from "material-ui-icons/RemoveRedEye";
 import routerContext from "../components/RouterContext";
 import { Shortcuts } from "react-shortcuts";
 

@@ -12,7 +12,6 @@ import {
 import IconButton from "material-ui/IconButton";
 import ArrowBack from "material-ui-icons/ArrowBack";
 import DragHandle from "material-ui-icons/DragHandle";
-import Edit from "material-ui-icons/Edit";
 import ContentRemove from "material-ui-icons/Remove";
 import Eye from "material-ui-icons/RemoveRedEye";
 import Add from "material-ui-icons/Add";
