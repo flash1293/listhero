@@ -5,7 +5,7 @@ const performLogin = (username, password, serverPassword) =>
     method: "post",
     headers: {
       Accept: "application/json, text/plain, */*",
-      Authorization: `Basic ${btoa("user:" + serverPassword)}`,
+      Authorization: (serverPassword ? `Basic ${btoa("user:" + serverPassword)}` : ''),
       "Content-Type": "application/json"
     },
     body: JSON.stringify({ username, password })

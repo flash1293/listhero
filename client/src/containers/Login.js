@@ -35,6 +35,7 @@ const Login = ({
       </Toolbar>
     </AppBar>
     {!requesting &&
+      serverPassword &&
       failed && (
         <Typography
           style={{
@@ -159,7 +160,7 @@ export default compose(
           user.encryptionKey,
           user.serverPassword
         );
-      } else if (!linkDataUsername && user.serverPassword) {
+      } else if (!linkDataUsername) {
         createLogin();
       }
     }

@@ -1,4 +1,5 @@
 const express = require("express");
+const noop = require("express-noop");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const fs = require("fs");
@@ -23,7 +24,7 @@ const clients = {};
 
 const scryptParams = scrypt.paramsSync(0.2);
 
-app.post("/token", basicauth("user", process.env.PASSWORD), (req, res) => {
+app.post("/token", (process.env.PASSWORD ? basicauth("user", process.env.PASSWORD) : noop()), (req, res) => {
   const { username, password } = req.body;
 
   redis.hexists("users", username).then(exists => {

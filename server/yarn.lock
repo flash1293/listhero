@@ -483,6 +483,10 @@ express-jwt@^5.3.0:
     jsonwebtoken "^7.3.0"
     lodash.set "^4.0.0"
 
+express-noop@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/express-noop/-/express-noop-1.1.0.tgz#762ade9476e07cb3b10cd14f490a378d12a571c0"
+
 express-unless@^0.3.0:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/express-unless/-/express-unless-0.3.1.tgz#2557c146e75beb903e2d247f9b5ba01452696e20"
