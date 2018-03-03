@@ -24,7 +24,7 @@ export const Logo = ({ inverted, showSyncMarker }) => (
         <DomainMarker emoji="🛍️" />
       )}
     {!showSyncMarker &&
-      window.location.host.split(".")[0] !== "throwaway" && (
+      window.location.host.split(".")[0] === "throwaway" && (
         <DomainMarker emoji="🗑️" />
       )}
     {showSyncMarker && (
