@@ -23,6 +23,10 @@ export const Logo = ({ inverted, showSyncMarker }) => (
       window.location.host.split(".")[0] === "shopping" && (
         <DomainMarker emoji="🛍️" />
       )}
+    {!showSyncMarker &&
+      window.location.host.split(".")[0] !== "throwaway" && (
+        <DomainMarker emoji="🗑️" />
+      )}
     {showSyncMarker && (
       <SyncIcon
         style={{ position: "absolute", right: 10, bottom: -5, width: 15 }}
