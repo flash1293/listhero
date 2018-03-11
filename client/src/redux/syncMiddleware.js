@@ -8,6 +8,7 @@ import {
   REDUCER_VERSION
 } from "../config";
 import syncMiddleware from "../sync/syncMiddleware";
+import { getRandomData } from "./utils";
 
 const checkAndUpdateSeed = seed => {
   const storageKey = `sync-seed:lists`;
@@ -25,9 +26,9 @@ const checkAndUpdateSeed = seed => {
 };
 
 const encrypt = (data, key) => {
-  const seed = Math.floor(Math.random() * (Math.pow(2, 40) - 1));
+  const seed = getRandomData(128);
   const crypt = new aes.ModeOfOperation.ctr(key, new aes.Counter(seed));
-  return `${seed};${compose(
+  return `0x${aes.utils.hex.fromBytes(seed)};${compose(
     aes.utils.hex.fromBytes,
     crypt.encrypt.bind(crypt),
     aes.utils.utf8.toBytes,
@@ -35,11 +36,19 @@ const encrypt = (data, key) => {
   )(data)}`;
 };
 
+function getSeed(seed) {
+  if(seed.startsWith('0x')) {
+    return aes.utils.hex.toBytes(seed.substring(2));
+  } else {
+    return Number(seed);
+  }
+}
+
 const decrypt = (data, key) => {
   const [seed, seededData] = data.split(";");
   const crypt = new aes.ModeOfOperation.ctr(
     key,
-    new aes.Counter(seededData ? Number(seed) : 1)
+    new aes.Counter(seededData ? getSeed(seed) : 1)
   );
   return compose(
     unescape,
