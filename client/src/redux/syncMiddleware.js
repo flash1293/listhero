@@ -1,4 +1,5 @@
 import aes from "aes-js";
+import { aes256 } from "aes-wasm";
 import compose from "ramda/src/compose";
 
 import {
@@ -25,12 +26,24 @@ const checkAndUpdateSeed = seed => {
   return true;
 };
 
-const encrypt = (data, key) => {
+let aes256Instance;
+function getAesInstance() {
+  if(!aes256Instance) {
+    return aes256().then(instance => {
+      aes256Instance = instance;
+      return instance;
+    });
+  } else {
+    return Promise.resolve(aes256Instance);
+  }
+}
+
+const encrypt = (crypt, data, key) => {
   const seed = getRandomData(128);
-  const crypt = new aes.ModeOfOperation.ctr(key, new aes.Counter(seed));
+  crypt.init(key, seed, 'CTR');
   return `0x${aes.utils.hex.fromBytes(seed)};${compose(
     aes.utils.hex.fromBytes,
-    crypt.encrypt.bind(crypt),
+    crypt.encrypt,
     aes.utils.utf8.toBytes,
     escape
   )(data)}`;
@@ -44,22 +57,35 @@ function getSeed(seed) {
   }
 }
 
-const decrypt = (data, key) => {
+const decrypt = (crypt, data, key) => {
   const [seed, seededData] = data.split(";");
-  const crypt = new aes.ModeOfOperation.ctr(
-    key,
-    new aes.Counter(seededData ? getSeed(seed) : 1)
-  );
-  return compose(
-    unescape,
-    aes.utils.utf8.fromBytes,
-    crypt.decrypt.bind(crypt),
-    aes.utils.hex.toBytes
-  )(seededData ? seededData : data);
+  const convertedSeed = seededData ? getSeed(seed) : 1;
+  if(Number.isInteger(convertedSeed)) {
+    // legacy action
+    const legacyCrypt = new aes.ModeOfOperation.ctr(
+      key,
+      new aes.Counter(convertedSeed)
+    );
+    return compose(
+      unescape,
+      aes.utils.utf8.fromBytes,
+      legacyCrypt.decrypt.bind(legacyCrypt),
+      aes.utils.hex.toBytes
+    )(seededData ? seededData : data);
+  } else {
+    crypt.init(key, new Uint8Array(convertedSeed), 'CTR');
+    return compose(
+      unescape,
+      aes.utils.utf8.fromBytes,
+      crypt.decrypt,
+      aes.utils.hex.toBytes
+    )(seededData ? seededData : data);
+  }
 };
 
 const postActionCreator = store => req =>
-  fetch(`${API_PROTOCOL}//${API_HOST}/api`, {
+  getAesInstance()
+    .then(crypt => fetch(`${API_PROTOCOL}//${API_HOST}/api`, {
     method: "post",
     headers: {
       Accept: "application/json, text/plain, */*",
@@ -70,7 +96,7 @@ const postActionCreator = store => req =>
     body: JSON.stringify({
       ...req,
       actions: req.actions.map(action =>
-        encrypt(JSON.stringify(action), store.getState().user.encryptionKey)
+        encrypt(crypt, JSON.stringify(action), store.getState().user.encryptionKey)
       )
     })
   })
@@ -83,11 +109,12 @@ const postActionCreator = store => req =>
     .then(jsonRes => {
       if (jsonRes.replayLog) {
         jsonRes.replayLog = jsonRes.replayLog.map(action =>
-          JSON.parse(decrypt(action, store.getState().user.encryptionKey))
+          JSON.parse(decrypt(crypt, action, store.getState().user.encryptionKey))
         );
       }
       return jsonRes;
-    });
+    }))
+  ;
 
 const syncFilter = action => action.type !== "persist/REHYDRATE";
 

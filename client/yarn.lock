@@ -59,6 +59,10 @@ aes-js@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/aes-js/-/aes-js-3.1.0.tgz#f5f7588494526997cc635cc334c8bb8e967a5d82"
 
+aes-wasm@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/aes-wasm/-/aes-wasm-1.1.0.tgz#534bf291fe870006d57c2d3c94ccf7029334b87b"
+
 ajv-keywords@^2.0.0, ajv-keywords@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-2.1.1.tgz#617997fc5f60576894c435f940d819e135b80762"
