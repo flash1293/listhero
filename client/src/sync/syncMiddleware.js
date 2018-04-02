@@ -100,7 +100,6 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
             console.log("sync failed");
             requestInFlight = false;
           } else {
-            debugger;
             console.log("sync failed, retry in 1 second");
             setTimeout(() => {
               requestInFlight = false;

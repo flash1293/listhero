@@ -61,7 +61,7 @@ const decrypt = (crypt, data, key) => {
   const [seed, seededData] = data.split(";");
   const convertedSeed = seededData ? getSeed(seed) : 1;
   if(Number.isInteger(convertedSeed)) {
-    // legacy action
+    // legacy action, decrypt with aes-js
     const legacyCrypt = new aes.ModeOfOperation.ctr(
       key,
       new aes.Counter(convertedSeed)
@@ -73,6 +73,7 @@ const decrypt = (crypt, data, key) => {
       aes.utils.hex.toBytes
     )(seededData ? seededData : data);
   } else {
+    // modern action, decrypt with aes-wasm
     crypt.init(key, new Uint8Array(convertedSeed), 'CTR');
     return compose(
       unescape,
