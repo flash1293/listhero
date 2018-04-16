@@ -12,11 +12,12 @@ import ArrowBack from "material-ui-icons/ArrowBack";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import LongPress from "@johannes.reuter/react-long";
-import { withHandlers } from "recompose";
+import { withHandlers, pure } from "recompose";
 import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
 import routerContext from "../components/RouterContext";
 import { Shortcuts } from "react-shortcuts";
+import ReactList from 'react-list';
 
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import editDialog from "../components/EditDialog";
@@ -47,6 +48,7 @@ try {
 }
 
 const ViewListItem = compose(
+  pure,
   withHandlers({
     handleRemove: ownProps => () => ownProps.removeItem(ownProps.item),
     handleContextMenu: ownProps => () =>
@@ -218,20 +220,25 @@ export const ViewList = ({
       >
         {items.length > 0 ? (
           <List style={{ marginBottom: 60 }}>
-            {items.map(
-              (item, index) =>
-                item.isDivider ? (
-                  <Divider key={`divider-${index}`} />
-                ) : (
-                  <ViewListItem
-                    item={item}
-                    key={item.uid ? item.uid : item.label}
-                    removeItem={removeItem}
-                    isDialogOpen={Boolean(dialogItem)}
-                    handleContextMenu={handleDialogOpen}
-                  />
-                )
-            )}
+            <ReactList
+                itemRenderer={(index, key) => {
+                  const item = items[index];
+                  return item.isDivider ? (
+                    <Divider key={`divider-${index}`} />
+                  ) : (
+                    <ViewListItem
+                      item={item}
+                      key={item.uid ? item.uid : item.label}
+                      removeItem={removeItem}
+                      isDialogOpen={Boolean(dialogItem)}
+                      handleContextMenu={handleDialogOpen}
+                    />
+                  );
+                }}
+                length={items.length}
+                type='uniform'
+                useTranslate3d
+            />
           </List>
         ) : (
           <div
