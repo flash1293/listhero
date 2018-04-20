@@ -236,7 +236,7 @@ export const ViewList = ({
                   );
                 }}
                 length={items.length}
-                type='uniform'
+                type='simple'
                 useTranslate3d
             />
           </List>
