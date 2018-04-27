@@ -9,7 +9,6 @@ import {
   SortableElement,
   SortableHandle
 } from "react-sortable-hoc";
-import ReactList from 'react-list';
 import IconButton from "material-ui/IconButton";
 import ArrowBack from "material-ui-icons/ArrowBack";
 import DragHandle from "material-ui-icons/DragHandle";
@@ -18,7 +17,7 @@ import Eye from "material-ui-icons/RemoveRedEye";
 import Add from "material-ui-icons/Add";
 import { connect } from "react-redux";
 import compose from "ramda/src/compose";
-import { withHandlers, pure } from "recompose";
+import { withHandlers, pure, mapProps } from "recompose";
 import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
 import { Shortcuts } from "react-shortcuts";
@@ -58,7 +57,6 @@ const SortableDragHandle = SortableHandle(() => (
 ));
 
 const SortableItem = compose(
-  pure,
   SortableElement,
   withHandlers(() => ({
     onRemove: ({ onRemove, item }) => e => {
@@ -111,7 +109,9 @@ const SortableItem = compose(
           break;
       }
     }
-  }))
+  })),
+  mapProps(({ key, index, itemIndex, ...other }) => other),
+  pure
 )(({ item, onRemove, onIncrease, onDecrease, handleShortcuts, onClick }) => {
   return (
     <Shortcuts
@@ -171,33 +171,37 @@ const SortableItem = compose(
   );
 });
 
-const SortableList = pure((SortableContainer(
-  ({ items, onClick, onIncrease, onDecrease, onRemove, onSortEnd, onMove }) => {
-    return (
-      <List style={{ marginBottom: 60 }}>
-        <ReactList
-            itemRenderer={(index, key) => {
-              const item = items[index];
-              return (<SortableItem
-                key={key}
-                index={index}
-                itemIndex={index}
-                onClick={onClick}
-                onRemove={onRemove}
-                onIncrease={onIncrease}
-                onDecrease={onDecrease}
-                onMove={onMove}
-                item={item}
-              />);
-            }}
-            length={items.length}
-            type='simple'
-            useTranslate3d
-        />
-      </List>
-    );
-  }
-)));
+const SortableList = pure(
+  SortableContainer(
+    ({
+      items,
+      onClick,
+      onIncrease,
+      onDecrease,
+      onRemove,
+      onSortEnd,
+      onMove
+    }) => {
+      return (
+        <List style={{ marginBottom: 60 }}>
+          {items.map((item, index) => (
+            <SortableItem
+              key={item.uid ? item.uid : item.label}
+              index={index}
+              itemIndex={index}
+              onClick={onClick}
+              onRemove={onRemove}
+              onIncrease={onIncrease}
+              onDecrease={onDecrease}
+              onMove={onMove}
+              item={item}
+            />
+          ))}
+        </List>
+      );
+    }
+  )
+);
 
 export const EditList = ({
   list,

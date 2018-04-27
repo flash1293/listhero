@@ -17,7 +17,6 @@ import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
 import routerContext from "../components/RouterContext";
 import { Shortcuts } from "react-shortcuts";
-import ReactList from 'react-list';
 
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import editDialog from "../components/EditDialog";
@@ -220,25 +219,20 @@ export const ViewList = ({
       >
         {items.length > 0 ? (
           <List style={{ marginBottom: 60 }}>
-            <ReactList
-                itemRenderer={(index, key) => {
-                  const item = items[index];
-                  return item.isDivider ? (
-                    <Divider key={`divider-${index}`} />
-                  ) : (
-                    <ViewListItem
-                      item={item}
-                      key={item.uid ? item.uid : item.label}
-                      removeItem={removeItem}
-                      isDialogOpen={Boolean(dialogItem)}
-                      handleContextMenu={handleDialogOpen}
-                    />
-                  );
-                }}
-                length={items.length}
-                type='simple'
-                useTranslate3d
-            />
+            {items.map(
+              (item, index) =>
+                item.isDivider ? (
+                  <Divider key={`divider-${index}`} />
+                ) : (
+                  <ViewListItem
+                    item={item}
+                    key={item.uid ? item.uid : item.label}
+                    removeItem={removeItem}
+                    isDialogOpen={Boolean(dialogItem)}
+                    handleContextMenu={handleDialogOpen}
+                  />
+                )
+            )}
           </List>
         ) : (
           <div
