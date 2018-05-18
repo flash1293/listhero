@@ -32,7 +32,7 @@ export const Categories = ({
         <IconButton onClick={router.history.goBack} color="inherit">
           <ArrowBack />
         </IconButton>
-        <Typography type="title" color="inherit">
+        <Typography variant="title" color="inherit">
           Kategorien
         </Typography>
       </Toolbar>

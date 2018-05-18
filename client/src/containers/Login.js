@@ -29,7 +29,7 @@ const Login = ({
   <div>
     <AppBar position="static" color="primary">
       <Toolbar>
-        <Typography type="title" color="inherit">
+        <Typography variant="title" color="inherit">
           Konto-Synchronisierung
         </Typography>
       </Toolbar>

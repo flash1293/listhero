@@ -135,7 +135,7 @@ export const Lists = ({
           <MenuIcon />
         </IconButton>
         <Logo inverted showSyncMarker={!merged} />
-        <Typography type="title" color="inherit" style={{ flex: 1 }}>
+        <Typography variant="title" color="inherit" style={{ flex: 1 }}>
           Alle Listen
         </Typography>
         <IconButton

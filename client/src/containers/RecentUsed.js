@@ -22,7 +22,7 @@ export const RecentUsed = ({ listId, list: { recentItems }, router }) => (
         <IconButton onClick={router.history.goBack} color="inherit">
           <ArrowBack />
         </IconButton>
-        <Typography type="title" color="inherit">
+        <Typography variant="title" color="inherit">
           Zuletzt verwendet
         </Typography>
       </Toolbar>
