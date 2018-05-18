@@ -284,7 +284,11 @@ export default compose(
   lifecycle({
     componentDidMount() {
       this.noSleep = new NoSleep();
-      this.noSleep.enable();
+      const enableNoSleep = () => {
+        this.noSleep.enable();
+        document.removeEventListener('click', enableNoSleep, false);
+      };
+      document.addEventListener('click', enableNoSleep, false);
     },
     componentWillUnmount() {
       this.noSleep.disable();
