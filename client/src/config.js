@@ -1,7 +1,7 @@
 import uuid from "uuid/v4";
 import storage from "redux-persist/es/storage";
 import sessionStorage from 'redux-persist/es/storage/session';
-import createCompressor from "redux-persist-transform-compress";
+import createCompressor from "./redux/onlyDecompress";
 
 // cleans the client-state completely on update (including credentials)
 export const APP_VERSION = 5;
