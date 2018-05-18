@@ -124,7 +124,7 @@ const SortableItem = compose(
         ref={el => {
           window.el = el;
         }}
-        style={item.marker ? { backgroundColor: "#eee" } : { padding: 0 }}
+        style={item.marker ? { backgroundColor: "#eee" } : { padding: 0, wordBreak: 'break-word' }}
         onClick={item.marker ? undefined : onClick}
         button={!item.marker}
         tabIndex={-1}

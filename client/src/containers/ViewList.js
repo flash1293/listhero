@@ -76,7 +76,9 @@ const ViewListItem = compose(
                 paddingTop: 5,
                 paddingBottom: 5
               }
-            : undefined
+            : {
+              wordBreak: 'break-word'
+            }
         }
         button={!item.marker}
         onClick={item.marker ? undefined : onRemoveDelayed}
