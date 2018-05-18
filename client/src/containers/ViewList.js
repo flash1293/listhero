@@ -212,7 +212,7 @@ export const ViewList = ({
       <div
         style={{
           marginBottom: 60,
-          flex: "5 1 auto",
+          flex: "5 1 0",
           display: "flex",
           justifyContent: "center"
         }}

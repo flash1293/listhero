@@ -294,7 +294,7 @@ export const EditList = ({
             ))}
           </List>
         )}
-      <div style={{ flex: "5 1 auto" }}>
+      <div style={{ flex: "5 1 0" }}>
         <AddForm
           placeholder="Neuer Eintrag"
           recentItems={list.recentItems}
