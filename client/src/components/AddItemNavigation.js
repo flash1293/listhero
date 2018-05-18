@@ -1,7 +1,7 @@
 import React from "react";
-import ActionHistory from "material-ui-icons/History";
+import ActionHistory from "@material-ui/icons/History";
 import { Link } from "react-router-dom";
-import Button from "material-ui/Button";
+import Button from "@material-ui/core/Button";
 
 export default ({ uid }) => (
   <React.Fragment>

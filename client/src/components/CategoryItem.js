@@ -1,9 +1,9 @@
 import React from "react";
 import { withHandlers } from "recompose";
-import List, { ListItem, ListItemText } from "material-ui/List";
-import Collapse from "material-ui/transitions/Collapse";
-import ExpandLess from "material-ui-icons/ExpandLess";
-import ExpandMore from "material-ui-icons/ExpandMore";
+import List, { ListItem, ListItemText } from "@material-ui/core/List";
+import Collapse from "@material-ui/core/Collapse";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
 
 import AddableItem from "./AddableItem";
 

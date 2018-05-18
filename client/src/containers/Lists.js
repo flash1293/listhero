@@ -5,25 +5,25 @@ import {
   SortableElement,
   SortableHandle
 } from "react-sortable-hoc";
-import AppBar from "material-ui/AppBar";
-import Toolbar from "material-ui/Toolbar";
-import Typography from "material-ui/Typography";
-import IconButton from "material-ui/IconButton";
-import Drawer from "material-ui/Drawer";
-import Add from "material-ui-icons/Add";
-import LinkIcon from "material-ui-icons/Link";
-import PhotoCameraIcon from "material-ui-icons/PhotoCamera";
-import ChevronLeft from "material-ui-icons/ChevronLeft";
-import MenuIcon from "material-ui-icons/Menu";
-import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
-import { CircularProgress } from "material-ui/Progress";
-import Paper from "material-ui/Paper";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import Drawer from "@material-ui/core/Drawer";
+import Add from "@material-ui/icons/Add";
+import LinkIcon from "@material-ui/icons/Link";
+import PhotoCameraIcon from "@material-ui/icons/PhotoCamera";
+import ChevronLeft from "@material-ui/icons/ChevronLeft";
+import MenuIcon from "@material-ui/icons/Menu";
+import List, { ListItem, ListItemIcon, ListItemText } from "@material-ui/core/List";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Paper from "@material-ui/core/Paper";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withHandlers } from "recompose";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import SyncIcon from "material-ui-icons/Sync";
-import AccountCircleIcon from "material-ui-icons/AccountCircle";
+import SyncIcon from "@material-ui/icons/Sync";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import { Logo } from "../components/Logo";
@@ -42,8 +42,8 @@ import buildHandlers, {
   refresh,
   logout
 } from "../redux/actions";
-import ListItemSecondaryAction from "material-ui/List/ListItemSecondaryAction";
-import Divider from "material-ui/Divider/Divider";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import Divider from "@material-ui/core/Divider/Divider";
 import { REDUCER_VERSION } from "../config";
 
 const SortableDragHandle = SortableHandle(({ name }) => (

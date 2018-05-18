@@ -1,10 +1,10 @@
 import React from "react";
-import AppBar from "material-ui/AppBar";
-import Toolbar from "material-ui/Toolbar";
-import Typography from "material-ui/Typography";
-import List from "material-ui/List";
-import IconButton from "material-ui/IconButton";
-import ArrowBack from "material-ui-icons/ArrowBack";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import List from "@material-ui/core/List";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowBack from "@material-ui/icons/ArrowBack";
 import { connect } from "react-redux";
 import { compose } from "redux";
 

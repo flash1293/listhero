@@ -1,5 +1,5 @@
 import React from "react";
-import ActionList from "material-ui-icons/List";
+import ActionList from "@material-ui/icons/List";
 import emojiRegex from "emoji-regex";
 
 const isEmoji = str => !!emojiRegex().exec(getWholeChar(str, 0));

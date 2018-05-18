@@ -1,5 +1,5 @@
 import React from "react";
-import SyncIcon from "material-ui-icons/Sync";
+import SyncIcon from "@material-ui/icons/Sync";
 
 import logoSvgInverted from "../svg/logo_inverted.svg";
 import logoSvg from "../svg/logo.svg";

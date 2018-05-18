@@ -1,9 +1,9 @@
 import React from "react";
-import Input, { InputAdornment } from "material-ui/Input";
-import List from "material-ui/List";
-import { FormControl } from "material-ui/Form";
-import IconButton from "material-ui/IconButton";
-import Send from "material-ui-icons/Send";
+import Input, { InputAdornment } from "@material-ui/core/Input";
+import List from "@material-ui/core/List";
+import FormControl from "@material-ui/core/FormControl";
+import IconButton from "@material-ui/core/IconButton";
+import Send from "@material-ui/icons/Send";
 import { withState, withHandlers } from "recompose";
 import compose from "ramda/src/compose";
 import { Shortcuts } from "react-shortcuts";

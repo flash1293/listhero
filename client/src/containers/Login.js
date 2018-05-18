@@ -1,17 +1,17 @@
 import React from "react";
-import AppBar from "material-ui/AppBar";
-import Toolbar from "material-ui/Toolbar";
-import Typography from "material-ui/Typography";
-import Button from "material-ui/Button";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
-import { CircularProgress } from "material-ui/Progress";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { Redirect } from "react-router";
 import { branch, lifecycle, withHandlers } from "recompose";
 import { compose } from "redux";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import LinkIcon from "material-ui-icons/Link";
-import ErrorIcon from "material-ui-icons/Error";
-import SyncIcon from "material-ui-icons/Sync";
+import LinkIcon from "@material-ui/icons/Link";
+import ErrorIcon from "@material-ui/icons/Error";
+import SyncIcon from "@material-ui/icons/Sync";
 import aes from "aes-js";
 
 import buildHandlers, { requestLogin, createLogin } from "../redux/actions";

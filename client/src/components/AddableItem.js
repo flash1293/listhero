@@ -2,8 +2,8 @@ import React from "react";
 import { withHandlers } from "recompose";
 import { connect } from "react-redux";
 import buildHandlers, { addStackableItem } from "../redux/actions";
-import { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
-import Add from "material-ui-icons/Add";
+import { ListItem, ListItemIcon, ListItemText } from "@material-ui/core/List";
+import Add from "@material-ui/icons/Add";
 import compose from "ramda/src/compose";
 
 export const AddableItem = ({ entry, inset, addItem }) => (

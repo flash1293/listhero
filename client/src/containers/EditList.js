@@ -1,20 +1,20 @@
 import React from "react";
-import AppBar from "material-ui/AppBar";
-import Toolbar from "material-ui/Toolbar";
-import Typography from "material-ui/Typography";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
-import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
+import List, { ListItem, ListItemIcon, ListItemText } from "@material-ui/core/List";
 import {
   SortableContainer,
   SortableElement,
   SortableHandle
 } from "react-sortable-hoc";
-import IconButton from "material-ui/IconButton";
-import ArrowBack from "material-ui-icons/ArrowBack";
-import DragHandle from "material-ui-icons/DragHandle";
-import ContentRemove from "material-ui-icons/Remove";
-import Eye from "material-ui-icons/RemoveRedEye";
-import Add from "material-ui-icons/Add";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowBack from "@material-ui/icons/ArrowBack";
+import DragHandle from "@material-ui/icons/DragHandle";
+import ContentRemove from "@material-ui/icons/Remove";
+import Eye from "@material-ui/icons/RemoveRedEye";
+import Add from "@material-ui/icons/Add";
 import { connect } from "react-redux";
 import compose from "ramda/src/compose";
 import { withHandlers, pure, mapProps } from "recompose";

@@ -1,7 +1,7 @@
 import React from "react";
-import Dialog, { DialogActions, DialogContent } from "material-ui/Dialog";
-import Button from "material-ui/Button";
-import TextField from "material-ui/TextField";
+import Dialog, { DialogActions, DialogContent } from "@material-ui/core/Dialog";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 import inputForm from "./InputForm";
 
 export default inputForm(
