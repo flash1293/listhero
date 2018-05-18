@@ -12,11 +12,12 @@ import ArrowBack from "material-ui-icons/ArrowBack";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import LongPress from "@johannes.reuter/react-long";
-import { withHandlers, pure } from "recompose";
+import { withHandlers, pure, lifecycle } from "recompose";
 import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
 import routerContext from "../components/RouterContext";
 import { Shortcuts } from "react-shortcuts";
+import NoSleep from "nosleep.js";
 
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import editDialog from "../components/EditDialog";
@@ -280,6 +281,15 @@ export default compose(
   windowSize,
   preferredView("shop"),
   routerContext,
+  lifecycle({
+    componentDidMount() {
+      this.noSleep = new NoSleep();
+      this.noSleep.enable();
+    },
+    componentWillUnmount() {
+      this.noSleep.disable();
+    }
+  }),
   withHandlers({
     handleShortcuts: ({ router: { history }, listId, lists }) => action => {
       switch (action) {

@@ -10,8 +10,10 @@
     "emoji-regex": "^6.5.1",
     "i18next": "^10.2.2",
     "i18next-browser-languagedetector": "^2.1.0",
+    "lz-string": "^1.4.4",
     "material-ui": "^v1.0.0-beta.23",
     "material-ui-icons": "^1.0.0-beta.17",
+    "nosleep.js": "^0.7.0",
     "qrcode.react": "^0.7.2",
     "ramda": "^0.25.0",
     "react": "^16.2.0",
@@ -28,7 +30,6 @@
     "recompose": "^0.26.0",
     "redux": "^3.7.2",
     "redux-persist": "^5.4.0",
-    "lz-string": "^1.4.4",
     "reselect": "^3.0.1",
     "source-map-explorer": "^1.5.0",
     "uuid": "^3.1.0"
