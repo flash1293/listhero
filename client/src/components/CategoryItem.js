@@ -1,6 +1,8 @@
 import React from "react";
 import { withHandlers } from "recompose";
-import List, { ListItem, ListItemText } from "@material-ui/core/List";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 import Collapse from "@material-ui/core/Collapse";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";

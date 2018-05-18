@@ -15,7 +15,11 @@ import LinkIcon from "@material-ui/icons/Link";
 import PhotoCameraIcon from "@material-ui/icons/PhotoCamera";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import MenuIcon from "@material-ui/icons/Menu";
-import List, { ListItem, ListItemIcon, ListItemText } from "@material-ui/core/List";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Paper from "@material-ui/core/Paper";
 import { connect } from "react-redux";
@@ -42,7 +46,6 @@ import buildHandlers, {
   refresh,
   logout
 } from "../redux/actions";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Divider from "@material-ui/core/Divider/Divider";
 import { REDUCER_VERSION } from "../config";
 
@@ -124,8 +127,8 @@ export const Lists = ({
     <AppBar position="static" color="primary">
       <Toolbar>
         <IconButton
-          style={{ marginLeft: -12, marginRight: 10 }}
-          color="contrast"
+          style={{ marginLeft: -12, marginRight: 10, color: 'white' }}
+          color="default"
           aria-label="Menu"
           onClick={toggleDrawer}
         >

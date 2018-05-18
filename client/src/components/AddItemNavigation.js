@@ -9,7 +9,7 @@ export default ({ uid }) => (
       style={{ position: "fixed", right: 15, bottom: 15 }}
       to={`/lists/${uid}/entries/last-used`}
     >
-      <Button fab color="primary" aria-label="add">
+      <Button variant="fab" color="primary" aria-label="add">
         <ActionHistory />
       </Button>
     </Link>

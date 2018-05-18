@@ -4,7 +4,10 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
-import List, { ListItem, ListItemIcon, ListItemText } from "@material-ui/core/List";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
 import IconButton from "@material-ui/core/IconButton";
 import Edit from "@material-ui/icons/Edit";
 import DoneAll from "@material-ui/icons/DoneAll";
@@ -221,7 +224,7 @@ export const ViewList = ({
         }}
       >
         {items.length > 0 ? (
-          <List style={{ marginBottom: 60 }}>
+          <List style={{ marginBottom: 60, flex: "1" }}>
             {items.map(
               (item, index) =>
                 item.isDivider ? (
