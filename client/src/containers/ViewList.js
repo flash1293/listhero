@@ -20,7 +20,7 @@ import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
 import routerContext from "../components/RouterContext";
 import { Shortcuts } from "react-shortcuts";
-import NoSleep from "nosleep.js";
+import NoSleep from "../nosleep.js";
 
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import editDialog from "../components/EditDialog";
