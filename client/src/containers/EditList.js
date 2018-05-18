@@ -1,20 +1,23 @@
 import React from "react";
-import AppBar from "material-ui/AppBar";
-import Toolbar from "material-ui/Toolbar";
-import Typography from "material-ui/Typography";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
-import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
 import {
   SortableContainer,
   SortableElement,
   SortableHandle
 } from "react-sortable-hoc";
-import IconButton from "material-ui/IconButton";
-import ArrowBack from "material-ui-icons/ArrowBack";
-import DragHandle from "material-ui-icons/DragHandle";
-import ContentRemove from "material-ui-icons/Remove";
-import Eye from "material-ui-icons/RemoveRedEye";
-import Add from "material-ui-icons/Add";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowBack from "@material-ui/icons/ArrowBack";
+import DragHandle from "@material-ui/icons/DragHandle";
+import ContentRemove from "@material-ui/icons/Remove";
+import Eye from "@material-ui/icons/RemoveRedEye";
+import Add from "@material-ui/icons/Add";
 import { connect } from "react-redux";
 import compose from "ramda/src/compose";
 import { withHandlers, pure, mapProps } from "recompose";
@@ -235,7 +238,7 @@ export const EditList = ({
             <ArrowBack />
           </IconButton>
         </Link>
-        <Typography type="title" color="inherit" style={{ flex: 1 }}>
+        <Typography variant="title" color="inherit" style={{ flex: 1 }}>
           {list.name}
         </Typography>
         <Link tabIndex={-1} to={`/lists/${listId}/entries`}>
@@ -294,7 +297,7 @@ export const EditList = ({
             ))}
           </List>
         )}
-      <div style={{ flex: "5 1 0" }}>
+      <div style={{ flex: "5 1 0", position: "relative" }}>
         <AddForm
           placeholder="Neuer Eintrag"
           recentItems={list.recentItems}

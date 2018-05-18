@@ -1,10 +1,11 @@
 import React from "react";
-import MoreVertIcon from "material-ui-icons/MoreVert";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 import compose from "ramda/src/compose";
 import { withState, withHandlers, mapProps } from "recompose";
 import { connect } from "react-redux";
-import IconButton from "material-ui/IconButton";
-import Menu, { MenuItem } from "material-ui/Menu";
+import IconButton from "@material-ui/core/IconButton";
+import Menu from "@material-ui/core/Menu";
+import  MenuItem  from "@material-ui/core/MenuItem";
 import { withRouter } from "react-router-dom";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { translate } from "react-i18next";
@@ -18,7 +19,7 @@ import buildHandlers, {
 } from "../redux/actions";
 import ChangeNameDialog from "../components/ChangeNameDialog";
 import editDialog from "../components/EditDialog";
-import Divider from "material-ui/Divider/Divider";
+import Divider from "@material-ui/core/Divider/Divider";
 
 export default compose(
   connect(

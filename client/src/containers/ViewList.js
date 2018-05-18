@@ -1,14 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import AppBar from "material-ui/AppBar";
-import Toolbar from "material-ui/Toolbar";
-import Divider from "material-ui/Divider";
-import Typography from "material-ui/Typography";
-import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
-import IconButton from "material-ui/IconButton";
-import Edit from "material-ui-icons/Edit";
-import DoneAll from "material-ui-icons/DoneAll";
-import ArrowBack from "material-ui-icons/ArrowBack";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Divider from "@material-ui/core/Divider";
+import Typography from "@material-ui/core/Typography";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import IconButton from "@material-ui/core/IconButton";
+import Edit from "@material-ui/icons/Edit";
+import DoneAll from "@material-ui/icons/DoneAll";
+import ArrowBack from "@material-ui/icons/ArrowBack";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import LongPress from "@johannes.reuter/react-long";
@@ -17,7 +20,7 @@ import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
 import routerContext from "../components/RouterContext";
 import { Shortcuts } from "react-shortcuts";
-import NoSleep from "nosleep.js";
+import NoSleep from "../nosleep.js";
 
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import editDialog from "../components/EditDialog";
@@ -153,7 +156,7 @@ export const ViewList = ({
             <ArrowBack />
           </IconButton>
         </Link>
-        <Typography type="title" color="inherit" style={{ flex: 1 }}>
+        <Typography variant="title" color="inherit" style={{ flex: 1 }}>
           {list.name}
         </Typography>
         <Link tabIndex={-1} to={`/lists/${listId}/entries/edit`}>
@@ -221,7 +224,7 @@ export const ViewList = ({
         }}
       >
         {items.length > 0 ? (
-          <List style={{ marginBottom: 60 }}>
+          <List style={{ marginBottom: 60, flex: "1" }}>
             {items.map(
               (item, index) =>
                 item.isDivider ? (

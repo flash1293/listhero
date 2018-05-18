@@ -1,9 +1,9 @@
 import React from "react";
-import AppBar from "material-ui/AppBar";
-import Toolbar from "material-ui/Toolbar";
-import Typography from "material-ui/Typography";
-import IconButton from "material-ui/IconButton";
-import ArrowBack from "material-ui-icons/ArrowBack";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowBack from "@material-ui/icons/ArrowBack";
 import { compose } from "redux";
 import QRCode from "qrcode.react";
 
@@ -18,7 +18,7 @@ export const SyncQrCode = ({ syncLink, router }) => (
         <IconButton onClick={router.history.goBack} color="inherit">
           <ArrowBack />
         </IconButton>
-        <Typography type="title" color="inherit">
+        <Typography variant="title" color="inherit">
           Sync-Link
         </Typography>
       </Toolbar>
