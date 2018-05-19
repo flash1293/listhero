@@ -1,5 +1,4 @@
 import useWith from "ramda/src/useWith";
-import identity from "ramda/src/identity";
 
 const stackRegex = /(\d+) (.+)/;
 
