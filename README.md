@@ -1,6 +1,5 @@
-<img src="">
 <h1 align="center">
-  <img src="https://raw.githubusercontent.com/flash1293/ekofe/master/client/src/svg/logo.svg" alt="ekofe" title="ekofe" width="300"><br />
+  <img src="https://raw.githubusercontent.com/flash1293/ekofe/master/logo.png" alt="ekofe" title="ekofe" width="300" /><br />
   Ekofe
 </h1>
 
