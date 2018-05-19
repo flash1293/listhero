@@ -9,7 +9,7 @@ branches:
 services:
  - docker
 
-install: cd client && yarn install && yarn build && cd ..
+install: cd client && yarn install && && yarn test && yarn build && cd ..
 script:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker build -t ekofe-client client 

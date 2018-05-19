@@ -14,11 +14,12 @@ const parseStackedItem = item => {
 };
 
 export const isStacked = item => stackRegex.test(item);
-export const stackItemIndex = useWith(
-  (list, { item, isStacked, label }) =>
-    list.findIndex(i => i.name === item || (isStacked && label === item)),
-  [identity, parseStackedItem]
-);
+export const stackItemIndex = (list, newItem) =>
+  list.findIndex(i => {
+    const parsedI = parseStackedItem(i.name);
+    return parsedI.isStacked ? parsedI.label === newItem : i.name === newItem;
+  });
+
 export const increaseStack = useWith(
   ({ item, isStacked, count, label }) =>
     isStacked ? `${count + 1} ${label}` : `2 ${item}`,

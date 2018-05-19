@@ -1,0 +1,433 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`listReducer add item add item to already populated list 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "Test item 2",
+        "stacked": false,
+        "uid": "1234",
+      },
+      Object {
+        "name": "item 1",
+        "stacked": false,
+        "uid": "676767",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer add item add item to empty list 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "Test item",
+        "stacked": false,
+        "uid": "1234",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer add item add item to list which recently contained that item 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "Test item",
+        "stacked": false,
+        "uid": "1234",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [
+      "something else",
+    ],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer add item add item with same name to already populated list 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 1",
+        "stacked": false,
+        "uid": "1234",
+      },
+      Object {
+        "name": "item 1",
+        "stacked": false,
+        "uid": "676767",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer add item add item with same name to list already populated with a stacked item 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "thing",
+        "stacked": false,
+        "uid": "1234",
+      },
+      Object {
+        "name": "2 thing",
+        "stacked": true,
+        "uid": "676767",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer add item add stackable item to list with a matching already stacked item 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "3 thing",
+        "stacked": true,
+        "uid": "676767",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer add item add stackable item to list with a matching item 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "2 thing",
+        "stacked": true,
+        "uid": "676767",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer add item add stackable item to list without matching items 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "Test item 2",
+        "stacked": false,
+        "uid": "1234",
+      },
+      Object {
+        "name": "item 1",
+        "stacked": false,
+        "uid": "676767",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer add list add list to empty state 1`] = `
+Array [
+  Object {
+    "items": Array [],
+    "name": "Test",
+    "recentItems": Array [],
+    "uid": "1234",
+  },
+]
+`;
+
+exports[`listReducer add list add second list 1`] = `
+Array [
+  Object {
+    "items": Array [],
+    "name": "Test 2",
+    "recentItems": Array [],
+    "uid": "1234",
+  },
+  Object {
+    "items": Array [],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer decrease item decrease stacked item 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "2 thing",
+        "stacked": true,
+        "uid": "676767",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer decrease item decrease stacked item with stack-size of 2 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "thing",
+        "stacked": false,
+        "uid": "676767",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer increase item increase stacked item 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "3 thing",
+        "stacked": true,
+        "uid": "676767",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer increase item increase unstacked item 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "2 thing",
+        "stacked": true,
+        "uid": "676767",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer move item move item to beginning 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 2",
+        "stacked": false,
+        "uid": "2",
+      },
+      Object {
+        "name": "item 1",
+        "stacked": false,
+        "uid": "1",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "1",
+  },
+]
+`;
+
+exports[`listReducer move item move item to center 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 2",
+        "stacked": false,
+        "uid": "2",
+      },
+      Object {
+        "name": "item 1",
+        "stacked": false,
+        "uid": "1",
+      },
+      Object {
+        "name": "item 3",
+        "stacked": false,
+        "uid": "3",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "1",
+  },
+]
+`;
+
+exports[`listReducer move item move item to end 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 2",
+        "stacked": false,
+        "uid": "2",
+      },
+      Object {
+        "name": "item 1",
+        "stacked": false,
+        "uid": "1",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "1",
+  },
+]
+`;
+
+exports[`listReducer move item move item to too high index 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 2",
+        "stacked": false,
+        "uid": "2",
+      },
+      Object {
+        "name": "item 3",
+        "stacked": false,
+        "uid": "3",
+      },
+      Object {
+        "name": "item 1",
+        "stacked": false,
+        "uid": "1",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "1",
+  },
+]
+`;
+
+exports[`listReducer move list move list to beginning 1`] = `
+Array [
+  Object {
+    "items": Array [],
+    "name": "Test 2",
+    "recentItems": Array [],
+    "uid": "2",
+  },
+  Object {
+    "items": Array [],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "1",
+  },
+]
+`;
+
+exports[`listReducer move list move list to center 1`] = `
+Array [
+  Object {
+    "items": Array [],
+    "name": "Test 2",
+    "recentItems": Array [],
+    "uid": "2",
+  },
+  Object {
+    "items": Array [],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "1",
+  },
+  Object {
+    "items": Array [],
+    "name": "Test 3",
+    "recentItems": Array [],
+    "uid": "3",
+  },
+]
+`;
+
+exports[`listReducer move list move list to end 1`] = `
+Array [
+  Object {
+    "items": Array [],
+    "name": "Test 2",
+    "recentItems": Array [],
+    "uid": "2",
+  },
+  Object {
+    "items": Array [],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "1",
+  },
+]
+`;
+
+exports[`listReducer move list move list to too high index 1`] = `
+Array [
+  Object {
+    "items": Array [],
+    "name": "Test 2",
+    "recentItems": Array [],
+    "uid": "2",
+  },
+  Object {
+    "items": Array [],
+    "name": "Test 3",
+    "recentItems": Array [],
+    "uid": "3",
+  },
+  Object {
+    "items": Array [],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "1",
+  },
+]
+`;
