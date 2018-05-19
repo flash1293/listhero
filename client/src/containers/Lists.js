@@ -127,7 +127,7 @@ export const Lists = ({
     <AppBar position="static" color="primary">
       <Toolbar>
         <IconButton
-          style={{ marginLeft: -12, marginRight: 10, color: 'white' }}
+          style={{ marginLeft: -12, marginRight: 10, color: "white" }}
           color="default"
           aria-label="Menu"
           onClick={toggleDrawer}
@@ -155,28 +155,30 @@ export const Lists = ({
       useWindowAsScrollContainer
       lockAxis="y"
     />
-    {lists.length === 0 && merged && (
-      <Paper style={{ padding: "20px" }} elevation={2}>
-        <Typography>
-          Noch keine Listen angelegt.<br />
-          Tippe rechts oben "+", um eine Liste hinzuzufügen.<br />
-          <br />
-          Einträge können über mehrere Geräte synchronisiert werden.<br />
-          Öffne Links oben das Menü, um den Sync-Code zu kopieren.
-        </Typography>
-      </Paper>
-    )}
-    {lists.length === 0 && !merged && (
-      <CircularProgress
-        style={{
-          margin: "0 auto",
-          display: "block",
-          marginTop: 50
-        }}
-        size={80}
-        thickness={4}
-      />
-    )}
+    {lists.length === 0 &&
+      merged && (
+        <Paper style={{ padding: "20px" }} elevation={2}>
+          <Typography>
+            Noch keine Listen angelegt.<br />
+            Tippe rechts oben "+", um eine Liste hinzuzufügen.<br />
+            <br />
+            Einträge können über mehrere Geräte synchronisiert werden.<br />
+            Öffne Links oben das Menü, um den Sync-Code zu kopieren.
+          </Typography>
+        </Paper>
+      )}
+    {lists.length === 0 &&
+      !merged && (
+        <CircularProgress
+          style={{
+            margin: "0 auto",
+            display: "block",
+            marginTop: 50
+          }}
+          size={80}
+          thickness={4}
+        />
+      )}
     {isDialogOpen && (
       <ChangeNameDialog
         initialText=""

@@ -28,7 +28,7 @@ const checkAndUpdateSeed = seed => {
 
 let aes256Instance;
 function getAesInstance() {
-  if(!aes256Instance) {
+  if (!aes256Instance) {
     return aes256().then(instance => {
       aes256Instance = instance;
       return instance;
@@ -40,7 +40,7 @@ function getAesInstance() {
 
 const encrypt = (crypt, data, key) => {
   const seed = getRandomData(128);
-  crypt.init(key, seed, 'CTR');
+  crypt.init(key, seed, "CTR");
   return `0x${aes.utils.hex.fromBytes(seed)};${compose(
     aes.utils.hex.fromBytes,
     crypt.encrypt,
@@ -50,7 +50,7 @@ const encrypt = (crypt, data, key) => {
 };
 
 function getSeed(seed) {
-  if(seed.startsWith('0x')) {
+  if (seed.startsWith("0x")) {
     return aes.utils.hex.toBytes(seed.substring(2));
   } else {
     return Number(seed);
@@ -60,7 +60,7 @@ function getSeed(seed) {
 const decrypt = (crypt, data, key) => {
   const [seed, seededData] = data.split(";");
   const convertedSeed = seededData ? getSeed(seed) : 1;
-  if(Number.isInteger(convertedSeed)) {
+  if (Number.isInteger(convertedSeed)) {
     // legacy action, decrypt with aes-js
     const legacyCrypt = new aes.ModeOfOperation.ctr(
       key,
@@ -74,7 +74,7 @@ const decrypt = (crypt, data, key) => {
     )(seededData ? seededData : data);
   } else {
     // modern action, decrypt with aes-wasm
-    crypt.init(key, new Uint8Array(convertedSeed), 'CTR');
+    crypt.init(key, new Uint8Array(convertedSeed), "CTR");
     return compose(
       unescape,
       aes.utils.utf8.fromBytes,
@@ -85,37 +85,43 @@ const decrypt = (crypt, data, key) => {
 };
 
 const postActionCreator = store => req =>
-  getAesInstance()
-    .then(crypt => fetch(`${API_PROTOCOL}//${API_HOST}/api`, {
-    method: "post",
-    headers: {
-      Accept: "application/json, text/plain, */*",
-      "Content-Type": "application/json",
-      "X-Sync-Session": clientSession,
-      Authorization: `Bearer ${store.getState().user.token}`
-    },
-    body: JSON.stringify({
-      ...req,
-      actions: req.actions.map(action =>
-        encrypt(crypt, JSON.stringify(action), store.getState().user.encryptionKey)
-      )
+  getAesInstance().then(crypt =>
+    fetch(`${API_PROTOCOL}//${API_HOST}/api`, {
+      method: "post",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json",
+        "X-Sync-Session": clientSession,
+        Authorization: `Bearer ${store.getState().user.token}`
+      },
+      body: JSON.stringify({
+        ...req,
+        actions: req.actions.map(action =>
+          encrypt(
+            crypt,
+            JSON.stringify(action),
+            store.getState().user.encryptionKey
+          )
+        )
+      })
     })
-  })
-    .then(res => {
-      if (res.status === 401) {
-        throw new Error("unauthorized");
-      }
-      return res.json();
-    })
-    .then(jsonRes => {
-      if (jsonRes.replayLog) {
-        jsonRes.replayLog = jsonRes.replayLog.map(action =>
-          JSON.parse(decrypt(crypt, action, store.getState().user.encryptionKey))
-        );
-      }
-      return jsonRes;
-    }))
-  ;
+      .then(res => {
+        if (res.status === 401) {
+          throw new Error("unauthorized");
+        }
+        return res.json();
+      })
+      .then(jsonRes => {
+        if (jsonRes.replayLog) {
+          jsonRes.replayLog = jsonRes.replayLog.map(action =>
+            JSON.parse(
+              decrypt(crypt, action, store.getState().user.encryptionKey)
+            )
+          );
+        }
+        return jsonRes;
+      })
+  );
 
 const syncFilter = action => action.type !== "persist/REHYDRATE";
 

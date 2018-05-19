@@ -120,7 +120,9 @@ export default function reducer(state = initalState, action) {
         action.newIndex !== undefined
           ? action.newIndex
           : state.findIndex(i => i.uid === action.newId);
-      return oldIndex === -1 ? state : arrayMove(state, oldIndex, Math.min(newIndex, state.length - 1));
+      return oldIndex === -1
+        ? state
+        : arrayMove(state, oldIndex, Math.min(newIndex, state.length - 1));
     case "MOVE_ITEM":
       return replaceByMap(
         state,
@@ -135,7 +137,11 @@ export default function reducer(state = initalState, action) {
             ? list
             : {
                 ...list,
-                items: arrayMove(list.items, oldIndex, Math.min(newIndex, list.items.length - 1))
+                items: arrayMove(
+                  list.items,
+                  oldIndex,
+                  Math.min(newIndex, list.items.length - 1)
+                )
               };
         }
       );

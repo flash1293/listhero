@@ -81,8 +81,8 @@ const ViewListItem = compose(
                 paddingBottom: 5
               }
             : {
-              wordBreak: 'break-word'
-            }
+                wordBreak: "break-word"
+              }
         }
         button={!item.marker}
         onClick={item.marker ? undefined : onRemoveDelayed}
@@ -289,9 +289,9 @@ export default compose(
       this.noSleep = new NoSleep();
       const enableNoSleep = () => {
         this.noSleep.enable();
-        document.removeEventListener('click', enableNoSleep, false);
+        document.removeEventListener("click", enableNoSleep, false);
       };
-      document.addEventListener('click', enableNoSleep, false);
+      document.addEventListener("click", enableNoSleep, false);
     },
     componentWillUnmount() {
       this.noSleep.disable();

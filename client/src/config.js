@@ -1,6 +1,6 @@
 import uuid from "uuid/v4";
 import storage from "redux-persist/es/storage";
-import sessionStorage from 'redux-persist/es/storage/session';
+import sessionStorage from "redux-persist/es/storage/session";
 import createCompressor from "./redux/onlyDecompress";
 
 // cleans the client-state completely on update (including credentials)
@@ -14,7 +14,7 @@ const isThrowawayAccount = window.location.host.split(".")[0] === "throwaway";
 const compressor = createCompressor();
 export const persistConfig = {
   key: `ekofe-${APP_VERSION}`,
-  storage: (isThrowawayAccount ? sessionStorage : storage),
+  storage: isThrowawayAccount ? sessionStorage : storage,
   transforms: [compressor]
 };
 

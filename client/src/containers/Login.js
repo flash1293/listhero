@@ -24,7 +24,9 @@ const Login = ({
   submitServerPassword,
   syncLink,
   user: { requesting, username, serverPassword, failed },
-  match: { params: { username: linkDataUsername } }
+  match: {
+    params: { username: linkDataUsername }
+  }
 }) => (
   <div>
     <AppBar position="static" color="primary">
@@ -114,7 +116,9 @@ export default compose(
   withHandlers({
     loginWithLinkData: ({
       requestLogin,
-      match: { params: { username, password, encryptionKey, serverPassword } }
+      match: {
+        params: { username, password, encryptionKey, serverPassword }
+      }
     }) => () =>
       requestLogin(
         username,
@@ -146,7 +150,9 @@ export default compose(
         requestLogin,
         createLogin,
         loginWithLinkData,
-        match: { params: { username: linkDataUsername } }
+        match: {
+          params: { username: linkDataUsername }
+        }
       } = this.props;
       if (
         linkDataUsername &&

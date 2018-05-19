@@ -600,52 +600,46 @@ describe("listReducer", () => {
     });
 
     test("move item in non-existing list", () => {
-const state = [
-          {
-            items: [
-              { name: "item 1", uid: "1", stacked: false },
-              { name: "item 2", uid: "2", stacked: false },
-              { name: "item 3", uid: "3", stacked: false }
-            ],
-            name: "Test 1",
-            uid: "1",
-            recentItems: []
-          }
-        ]
-      const result = reducer(
-        state,
+      const state = [
         {
-          type: "MOVE_ITEM",
-          list: "not_existing",
-          oldId: "1",
-          newIndex: 100
+          items: [
+            { name: "item 1", uid: "1", stacked: false },
+            { name: "item 2", uid: "2", stacked: false },
+            { name: "item 3", uid: "3", stacked: false }
+          ],
+          name: "Test 1",
+          uid: "1",
+          recentItems: []
         }
-      );
+      ];
+      const result = reducer(state, {
+        type: "MOVE_ITEM",
+        list: "not_existing",
+        oldId: "1",
+        newIndex: 100
+      });
       expect(result).toEqual(state);
     });
 
     test("move non-existing item", () => {
-const state = [
-          {
-            items: [
-              { name: "item 1", uid: "1", stacked: false },
-              { name: "item 2", uid: "2", stacked: false },
-              { name: "item 3", uid: "3", stacked: false }
-            ],
-            name: "Test 1",
-            uid: "1",
-            recentItems: []
-          }
-        ]
-      const result = reducer(
-        state,
+      const state = [
         {
-          type: "MOVE_ITEM",
-          list: "1",
-          oldId: "not_existing",
-          newIndex: 100
+          items: [
+            { name: "item 1", uid: "1", stacked: false },
+            { name: "item 2", uid: "2", stacked: false },
+            { name: "item 3", uid: "3", stacked: false }
+          ],
+          name: "Test 1",
+          uid: "1",
+          recentItems: []
         }
-      );
+      ];
+      const result = reducer(state, {
+        type: "MOVE_ITEM",
+        list: "1",
+        oldId: "not_existing",
+        newIndex: 100
+      });
       expect(result).toEqual(state);
     });
   });
