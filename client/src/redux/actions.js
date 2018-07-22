@@ -51,6 +51,13 @@ export const removeItem = (dispatch, ownProps) => item =>
     item: item.uid
   });
 
+export const removeRecentlyUsedItem = (dispatch, ownProps) => item =>
+  dispatch({
+    type: "REMOVE_RECENTLY_USED_ITEM",
+    list: ownProps.listId,
+    item: item
+  });
+
 export const increaseItem = (dispatch, ownProps) => item =>
   dispatch({
     type: "INCREASE_ITEM",

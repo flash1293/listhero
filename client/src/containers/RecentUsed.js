@@ -13,7 +13,7 @@ import redirectToHome from "../components/RedirectToHome";
 import routeParam from "../components/RouteParam";
 import routerContext from "../components/RouterContext";
 import buildSelector, { list } from "../redux/selectors";
-import AddableItem from "../components/AddableItem";
+import RecentlyUsedItem from "../components/RecentlyUsedItem";
 
 export const RecentUsed = ({ listId, list: { recentItems }, router }) => (
   <div>
@@ -29,7 +29,7 @@ export const RecentUsed = ({ listId, list: { recentItems }, router }) => (
     </AppBar>
     <List>
       {recentItems.map((entry, index) => (
-        <AddableItem key={entry} listId={listId} entry={entry} />
+        <RecentlyUsedItem key={entry} listId={listId} entry={entry} />
       ))}
     </List>
   </div>

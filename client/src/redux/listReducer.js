@@ -180,6 +180,15 @@ export default function reducer(state = initalState, action) {
           }
         }
       );
+    case "REMOVE_RECENTLY_USED_ITEM":
+      return replaceByMap(
+        state,
+        l => l.uid === action.list,
+        list => ({
+          ...list,
+          recentItems: list.recentItems.filter(i => i !== action.item)
+        })
+      );
     case "CLEAR_LIST":
       return replaceByMap(
         state,

@@ -431,3 +431,41 @@ Array [
   },
 ]
 `;
+
+exports[`listReducer remove recently used item remove item from recently used list 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "thing",
+        "stacked": false,
+        "uid": "676767",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [
+      "thong",
+    ],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer remove recently used item remove non existent item from recently used list 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "thing",
+        "stacked": false,
+        "uid": "676767",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [
+      "thang",
+    ],
+    "uid": "6789",
+  },
+]
+`;

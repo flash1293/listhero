@@ -196,6 +196,46 @@ describe("listReducer", () => {
     });
   });
 
+  describe("remove recently used item", () => {
+    test("remove item from recently used list", () => {
+      const result = reducer(
+        [
+          {
+            items: [{ name: "thing", uid: "676767", stacked: false }],
+            name: "Test 1",
+            uid: "6789",
+            recentItems: [ "thang", "thong" ]
+          }
+        ],
+        {
+          type: "REMOVE_RECENTLY_USED_ITEM",
+          list: "6789",
+          item: "thang"
+        }
+      );
+      expect(result).toMatchSnapshot();
+    });
+
+    test("remove non existent item from recently used list", () => {
+      const result = reducer(
+        [
+          {
+            items: [{ name: "thing", uid: "676767", stacked: false }],
+            name: "Test 1",
+            uid: "6789",
+            recentItems: [ "thang" ]
+          }
+        ],
+        {
+          type: "REMOVE_RECENTLY_USED_ITEM",
+          list: "6789",
+          item: "abc"
+        }
+      );
+      expect(result).toMatchSnapshot();
+    });
+  });
+
   describe("increase item", () => {
     test("increase unstacked item", () => {
       const result = reducer(
