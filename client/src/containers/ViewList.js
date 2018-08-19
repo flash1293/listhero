@@ -20,7 +20,6 @@ import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
 import routerContext from "../components/RouterContext";
 import { Shortcuts } from "react-shortcuts";
-import NoSleep from "../nosleep.js";
 
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import editDialog from "../components/EditDialog";
@@ -284,19 +283,6 @@ export default compose(
   windowSize,
   preferredView("shop"),
   routerContext,
-  lifecycle({
-    componentDidMount() {
-      this.noSleep = new NoSleep();
-      const enableNoSleep = () => {
-        this.noSleep.enable();
-        document.removeEventListener("click", enableNoSleep, false);
-      };
-      document.addEventListener("click", enableNoSleep, false);
-    },
-    componentWillUnmount() {
-      this.noSleep.disable();
-    }
-  }),
   withHandlers({
     handleShortcuts: ({ router: { history }, listId, lists }) => action => {
       switch (action) {
