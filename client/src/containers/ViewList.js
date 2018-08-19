@@ -15,7 +15,7 @@ import ArrowBack from "@material-ui/icons/ArrowBack";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import LongPress from "@johannes.reuter/react-long";
-import { withHandlers, pure, lifecycle } from "recompose";
+import { withHandlers, pure } from "recompose";
 import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
 import routerContext from "../components/RouterContext";
