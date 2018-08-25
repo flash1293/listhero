@@ -129,8 +129,9 @@ export const removeList = dispatch => list =>
 
 export const clearList = dispatch => list =>
   dispatch({
-    type: "CLEAR_LIST",
-    list: list.uid
+    type: "REMOVE_MULTIPLE_ITEMS",
+    list: list.uid,
+    items: list.items.map(item => item.uid)
   });
 
 export const requestLogin = dispatch => (

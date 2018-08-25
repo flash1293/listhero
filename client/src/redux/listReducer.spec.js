@@ -196,6 +196,84 @@ describe("listReducer", () => {
     });
   });
 
+  describe("remove multiple items", () => {
+    test("remove multiple items from list", () => {
+      const result = reducer(
+        [
+          {
+            items: [{ name: "thing", uid: "676767", stacked: false }, { name: "thing2", uid: "1234", stacked: false }, { name: "thing3", uid: "5678", stacked: false }],
+            name: "Test 1",
+            uid: "6789",
+            recentItems: [ "thang", "thong" ]
+          }
+        ],
+        {
+          type: "REMOVE_MULTIPLE_ITEMS",
+          list: "6789",
+          items: ["1234", "5678"]
+        }
+      );
+      expect(result).toMatchSnapshot();
+    });
+
+    test("remove multiple items from nonexistent list", () => {
+      const result = reducer(
+        [
+          {
+            items: [{ name: "thing", uid: "676767", stacked: false }, { name: "thing2", uid: "1234", stacked: false }, { name: "thing3", uid: "5678", stacked: false }],
+            name: "Test 1",
+            uid: "6789",
+            recentItems: [ "thang", "thong" ]
+          }
+        ],
+        {
+          type: "REMOVE_MULTIPLE_ITEMS",
+          list: "6780",
+          items: ["1234", "5678"]
+        }
+      );
+      expect(result).toMatchSnapshot();
+    });
+
+    test("remove all items from list", () => {
+      const result = reducer(
+        [
+          {
+            items: [{ name: "thing", uid: "676767", stacked: false }, { name: "thing2", uid: "1234", stacked: false }, { name: "thing3", uid: "5678", stacked: false }],
+            name: "Test 1",
+            uid: "6789",
+            recentItems: [ "thang", "thong" ]
+          }
+        ],
+        {
+          type: "REMOVE_MULTIPLE_ITEMS",
+          list: "6789",
+          items: ["676767", "1234", "5678"]
+        }
+      );
+      expect(result).toMatchSnapshot();
+    });
+
+    test("remove multiple nonexistent items from list", () => {
+      const result = reducer(
+        [
+          {
+            items: [{ name: "thing", uid: "676767", stacked: false }, { name: "thing2", uid: "1234", stacked: false }, { name: "thing3", uid: "5678", stacked: false }],
+            name: "Test 1",
+            uid: "6789",
+            recentItems: [ "thang", "thong" ]
+          }
+        ],
+        {
+          type: "REMOVE_MULTIPLE_ITEMS",
+          list: "6789",
+          items: ["1234", "1235", "1236"]
+        }
+      );
+      expect(result).toMatchSnapshot();
+    });
+  });
+
   describe("remove recently used item", () => {
     test("remove item from recently used list", () => {
       const result = reducer(

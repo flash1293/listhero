@@ -206,6 +206,27 @@ export default function reducer(state = initalState, action) {
           };
         }
       );
+    case "REMOVE_MULTIPLE_ITEMS":
+      return replaceByMap(
+        state,
+        l => l.uid === action.list,
+        list => {
+          const itemsToDelete = list.items.filter(item => action.items.indexOf(item.uid) > -1).filter(item => !item.marker);
+          if (itemsToDelete) {
+            return {
+              ...list,
+              items: list.items.filter(i => action.items.indexOf(i.uid) === -1),
+              recentItems: uniq(
+                itemsToDelete
+                  .map(item => item.name)
+                  .concat(list.recentItems)
+              ).slice(0, RECENT_ITEMS_LENGTH)
+            };
+          } else {
+            return list;
+          }
+        }
+      );
     case "EDIT_ITEM":
       return replaceByMap(
         state,

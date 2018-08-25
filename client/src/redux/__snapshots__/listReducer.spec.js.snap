@@ -432,6 +432,101 @@ Array [
 ]
 `;
 
+exports[`listReducer remove multiple items remove all items from list 1`] = `
+Array [
+  Object {
+    "items": Array [],
+    "name": "Test 1",
+    "recentItems": Array [
+      "thing",
+      "thing2",
+      "thing3",
+      "thang",
+      "thong",
+    ],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer remove multiple items remove multiple items from list 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "thing",
+        "stacked": false,
+        "uid": "676767",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [
+      "thing2",
+      "thing3",
+      "thang",
+      "thong",
+    ],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer remove multiple items remove multiple items from nonexistent list 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "thing",
+        "stacked": false,
+        "uid": "676767",
+      },
+      Object {
+        "name": "thing2",
+        "stacked": false,
+        "uid": "1234",
+      },
+      Object {
+        "name": "thing3",
+        "stacked": false,
+        "uid": "5678",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [
+      "thang",
+      "thong",
+    ],
+    "uid": "6789",
+  },
+]
+`;
+
+exports[`listReducer remove multiple items remove multiple nonexistent items from list 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "thing",
+        "stacked": false,
+        "uid": "676767",
+      },
+      Object {
+        "name": "thing3",
+        "stacked": false,
+        "uid": "5678",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [
+      "thing2",
+      "thang",
+      "thong",
+    ],
+    "uid": "6789",
+  },
+]
+`;
+
 exports[`listReducer remove recently used item remove item from recently used list 1`] = `
 Array [
   Object {
