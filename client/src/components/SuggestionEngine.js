@@ -18,19 +18,27 @@ function slidingTokenizer(str) {
   return words;
 }
 
+function initializeSuggestionEngine(recentItems, setSuggestionHandler) {
+  const engine = new Bloodhound({
+    local: recentItems.concat(flatten(values(categoryList))),
+    queryTokenizer: Bloodhound.tokenizers.nonword,
+    datumTokenizer: slidingTokenizer
+  });
+  engine.initialize().then(() => setSuggestionHandler(engine));
+}
+
 export default compose(
   withState("suggestionHandler", "setSuggestionHandler", null),
   withState("suggestions", "setSuggestions", []),
   lifecycle({
     componentDidMount() {
-      const engine = new Bloodhound({
-        local: this.props.recentItems.concat(flatten(values(categoryList))),
-        queryTokenizer: Bloodhound.tokenizers.nonword,
-        datumTokenizer: slidingTokenizer
-      });
-      engine.initialize().then(() => this.props.setSuggestionHandler(engine));
+      const { recentItems, setSuggestionHandler } = this.props;
+      initializeSuggestionEngine(recentItems, setSuggestionHandler);
     },
     componentWillReceiveProps(nextProps) {
+      if(this.props.recentItems !== nextProps.recentItems) {
+        initializeSuggestionEngine(nextProps.recentItems, nextProps.setSuggestionHandler);
+      }
       if (nextProps.text !== this.props.text) {
         if (nextProps.text.length >= 2 && nextProps.suggestionHandler) {
           nextProps.suggestionHandler.search(nextProps.text, results =>
