@@ -35,7 +35,8 @@ import routerContext from "../components/RouterContext";
 import moveObject from "../components/MoveObject";
 import buildHandlers, {
   addList,
-  moveList
+  moveList,
+  refresh
 } from "../redux/actions";
 
 const SortableDragHandle = SortableHandle(({ name }) => (
@@ -106,7 +107,8 @@ export const Lists = ({
   toggleDrawer,
   isDrawerOpen,
   merged,
-  onSortEnd
+  onSortEnd,
+  refresh
 }) => (
   <div>
     <AppBar position="static" color="primary">
@@ -119,7 +121,7 @@ export const Lists = ({
         >
           <MenuIcon />
         </IconButton>
-        <Logo inverted showSyncMarker={!merged} />
+        <Logo onClick={refresh} inverted showSyncMarker={!merged} />
         <Typography variant="title" color="inherit" style={{ flex: 1 }}>
           Alle Listen
         </Typography>
@@ -184,7 +186,8 @@ export default compose(
     }),
     buildHandlers({
       addList,
-      moveList
+      moveList,
+      refresh
     })
   ),
   routerContext,

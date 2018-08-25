@@ -8,8 +8,8 @@ const DomainMarker = ({ emoji }) => (
   <span style={{ position: "absolute", right: 5, bottom: -5 }}>{emoji}</span>
 );
 
-export const Logo = ({ inverted, showSyncMarker }) => (
-  <span style={{ position: "relative" }}>
+export const Logo = ({ onClick, inverted, showSyncMarker }) => (
+  <span onClick={onClick} style={{ position: "relative" }}>
     <img
       style={{ width: 30, marginRight: 15, display: "inline-block" }}
       alt="Logo"
