@@ -5,7 +5,7 @@ import List from "@material-ui/core/List";
 import FormControl from "@material-ui/core/FormControl";
 import IconButton from "@material-ui/core/IconButton";
 import Send from "@material-ui/icons/Send";
-import { withState, withHandlers } from "recompose";
+import { withState, withHandlers, lifecycle } from "recompose";
 import compose from "ramda/src/compose";
 import { Shortcuts } from "react-shortcuts";
 
@@ -18,6 +18,15 @@ export default compose(
   withState("inputRef", "setInputRef"),
   withHandlers({
     focusInput: ({ inputRef }) => () => inputRef.focus()
+  }),
+  lifecycle({
+    componentWillReceiveProps(nextProps) {
+      if(nextProps.listId !== this.props.listId) {
+        // remove current text from input field to fill it with the initial value
+        // (thats what you get for local state)
+        this.props.storeText(undefined);
+      }
+    }
   }),
   withHandlers({
     handleShortcuts: ({ focusInput }) => (action, event) => {
@@ -38,9 +47,9 @@ export default compose(
       focusInput();
       clearText();
     },
-    handleChangeText: ({ handleChangeText, onChange, initialText }) => e => {
+    handleChangeText: ({ handleChangeText, onChange }) => e => {
       handleChangeText(e);
-      onChange(e.target.value || initialText);
+      onChange(e.target.value);
     }
   }),
   suggestionEngine

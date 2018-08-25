@@ -40,7 +40,7 @@ export default compose(
         initializeSuggestionEngine(nextProps.recentItems, nextProps.setSuggestionHandler);
       }
       if (nextProps.text !== this.props.text) {
-        if (nextProps.text.length >= 2 && nextProps.suggestionHandler) {
+        if (nextProps.text && nextProps.text.length >= 2 && nextProps.suggestionHandler) {
           nextProps.suggestionHandler.search(nextProps.text, results =>
             nextProps.setSuggestions(results)
           );
