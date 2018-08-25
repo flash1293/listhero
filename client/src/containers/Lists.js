@@ -9,11 +9,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
-import Drawer from "@material-ui/core/Drawer";
 import Add from "@material-ui/icons/Add";
-import LinkIcon from "@material-ui/icons/Link";
-import PhotoCameraIcon from "@material-ui/icons/PhotoCamera";
-import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import MenuIcon from "@material-ui/icons/Menu";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -25,29 +21,22 @@ import Paper from "@material-ui/core/Paper";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withHandlers } from "recompose";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import SyncIcon from "@material-ui/icons/Sync";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import { Logo } from "../components/Logo";
-import buildSelector, { lists, user, merged } from "../redux/selectors";
-import syncLink from "../components/SyncLink";
+import buildSelector, { lists, merged } from "../redux/selectors";
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import ListMenu from "../components/ListMenu";
 import ChangeNameDialog from "../components/ChangeNameDialog";
 import addDialog from "../components/AddDialog";
-import drawer from "../components/Drawer";
+import Drawer from "../components/Drawer";
+import drawerToggle from "../components/DrawerToggle";
 import routerContext from "../components/RouterContext";
 import moveObject from "../components/MoveObject";
 import buildHandlers, {
   addList,
-  moveList,
-  refresh,
-  logout
+  moveList
 } from "../redux/actions";
-import Divider from "@material-ui/core/Divider/Divider";
-import { REDUCER_VERSION } from "../config";
 
 const SortableDragHandle = SortableHandle(({ name }) => (
   <ListIcon name={name} />
@@ -114,14 +103,10 @@ export const Lists = ({
   handleDialogClose,
   handleDialogSubmit,
   router,
-  isDrawerOpen,
   toggleDrawer,
-  syncLink,
-  refresh,
-  logout,
+  isDrawerOpen,
   merged,
-  onSortEnd,
-  user: { username }
+  onSortEnd
 }) => (
   <div>
     <AppBar position="static" color="primary">
@@ -186,62 +171,7 @@ export const Lists = ({
         onClose={handleDialogClose}
       />
     )}
-    <Drawer open={isDrawerOpen} type="temporary" onClose={toggleDrawer}>
-      <div role="button">
-        <List>
-          <ListItem>
-            <ListItemIcon>
-              <Logo />
-            </ListItemIcon>
-            <ListItemText
-              primary={`Listhero Version ${REDUCER_VERSION}`}
-              secondary={`Account-ID: ${username}`}
-            />
-            <ListItemSecondaryAction>
-              <IconButton onClick={toggleDrawer}>
-                <ChevronLeft />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-          <Divider />
-          <CopyToClipboard text={syncLink}>
-            <ListItem button>
-              <ListItemIcon>
-                <LinkIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary="Sync-Link kopieren"
-                secondary="Dieser Link gibt Zugriff auf deinen Account"
-              />
-            </ListItem>
-          </CopyToClipboard>
-          <Link to="/qr">
-            <ListItem button>
-              <ListItemIcon>
-                <PhotoCameraIcon />
-              </ListItemIcon>
-              <ListItemText primary="Sync-Link als Qr Code anzeigen" />
-            </ListItem>
-          </Link>
-          <ListItem button onClick={refresh}>
-            <ListItemIcon>
-              <SyncIcon />
-            </ListItemIcon>
-            <ListItemText primary="Neu synchronisieren" />
-          </ListItem>
-          <Divider />
-          <ListItem button onClick={logout}>
-            <ListItemIcon>
-              <AccountCircleIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary="Neuen Account erstellen"
-              secondary="Ohne Sync-Link geht dein aktueller Account verloren"
-            />
-          </ListItem>
-        </List>
-      </div>
-    </Drawer>
+    <Drawer isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
   </div>
 );
 
@@ -250,19 +180,15 @@ export default compose(
   connect(
     buildSelector({
       lists,
-      user,
       merged
     }),
     buildHandlers({
       addList,
-      moveList,
-      refresh,
-      logout
+      moveList
     })
   ),
   routerContext,
   addDialog("addList"),
-  drawer,
-  syncLink,
-  moveObject("moveList", (props, index) => props.lists[index].uid)
+  moveObject("moveList", (props, index) => props.lists[index].uid),
+  drawerToggle
 )(Lists);
