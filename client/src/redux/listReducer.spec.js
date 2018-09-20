@@ -761,4 +761,199 @@ describe("listReducer", () => {
       expect(result).toEqual(state);
     });
   });
+
+  describe("move item to other list", () => {
+    test("move item to beginning of other list", () => {
+      const result = reducer(
+        [
+          {
+            items: [
+              { name: "item 1", uid: "1", stacked: false },
+              { name: "item 2", uid: "2", stacked: false }
+            ],
+            name: "Test 1",
+            uid: "1",
+            recentItems: []
+          },
+          {
+            items: [
+              { name: "item 1", uid: "11", stacked: false },
+              { name: "item 2", uid: "22", stacked: false }
+            ],
+            name: "Test 2",
+            uid: "2"
+          }
+        ],
+        {
+          type: "MOVE_ITEM_TO_LIST",
+          oldList: "1",
+          newList: "2",
+          oldId: "1"
+        }
+      );
+      expect(result).toMatchSnapshot();
+    });
+
+    test("move item to empty list", () => {
+      const result = reducer(
+        [
+          {
+            items: [
+              { name: "item 1", uid: "1", stacked: false },
+              { name: "item 2", uid: "2", stacked: false }
+            ],
+            name: "Test 1",
+            uid: "1",
+            recentItems: []
+          },
+          {
+            items: [],
+            name: "Test 2",
+            uid: "2"
+          }
+        ],
+        {
+          type: "MOVE_ITEM_TO_LIST",
+          oldList: "1",
+          newList: "2",
+          oldId: "2"
+        }
+      );
+      expect(result).toMatchSnapshot();
+    });
+
+    test("move end item to other list", () => {
+      const result = reducer(
+        [
+          {
+            items: [
+              { name: "item 1", uid: "1", stacked: false },
+              { name: "item 2", uid: "2", stacked: false },
+              { name: "item 3", uid: "3", stacked: false }
+            ],
+            name: "Test 1",
+            uid: "1",
+            recentItems: []
+          },
+          {
+            items: [],
+            name: "Test 2",
+            uid: "2"
+          }
+        ],
+        {
+          type: "MOVE_ITEM_TO_LIST",
+          oldList: "1",
+          newList: "2",
+          oldId: "3"
+        }
+      );
+      expect(result).toMatchSnapshot();
+    });
+
+    test("move center item to other list", () => {
+      const result = reducer(
+        [
+          {
+            items: [
+              { name: "item 1", uid: "1", stacked: false },
+              { name: "item 2", uid: "2", stacked: false },
+              { name: "item 3", uid: "3", stacked: false }
+            ],
+            name: "Test 1",
+            uid: "1",
+            recentItems: []
+          },
+          {
+            items: [],
+            name: "Test 2",
+            uid: "2"
+          }
+        ],
+        {
+          type: "MOVE_ITEM_TO_LIST",
+          oldList: "1",
+          newList: "2",
+          oldId: "2"
+        }
+      );
+      expect(result).toMatchSnapshot();
+    });
+
+    test("move item from non-existing list", () => {
+      const state = [
+        {
+          items: [
+            { name: "item 1", uid: "1", stacked: false },
+            { name: "item 2", uid: "2", stacked: false },
+            { name: "item 3", uid: "3", stacked: false }
+          ],
+          name: "Test 1",
+          uid: "1",
+          recentItems: []
+        },
+        {
+          items: [],
+          name: "Test 2",
+          uid: "2"
+        }
+      ];
+      const result = reducer(state, {
+        type: "MOVE_ITEM_TO_LIST",
+        oldList: "not_existing",
+        newList: "2",
+        oldId: "1"
+      });
+      expect(result).toEqual(state);
+    });
+
+    test("move non-existing item to other list", () => {
+      const state = [
+        {
+          items: [
+            { name: "item 1", uid: "1", stacked: false },
+            { name: "item 2", uid: "2", stacked: false },
+            { name: "item 3", uid: "3", stacked: false }
+          ],
+          name: "Test 1",
+          uid: "1",
+          recentItems: []
+        },
+        {
+          items: [],
+          name: "Test 2",
+          uid: "2"
+        }
+      ];
+      const result = reducer(state, {
+        type: "MOVE_ITEM_TO_LIST",
+        oldList: "1",
+        newList: "2",
+        oldId: "not_existing"
+      });
+      expect(result).toEqual(state);
+    });
+
+    test("move item to non-existing list", () => {
+      const state = [
+        {
+          items: [
+            { name: "item 1", uid: "1", stacked: false },
+            { name: "item 2", uid: "2", stacked: false },
+            { name: "item 3", uid: "3", stacked: false }
+          ],
+          name: "Test 1",
+          uid: "1",
+          recentItems: []
+        }
+      ];
+      const result = reducer(state, {
+        type: "MOVE_ITEM_TO_LIST",
+        oldList: "1",
+        newList: "2",
+        oldId: "1"
+      });
+      expect(result).toMatchSnapshot();
+    });
+  });
 });

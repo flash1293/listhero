@@ -24,8 +24,9 @@ import { withHandlers, pure, mapProps } from "recompose";
 import { I18n } from "react-i18next";
 import windowSize from "react-window-size";
 import { Shortcuts } from "react-shortcuts";
-import routerContext from "../components/RouterContext";
+import LongPress from "@johannes.reuter/react-long";
 
+import routerContext from "../components/RouterContext";
 import preferredView from "../components/PreferredView";
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
 import redirectToLogin from "../components/RedirectToLogin";
@@ -33,21 +34,32 @@ import redirectToHome from "../components/RedirectToHome";
 import routeParam from "../components/RouteParam";
 import ChangeNameDialog from "../components/ChangeNameDialog";
 import AddItemNavigation from "../components/AddItemNavigation";
+import ItemContextDialog from "../components/ItemContextDialog";
 import AddForm from "../components/AddForm";
 import ListMenu from "../components/ListMenu";
 import moveObject from "../components/MoveObject";
 import editDialog from "../components/EditDialog";
 import buildHandlers, {
   removeItem,
+  moveItemToBottom,
   addItem,
   increaseItem,
   decreaseItem,
   editItem,
   moveItem,
   setPreferredView,
-  changeEnteredText
+  changeEnteredText,
+  moveItemToList
 } from "../redux/actions";
 import buildSelector, { list, lists } from "../redux/selectors";
+
+// touch-support feature detection
+let touchSupport = true;
+try {
+  document.createEvent("TouchEvent");
+} catch (e) {
+  touchSupport = false;
+}
 
 const SortableDragHandle = SortableHandle(() => (
   <DragHandle
@@ -78,7 +90,18 @@ const SortableItem = compose(
       itemIndex > 0 && onMove(item.uid, itemIndex - 1),
     onMoveDown: ({ onMove, item, itemIndex }) => () =>
       onMove(item.uid, itemIndex + 1),
-    onClick: ({ onClick, item }) => () => onClick(item)
+    onClick: ({ onClick, item }) => () => onClick(item),
+    onContext: ({ onContext, item }) => e => {
+      if (e) {
+        e.preventDefault();
+      }
+      onContext(item);
+    },
+    handleTouchEnd: ({ isContextDialogOpen }) => e => {
+      if (isContextDialogOpen) {
+        e.preventDefault();
+      }
+    }
   })),
   withHandlers(() => ({
     handleShortcuts: ({
@@ -115,8 +138,8 @@ const SortableItem = compose(
   })),
   mapProps(({ key, index, itemIndex, ...other }) => other),
   pure
-)(({ item, onRemove, onIncrease, onDecrease, handleShortcuts, onClick }) => {
-  return (
+)(({ item, onRemove, onIncrease, onDecrease, handleShortcuts, onClick, onContext, handleTouchEnd }) => {
+  const element = (
     <Shortcuts
       tabIndex={0}
       stopPropagation={false}
@@ -133,6 +156,7 @@ const SortableItem = compose(
             : { padding: 0, wordBreak: "break-word" }
         }
         onClick={item.marker ? undefined : onClick}
+        onContextMenu={item.marker ? undefined : onContext}
         button={!item.marker}
         tabIndex={-1}
       >
@@ -176,6 +200,18 @@ const SortableItem = compose(
       </ListItem>
     </Shortcuts>
   );
+
+    return touchSupport ? (
+      <LongPress
+        time={1000}
+        onTouchEnd={handleTouchEnd}
+        onLongPress={onContext}
+      >
+        {element}
+      </LongPress>
+    ) : (
+      element
+    );
 });
 
 const SortableList = pure(
@@ -186,6 +222,8 @@ const SortableList = pure(
       onIncrease,
       onDecrease,
       onRemove,
+      onContext,
+      isContextDialogOpen,
       onSortEnd,
       onMove
     }) => {
@@ -197,11 +235,13 @@ const SortableList = pure(
               index={index}
               itemIndex={index}
               onClick={onClick}
+              onContext={onContext}
               onRemove={onRemove}
               onIncrease={onIncrease}
               onDecrease={onDecrease}
               onMove={onMove}
               item={item}
+              isContextDialogOpen={isContextDialogOpen}
             />
           ))}
         </List>
@@ -216,13 +256,18 @@ export const EditList = ({
   addItem,
   onSortEnd,
   handleDialogOpen,
+  handleDialogContextOpen,
   removeItem,
+  moveItemToBottom,
+  moveItemToList,
   moveItem,
   increaseItem,
   decreaseItem,
   changeEnteredText,
   dialogItem,
+  dialogItemContext,
   handleDialogClose,
+  handleDialogContextClose,
   handleDialogSubmit,
   windowWidth,
   handleShortcuts,
@@ -315,6 +360,8 @@ export const EditList = ({
           onSortEnd={onSortEnd}
           onMove={moveItem}
           onClick={handleDialogOpen}
+          onContext={handleDialogContextOpen}
+          isContextDialogOpen={Boolean(dialogItemContext)}
           onRemove={removeItem}
           onDecrease={decreaseItem}
           onIncrease={increaseItem}
@@ -330,6 +377,17 @@ export const EditList = ({
         initialText={dialogItem.name}
         onClose={handleDialogClose}
         onSubmit={handleDialogSubmit}
+      />
+    )}
+    {dialogItemContext && (
+      <ItemContextDialog
+        item={dialogItemContext}
+        lists={lists}
+        currentListId={listId}
+        onClose={handleDialogContextClose}
+        removeItem={removeItem}
+        moveToBottom={moveItemToBottom}
+        moveToList={moveItemToList}
       />
     )}
   </div>
@@ -350,11 +408,14 @@ export default compose(
       increaseItem,
       decreaseItem,
       changeEnteredText,
+      moveItemToBottom,
       removeItem,
-      setPreferredView
+      setPreferredView,
+      moveItemToList
     })
   ),
   redirectToHome,
+  editDialog("ItemContext", undefined, "Context"),
   editDialog("Item", "editItem"),
   moveObject("moveItem", (props, index) => props.list.items[index].uid),
   windowSize,

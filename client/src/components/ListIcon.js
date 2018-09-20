@@ -24,10 +24,10 @@ function getWholeChar(str, i) {
 export const filterLeadingEmoji = name =>
   isEmoji(name) ? name.replace(emojiRegex().exec(name), "") : name;
 
-export default ({ name }) => (
-  <span>
+export default ({ name, style }) => (
+  <span style={style}>
     {isEmoji(name) ? (
-      <span style={{ fontSize: "1.5em" }}>{getWholeChar(name, 0)}</span>
+      <span style={{ fontSize: "1.4em" }}>{getWholeChar(name, 0)}</span>
     ) : (
       <ActionList />
     )}

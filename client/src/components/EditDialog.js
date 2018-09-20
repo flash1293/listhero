@@ -1,14 +1,14 @@
 import { withHandlers, withState, mapProps } from "recompose";
 import compose from "ramda/src/compose";
 
-export default (objectName, handlerProp) =>
+export default (objectName, handlerProp, dialogNamePrefix = "") =>
   compose(
     withState("dialogObject", "setDialogObject", null),
     withHandlers({
-      handleDialogClose: ({ setDialogObject }) => () => setDialogObject(null),
-      handleDialogOpen: ({ setDialogObject }) => dialogObject =>
+      [`handleDialog${dialogNamePrefix}Close`]: ({ setDialogObject }) => () => setDialogObject(null),
+      [`handleDialog${dialogNamePrefix}Open`]: ({ setDialogObject }) => dialogObject =>
         setDialogObject(dialogObject),
-      handleDialogSubmit: ({
+      [`handleDialog${dialogNamePrefix}Submit`]: ({
         setDialogObject,
         dialogObject,
         ...ownProps

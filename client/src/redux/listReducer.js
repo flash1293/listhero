@@ -145,6 +145,28 @@ export default function reducer(state = initalState, action) {
               };
         }
       );
+    case "MOVE_ITEM_TO_LIST":
+      const oldList = state.find(list => list.uid === action.oldList);
+      if (!oldList) {
+        return state;
+      }
+      const itemToMove = oldList.items.find(item => item.uid === action.oldId);
+      if (!itemToMove) {
+        return state;
+      }
+      return state.map(list => {
+        if (list.uid === action.oldList) {
+          return {
+            ...list,
+            items: list.items.filter(item => item !== itemToMove)
+          };
+        } else if (list.uid === action.newList) {
+          return {
+            ...list,
+            items: [itemToMove, ...list.items]
+          };
+        } else return list;
+      });
     case "MOVE_ITEM_TO_BOTTOM":
       return replaceByMap(
         state,

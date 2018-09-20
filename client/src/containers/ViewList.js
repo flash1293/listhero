@@ -22,9 +22,9 @@ import routerContext from "../components/RouterContext";
 import { Shortcuts } from "react-shortcuts";
 
 import ListIcon, { filterLeadingEmoji } from "../components/ListIcon";
+import ItemContextDialog from "../components/ItemContextDialog";
 import editDialog from "../components/EditDialog";
 import preferredView from "../components/PreferredView";
-import ContextDialog from "../components/ContextDialog";
 import redirectToLogin from "../components/RedirectToLogin";
 import redirectToHome from "../components/RedirectToHome";
 import ListMenu from "../components/ListMenu";
@@ -34,7 +34,8 @@ import routeParam from "../components/RouteParam";
 import buildHandlers, {
   removeItem,
   moveItemToBottom,
-  setPreferredView
+  setPreferredView,
+  moveItemToList
 } from "../redux/actions";
 import buildSelector, { list, lists, filteredItems } from "../redux/selectors";
 
@@ -53,8 +54,12 @@ const ViewListItem = compose(
   pure,
   withHandlers({
     handleRemove: ownProps => () => ownProps.removeItem(ownProps.item),
-    handleContextMenu: ownProps => () =>
-      ownProps.handleContextMenu(ownProps.item),
+    handleContextMenu: ownProps => e => {
+      if (e) {
+        e.preventDefault();
+      }
+      ownProps.handleContextMenu(ownProps.item);
+    },
     handleTouchEnd: ({ isDialogOpen }) => e => {
       if (isDialogOpen) {
         e.preventDefault();
@@ -84,6 +89,7 @@ const ViewListItem = compose(
               }
         }
         button={!item.marker}
+        onContextMenu={handleContextMenu}
         onClick={item.marker ? undefined : onRemoveDelayed}
       >
         {item.label ? (
@@ -108,25 +114,6 @@ const ViewListItem = compose(
   }
 );
 
-const ItemContextDialog = withHandlers({
-  handleRemove: ownProps => () => {
-    ownProps.removeItem(ownProps.item);
-    ownProps.onClose();
-  },
-  handleSendToBottom: ownProps => () => {
-    ownProps.moveToBottom(ownProps.item);
-    ownProps.onClose();
-  }
-})(({ item, handleSendToBottom, handleRemove, onClose }) => (
-  <ContextDialog onClose={onClose}>
-    <ListItem button onClick={handleSendToBottom}>
-      <ListItemText primary="Nach unten verschieben" />
-    </ListItem>
-    <ListItem button onClick={handleRemove}>
-      <ListItemText primary="Abhaken" />
-    </ListItem>
-  </ContextDialog>
-));
 
 export const ViewList = ({
   list,
@@ -135,6 +122,7 @@ export const ViewList = ({
   listId,
   removeItem,
   moveItemToBottom,
+  moveItemToList,
   dialogItem,
   handleDialogOpen,
   handleDialogClose,
@@ -259,9 +247,12 @@ export const ViewList = ({
     {dialogItem && (
       <ItemContextDialog
         item={dialogItem}
+        lists={lists}
+        currentListId={listId}
         onClose={handleDialogClose}
         removeItem={removeItem}
         moveToBottom={moveItemToBottom}
+        moveToList={moveItemToList}
       />
     )}
   </div>
@@ -275,7 +266,8 @@ export default compose(
     buildHandlers({
       removeItem,
       moveItemToBottom,
-      setPreferredView
+      setPreferredView,
+      moveItemToList
     })
   ),
   editDialog("Item"),

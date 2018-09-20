@@ -352,6 +352,160 @@ Array [
 ]
 `;
 
+exports[`listReducer move item to other list move center item to other list 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 1",
+        "stacked": false,
+        "uid": "1",
+      },
+      Object {
+        "name": "item 3",
+        "stacked": false,
+        "uid": "3",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "1",
+  },
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 2",
+        "stacked": false,
+        "uid": "2",
+      },
+    ],
+    "name": "Test 2",
+    "uid": "2",
+  },
+]
+`;
+
+exports[`listReducer move item to other list move end item to other list 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 1",
+        "stacked": false,
+        "uid": "1",
+      },
+      Object {
+        "name": "item 2",
+        "stacked": false,
+        "uid": "2",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "1",
+  },
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 3",
+        "stacked": false,
+        "uid": "3",
+      },
+    ],
+    "name": "Test 2",
+    "uid": "2",
+  },
+]
+`;
+
+exports[`listReducer move item to other list move item to beginning of other list 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 2",
+        "stacked": false,
+        "uid": "2",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "1",
+  },
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 1",
+        "stacked": false,
+        "uid": "1",
+      },
+      Object {
+        "name": "item 1",
+        "stacked": false,
+        "uid": "11",
+      },
+      Object {
+        "name": "item 2",
+        "stacked": false,
+        "uid": "22",
+      },
+    ],
+    "name": "Test 2",
+    "uid": "2",
+  },
+]
+`;
+
+exports[`listReducer move item to other list move item to empty list 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 1",
+        "stacked": false,
+        "uid": "1",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "1",
+  },
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 2",
+        "stacked": false,
+        "uid": "2",
+      },
+    ],
+    "name": "Test 2",
+    "uid": "2",
+  },
+]
+`;
+
+exports[`listReducer move item to other list move item to non-existing list 1`] = `
+Array [
+  Object {
+    "items": Array [
+      Object {
+        "name": "item 2",
+        "stacked": false,
+        "uid": "2",
+      },
+      Object {
+        "name": "item 3",
+        "stacked": false,
+        "uid": "3",
+      },
+    ],
+    "name": "Test 1",
+    "recentItems": Array [],
+    "uid": "1",
+  },
+]
+`;
+
 exports[`listReducer move list move list to beginning 1`] = `
 Array [
   Object {
