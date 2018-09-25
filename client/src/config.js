@@ -7,7 +7,7 @@ import createCompressor from "./redux/onlyDecompress";
 export const APP_VERSION = 5;
 
 // issues a purge and re-sync from the server on update (only list-data)
-export const REDUCER_VERSION = 6;
+export const REDUCER_VERSION = 7;
 
 const isThrowawayAccount = window.location.host.split(".")[0] === "throwaway";
 
