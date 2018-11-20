@@ -21,3 +21,7 @@ To start the server and client locally, you need a local redis server. Run `yarn
 ## Deployment
 
 The easiest way to deploy an ekofe instance is using the prepared `docker-compose.yml` file. On a production system, you can use the built images `flash1293/ekofe-server` and `flash1293/ekofe-client` instead of lokal sources and Dockerfiles.
+
+## Mechanism
+
+This app uses redux under the hood and syncs not the app state itself, but the individual actions between various clients connected to the same account. More explanation in the [presentation (german)](https://docs.google.com/presentation/d/1mfBnBNriB-ifflkYr-FCAmIciigvAv3ioP72TqLZUCE/edit?usp=sharing)
