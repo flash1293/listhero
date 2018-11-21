@@ -78,7 +78,9 @@ const postActionCreator = store => req =>
           JSON.stringify(action),
           store.getState().user.encryptionKey
         )
-      )
+      ),
+      snapshot: req.snapshot ? encrypt(JSON.stringify(req.snapshot), store.getState().user.encryptionKey) : false,
+      version: REDUCER_VERSION
     })
   })
     .then(res => {
@@ -94,6 +96,9 @@ const postActionCreator = store => req =>
             decrypt(action, store.getState().user.encryptionKey)
           )
         );
+      }
+      if (jsonRes.snapshot) {
+        jsonRes.snapshot = JSON.parse(decrypt(jsonRes.snapshot, store.getState().user.encryptionKey));
       }
       return jsonRes;
     });

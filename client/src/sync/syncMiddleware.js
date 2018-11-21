@@ -2,6 +2,7 @@ import { isNumber } from "util";
 
 export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
   let syncLog;
+  let lastServerSnapshotSequence = 999999999999;
   const saveSyncLog = () => {
     localStorage.setItem(`sync-log:${key}`, JSON.stringify(syncLog));
   };
@@ -24,6 +25,12 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
   return store => next => {
     const postAction = postActionCreator(store);
     const getSyncState = () => store.getState()[key];
+    const shouldUpdateSnapshot = () => {
+      const currentState = getSyncState();
+      const sequenceDelta = currentState.sequence - lastServerSnapshotSequence;
+      // TODO this heuristic can be a lot smarter than that...
+      return sequenceDelta > 10;
+    };
     const startSync = (
       options = { skipRetry: false, dontMarkNewSync: false }
     ) => {
@@ -48,9 +55,11 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
       postAction({
         startFrom:
           getSyncState().sequence - syncLog.length - actionsToSync.length,
-        actions: actionsToSync
+        actions: actionsToSync,
+        snapshot: shouldUpdateSnapshot() ? getSyncState().present : false
       })
         .then(res => {
+          lastServerSnapshotSequence = res.snapshotSequence;
           if (!checkAndUpdateSeed(res.seed)) {
             console.log("purging local state, server has another seed");
             // server has another seed than the client, purge all data and resync
@@ -59,6 +68,7 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
               key
             });
             requestInFlight = false;
+            lastServerSnapshotSequence = 999999999999;
             startSync();
           } else if (isNumber(res.replayFrom)) {
             next({
@@ -66,7 +76,9 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
               key,
               undo: getSyncState().sequence - res.replayFrom,
               localLogLength: syncLog.length ? syncLog.length : 0,
-              replayLog: res.replayLog.concat(syncLog)
+              replayLog: res.replayLog.concat(syncLog),
+              snapshot: res.snapshot,
+              snapshotSequence: res.snapshotSequence
             });
           } else {
             next({

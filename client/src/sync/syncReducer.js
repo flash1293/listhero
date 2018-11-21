@@ -14,7 +14,7 @@ export default (reducer, key) => {
     switch (action.type) {
       case "@@sync/MERGE":
         if (action.key !== key) return state;
-        const startingState = action.undo === 0 ? present : past[0];
+        const startingState = action.snapshot ? action.snapshot : action.undo === 0 ? present : past[0];
         // the new past state (the sync-point) is the old sync-point plus the
         // actions returned from the server (local log not included)
         const newPastState = action.replayLog
@@ -32,7 +32,7 @@ export default (reducer, key) => {
           past: [newPastState],
           present: newState,
           merged: true,
-          sequence: sequence - action.undo + action.replayLog.length
+          sequence: (action.snapshot ? action.snapshotSequence : sequence - action.undo) + action.replayLog.length
         };
       case "@@sync/SYNC":
         if (action.key !== key) return state;
