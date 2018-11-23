@@ -1,8 +1,8 @@
 import { isNumber } from "util";
 
-export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
+export default (postActionCreator, checkAndUpdateSeed, filter, key, reducerVersion, compatVersion) => {
   let syncLog;
-  let lastServerSnapshotSequence = 999999999999;
+  let lastServerSnapshotSequence = Number.MAX_SAFE_INTEGER;
   const saveSyncLog = () => {
     localStorage.setItem(`sync-log:${key}`, JSON.stringify(syncLog));
   };
@@ -29,7 +29,9 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
       const currentState = getSyncState();
       const sequenceDelta = currentState.sequence - lastServerSnapshotSequence;
       // TODO this heuristic can be a lot smarter than that...
-      return sequenceDelta > 10;
+      // TODO make this configurable since some types of states don't benefit from regular snapshotting
+      // don't attempt to post snapshots if we reduced incompatible actions earlier
+      return !currentState.purgeOnCompatLevel && sequenceDelta > 10;
     };
     const startSync = (
       options = { skipRetry: false, dontMarkNewSync: false }
@@ -56,7 +58,10 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
         startFrom:
           getSyncState().sequence - syncLog.length - actionsToSync.length,
         actions: actionsToSync,
-        snapshot: shouldUpdateSnapshot() ? getSyncState().present : false
+        snapshot: shouldUpdateSnapshot() ? getSyncState().present : false,
+        // don't attempt to get snapshots and send an invalid version if we reduced incompatible actions earlier
+        // just run along in compat mode
+        version: getSyncState().purgeOnCompatLevel ? "COMPAT_MODE" : reducerVersion
       })
         .then(res => {
           lastServerSnapshotSequence = res.snapshotSequence;
@@ -68,7 +73,7 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
               key
             });
             requestInFlight = false;
-            lastServerSnapshotSequence = 999999999999;
+            lastServerSnapshotSequence = Number.MAX_SAFE_INTEGER;
             startSync();
           } else if (isNumber(res.replayFrom)) {
             next({
@@ -122,22 +127,36 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key) => {
     };
     return action => {
       const oldState = getSyncState();
-      const result = next(action);
-      if (
-        (action.type === "@@sync/REQUEST_SYNC" ||
-          action.type === "@@sync/PURGE") &&
-        action.key === key &&
-        !requestInFlight
-      ) {
-        startSync({ skipRetry: action.skipRetry });
+      if (action.type === "@@sync/REQUEST_SYNC" && oldState.purgeOnCompatLevel <= compatVersion ) {
+        // an incompatible action was reduced in the past and now the reducer is updated for this action.
+        // issue a purge and re-sync to reduce this action again (or maybe there is a snapshot available?)
+
+        // TODO this is not completely clean since the re-sync could put you back into compat mode, just at a higher level
+        // (although very unlikely when working with web apps) and in this case snapshots would be incorrectly used.
+        // the sync directly after a purge should not rely on snapshots. But because this is highly unlikely and could
+        // cost a whole lot of performance (reducing a lot of actions is way costlier than using a semi-up-to-date snapshot)
+        // this case is not caught here
+        const result = next({ type: "@@sync/PURGE", key });
+        startSync();
+        return result;
       } else {
-        if (oldState !== getSyncState() && filter(action)) {
-          syncLog.push(action);
-          saveSyncLog();
-          startSync();
+        const result = next(action);
+        if (
+          (action.type === "@@sync/REQUEST_SYNC" ||
+            action.type === "@@sync/PURGE") &&
+          action.key === key &&
+          !requestInFlight
+        ) {
+          startSync({ skipRetry: action.skipRetry });
+        } else {
+          if (oldState !== getSyncState() && filter(action)) {
+            syncLog.push(action);
+            saveSyncLog();
+            startSync();
+          }
         }
+        return result;
       }
-      return result;
     };
   };
 };

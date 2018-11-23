@@ -5,7 +5,8 @@ import {
   API_PROTOCOL,
   API_HOST,
   clientSession,
-  REDUCER_VERSION
+  REDUCER_VERSION,
+  COMPAT_VERSION
 } from "../config";
 import syncMiddleware from "../sync/syncMiddleware";
 import { getRandomData } from "./utils";
@@ -79,8 +80,7 @@ const postActionCreator = store => req =>
           store.getState().user.encryptionKey
         )
       ),
-      snapshot: req.snapshot ? encrypt(JSON.stringify(req.snapshot), store.getState().user.encryptionKey) : false,
-      version: REDUCER_VERSION
+      snapshot: req.snapshot ? encrypt(JSON.stringify(req.snapshot), store.getState().user.encryptionKey) : false
     })
   })
     .then(res => {
@@ -109,5 +109,7 @@ export default syncMiddleware(
   postActionCreator,
   checkAndUpdateSeed,
   syncFilter,
-  "lists"
+  "lists",
+  REDUCER_VERSION,
+  COMPAT_VERSION
 );

@@ -9,6 +9,12 @@ export const APP_VERSION = 5;
 // issues a purge and re-sync from the server on update (only list-data)
 export const REDUCER_VERSION = 7;
 
+// issues a purge and re-sync from the server on an explicit sync request action
+// if there was a reduced action bigger than this version in the past
+// and the COMPAT_VERSION matches or exceeds this version now due to a code update (only list data)
+// this should only grow
+export const COMPAT_VERSION = 0;
+
 const isThrowawayAccount = window.location.host.split(".")[0] === "throwaway";
 
 const compressor = createCompressor();

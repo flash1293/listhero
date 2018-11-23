@@ -6,7 +6,7 @@ import listReducer from "./listReducer";
 import preferredViewReducer from "./preferredViewReducer";
 import enteredTextReducer from "./enteredTextReducer";
 import userReducer from "./userReducer";
-import { persistConfig } from "../config";
+import { persistConfig, COMPAT_VERSION } from "../config";
 import websocketMiddleware from "./websocketMiddleware";
 import { refreshOnRehydrateMiddleware } from "./refreshOnRehydrateMiddleware";
 import syncMiddleware from "./syncMiddleware";
@@ -15,7 +15,7 @@ import loginMiddleware from "./loginMiddleware";
 const persistentReducer = persistReducer(
   persistConfig,
   combineReducers({
-    lists: syncReducer(listReducer, "lists"),
+    lists: syncReducer(listReducer, "lists", COMPAT_VERSION),
     user: userReducer,
     preferredView: preferredViewReducer,
     enteredText: enteredTextReducer

@@ -35,7 +35,17 @@ export const moveItemToList = (dispatch, ownProps) => (oldId, newList) =>
     type: "MOVE_ITEM_TO_LIST",
     oldList: ownProps.listId,
     newList,
-    oldId
+    oldId,
+    // example on how to use compat_levels to prevent a full re-sync in most cases
+    // if MOVE_ITEM_TO_LIST is a new action and there may be client which don't support
+    // it yet simultaneously with clients which already dispatch this type of action.
+    // if the old clients never encounter the new action type, there is no reason
+    // to completely re-sync by bumping the reducer version. But if they do, they have to
+    // re-reduce the action. If the compat level prop here is bigger than the compatVersion of the
+    // higher order reducer, the middleware will enter compat mode and wait for an update of compatVersion.
+    // As soon as it arrives, it will do the re-sync. The other clients which were up-to-date in time
+    // don't see anything about this
+    // "@@sync/compat_level/list": 1
   });
 
 export const changeEnteredText = (dispatch, ownProps) => text =>
