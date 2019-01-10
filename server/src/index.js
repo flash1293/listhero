@@ -124,6 +124,7 @@ app.post("/api", jwtExpress({ secret: process.env.SECRET }), (req, res) => {
     }
     info(`New action log length: ${sequence + actions.length}`);
     if(snapshot) {
+      info(`Trying to store snapshot`);
       if((storedSnapshot.version === undefined || storedSnapshot.version >= version) &&
         startFrom === sequence ) {
         info(`Storing snapshot`);
