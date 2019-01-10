@@ -1,7 +1,7 @@
 import React from "react";
 import ActionHistory from "@material-ui/icons/History";
 import { Link } from "react-router-dom";
-import Button from "@material-ui/core/Button";
+import Fab from "@material-ui/core/Fab";
 
 export default ({ uid }) => (
   <React.Fragment>
@@ -9,9 +9,9 @@ export default ({ uid }) => (
       style={{ position: "fixed", right: 15, bottom: 15 }}
       to={`/lists/${uid}/entries/last-used`}
     >
-      <Button variant="fab" color="primary" aria-label="add">
+      <Fab color="primary" aria-label="add">
         <ActionHistory />
-      </Button>
+      </Fab>
     </Link>
   </React.Fragment>
 );

@@ -18,7 +18,7 @@ export const SyncQrCode = ({ syncLink, router }) => (
         <IconButton onClick={router.history.goBack} color="inherit">
           <ArrowBack />
         </IconButton>
-        <Typography variant="title" color="inherit">
+        <Typography variant="h6" color="inherit">
           Sync-Link
         </Typography>
       </Toolbar>

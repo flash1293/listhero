@@ -143,7 +143,7 @@ export const ViewList = ({
             <ArrowBack />
           </IconButton>
         </Link>
-        <Typography variant="title" color="inherit" style={{ flex: 1 }}>
+        <Typography variant="h6" color="inherit" style={{ flex: 1 }}>
           {list.name}
         </Typography>
         <Link tabIndex={-1} to={`/lists/${listId}/entries/edit`}>
