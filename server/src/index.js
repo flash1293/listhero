@@ -62,12 +62,13 @@ app.post("/token", (process.env.PASSWORD ? basicauth("user", process.env.PASSWOR
   });
 });
 
-app.post("/api", jwtExpress({ secret: process.env.SECRET }), (req, res) => {
+app.post("/api", jwtExpress({ secret: process.env.SECRET }), async (req, res) => {
   const stream = `stream-${req.user.username}`;
   const { startFrom, actions, snapshot, version } = req.body;
   const snapshotKey = `snapshot-${req.user.username}`;
   const commands = [["llen", stream]];
-  commands.push(["hgetall", snapshotKey]);
+  commands.push(["hget", snapshotKey, "version"]);
+  commands.push(["hget", snapshotKey, "sequence"]);
   if (actions.length > 0) {
     commands.push(
       ["rpush", stream].concat(actions.map(action => String(action)))
@@ -75,45 +76,53 @@ app.post("/api", jwtExpress({ secret: process.env.SECRET }), (req, res) => {
   }
   commands.push(["lrange", stream, startFrom, -1]);
   trace(commands);
-  redis.multi(commands).exec((err, results) => {
-    if (err) {
-      error(err);
-      res.status(500).end(err);
-      return;
-    }
+  try {
+    const results = await redis.multi(commands).exec()
     const sequence = results[0][1];
-    const storedSnapshot = results[1][1];
-    if(storedSnapshot.sequence) {
-      storedSnapshot.sequence = parseInt(storedSnapshot.sequence);
-    }
-    if(storedSnapshot.version) {
-      storedSnapshot.version = parseInt(storedSnapshot.version);
-    }
-    const newActions = actions.length > 0 ? results[3][1] : results[2][1];
-    trace(storedSnapshot);
+    let storedSnapshotSequence = results[1][1] ? parseInt(results[1][1]) : 0;
+    let storedSnapshotVersion = results[2][1] ? parseInt(results[2][1]) : undefined;
+    const newActions = actions.length > 0 ? results[4][1] : results[3][1];
+    trace(storedSnapshotSequence);
+    trace(storedSnapshotVersion);
     trace(sequence);
     trace(newActions);
+    if(snapshot) {
+      info(`Trying to store snapshot`);
+      if((storedSnapshotVersion === undefined || storedSnapshotVersion >= version) &&
+        startFrom === sequence ) {
+        info(`Storing snapshot`);
+        const snapshotSequence = sequence + actions.length;
+        await redis.multi([
+          ["hset", snapshotKey, "version", version],
+          ["hset", snapshotKey, "snapshot", snapshot],
+          ["hset", snapshotKey, "sequence", snapshotSequence]
+        ]).exec();
+        storedSnapshotSequence = snapshotSequence;
+        storedSnapshotVersion = version;
+      }
+    }
     if (startFrom < sequence) {
-      if (version === storedSnapshot.version &&
-        storedSnapshot.sequence > startFrom && JSON.stringify(newActions).length > storedSnapshot.snapshot.length) {
+      const storedSnapshot = await redis.hget(snapshotKey, "snapshot");
+      if (!snapshot && version === storedSnapshotVersion &&
+        storedSnapshotSequence > startFrom && JSON.stringify(newActions).length > storedSnapshot.length) {
           res.json({
             replayFrom: startFrom,
-            replayLog: newActions.slice(storedSnapshot.sequence - startFrom),
-            snapshot: storedSnapshot.snapshot,
-            snapshotSequence: storedSnapshot.sequence || 0,
-            seed
-          })
-        } else {
-          res.json({
-            replayFrom: startFrom,
-            replayLog: newActions,
-            snapshotSequence: storedSnapshot.sequence || 0,
+            replayLog: newActions.slice(storedSnapshotSequence - startFrom),
+            snapshot: storedSnapshot,
+            snapshotSequence: storedSnapshotSequence,
             seed
           });
-        }
+      } else {
+        res.json({
+          replayFrom: startFrom,
+          replayLog: newActions,
+          snapshotSequence: storedSnapshotSequence,
+          seed
+        });
+      }
     } else {
       res.json({
-        snapshotSequence: storedSnapshot.sequence || 0,
+        snapshotSequence: storedSnapshotSequence,
         seed
       });
     }
@@ -123,23 +132,11 @@ app.post("/api", jwtExpress({ secret: process.env.SECRET }), (req, res) => {
       );
     }
     info(`New action log length: ${sequence + actions.length}`);
-    if(snapshot) {
-      info(`Trying to store snapshot`);
-      if((storedSnapshot.version === undefined || storedSnapshot.version >= version) &&
-        startFrom === sequence ) {
-        info(`Storing snapshot`);
-        redis.multi([
-          ["hset", snapshotKey, "version", version],
-          ["hset", snapshotKey, "snapshot", snapshot],
-          ["hset", snapshotKey, "sequence", sequence + actions.length]
-        ]).exec((err) => {
-          if (err) {
-            error(err);
-          }
-        });
-      }
-    }
-  });
+  } catch (err) {
+    error(err);
+    res.status(500).end(err);
+    return;
+  }
 });
 
 app.ws("/api/updates/:session", (ws, req) => {
