@@ -31,7 +31,8 @@ export default (postActionCreator, checkAndUpdateSeed, filter, key, reducerVersi
       // TODO this heuristic can be a lot smarter than that...
       // TODO make this configurable since some types of states don't benefit from regular snapshotting
       // don't attempt to post snapshots if we reduced incompatible actions earlier
-      return !currentState.purgeOnCompatLevel && sequenceDelta > 500;
+      // Random chance prevents multiple clients from simultaneously submitting snapshots
+      return !currentState.purgeOnCompatLevel && sequenceDelta > 500 && Math.random() < 0.1;
     };
     const startSync = (
       options = { skipRetry: false, dontMarkNewSync: false }
