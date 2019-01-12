@@ -67,8 +67,8 @@ app.post("/api", jwtExpress({ secret: process.env.SECRET }), async (req, res) =>
   const { startFrom, actions, snapshot, version } = req.body;
   const snapshotKey = `snapshot-${req.user.username}`;
   const commands = [["llen", stream]];
-  commands.push(["hget", snapshotKey, "version"]);
   commands.push(["hget", snapshotKey, "sequence"]);
+  commands.push(["hget", snapshotKey, "version"]);
   if (actions.length > 0) {
     commands.push(
       ["rpush", stream].concat(actions.map(action => String(action)))
@@ -88,7 +88,7 @@ app.post("/api", jwtExpress({ secret: process.env.SECRET }), async (req, res) =>
     trace(newActions);
     if(snapshot) {
       info(`Trying to store snapshot`);
-      if((storedSnapshotVersion === undefined || storedSnapshotVersion >= version) &&
+      if((storedSnapshotVersion === undefined || version >= storedSnapshotVersion) &&
         startFrom === sequence ) {
         info(`Storing snapshot`);
         const snapshotSequence = sequence + actions.length;
@@ -101,29 +101,31 @@ app.post("/api", jwtExpress({ secret: process.env.SECRET }), async (req, res) =>
         storedSnapshotVersion = version;
       }
     }
+    const baseAnswer = {
+      snapshotSequence: version === storedSnapshotVersion ? storedSnapshotSequence : 0,
+      seed
+    };
+
     if (startFrom < sequence) {
       const storedSnapshot = await redis.hget(snapshotKey, "snapshot");
       if (!snapshot && version === storedSnapshotVersion &&
         storedSnapshotSequence > startFrom && JSON.stringify(newActions).length > storedSnapshot.length) {
           res.json({
+            ...baseAnswer,
             replayFrom: startFrom,
             replayLog: newActions.slice(storedSnapshotSequence - startFrom),
             snapshot: storedSnapshot,
-            snapshotSequence: storedSnapshotSequence,
-            seed
           });
       } else {
         res.json({
+          ...baseAnswer,
           replayFrom: startFrom,
           replayLog: newActions,
-          snapshotSequence: storedSnapshotSequence,
-          seed
         });
       }
     } else {
       res.json({
-        snapshotSequence: storedSnapshotSequence,
-        seed
+        ...baseAnswer
       });
     }
     if (actions.length > 0) {
