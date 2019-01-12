@@ -172,8 +172,9 @@ const SortableItem = compose(
         )}
         {!item.marker && (
           <React.Fragment>
-            <ListItemIcon tabIndex="-1" onClick={onIncrease}>
+            <ListItemIcon onClick={onIncrease}>
               <IconButton
+                tabIndex="-1" 
                 style={{
                   height: 48,
                   width: 30
@@ -183,10 +184,10 @@ const SortableItem = compose(
               </IconButton>
             </ListItemIcon>
             <ListItemIcon
-              tabIndex="-1"
               onClick={item.stacked ? onDecrease : onRemove}
             >
               <IconButton
+                tabIndex="-1" 
                 style={{
                   height: 48,
                   width: 30
