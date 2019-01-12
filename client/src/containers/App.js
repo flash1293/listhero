@@ -24,7 +24,8 @@ const PreloadedRouter = preloader({
   recentUsed: () => import("./RecentUsed"),
   syncQrCode: () => import("./SyncQrCode"),
   readQrCode: () => import("./ReadQrCode"),
-  categories: () => import("./Categories")
+  categories: () => import("./Categories"),
+  help: () => import("./Help")
 })(
   ({
     viewList,
@@ -32,7 +33,8 @@ const PreloadedRouter = preloader({
     syncQrCode,
     readQrCode,
     recentUsed,
-    categories
+    categories,
+    help
   }) => (
     <Router>
       <div>
@@ -61,6 +63,11 @@ const PreloadedRouter = preloader({
           exact
           path="/lists/:id/entries/categories"
           component={categories}
+        />
+        <Route
+          exact
+          path="/help"
+          component={help}
         />
       </div>
     </Router>

@@ -13,6 +13,7 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import { connect } from "react-redux";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import SyncIcon from "@material-ui/icons/Sync";
+import KeyboardIcon from "@material-ui/icons/Keyboard";
 import ShareIcon from "@material-ui/icons/Share";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Divider from "@material-ui/core/Divider/Divider";
@@ -111,6 +112,15 @@ export default compose(
                 secondary="Ohne Sync-Link geht dein aktueller Account verloren"
               />
             </ListItem>
+            <Divider />
+            <Link to="/help">
+              <ListItem button>
+                <ListItemIcon>
+                  <KeyboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="Shortcuts" />
+              </ListItem>
+            </Link>
           </List>
         </div>
       </Drawer>
