@@ -52,6 +52,7 @@ import buildHandlers, {
   moveItemToList
 } from "../redux/actions";
 import buildSelector, { list, lists } from "../redux/selectors";
+import ItemCount from "../components/ItemCount";
 
 // touch-support feature detection
 let touchSupport = true;
@@ -289,7 +290,7 @@ export const EditList = ({
           </IconButton>
         </Link>
         <Typography variant="h6" color="inherit" style={{ flex: 1 }}>
-          {list.name}
+          {list.name} <ItemCount count={list.items.length} />
         </Typography>
         <Link tabIndex={-1} to={`/lists/${listId}/entries`}>
           <IconButton color="inherit" aria-label="Einkaufs-Ansicht">

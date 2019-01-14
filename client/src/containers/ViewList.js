@@ -38,6 +38,7 @@ import buildHandlers, {
   moveItemToList
 } from "../redux/actions";
 import buildSelector, { list, lists, filteredItems } from "../redux/selectors";
+import ItemCount from "../components/ItemCount";
 
 const labelColor = label =>
   label === `weekday_${new Date().getDay() - 1}` ? "#bbb" : "#eee";
@@ -144,7 +145,7 @@ export const ViewList = ({
           </IconButton>
         </Link>
         <Typography variant="h6" color="inherit" style={{ flex: 1 }}>
-          {list.name}
+          {list.name} <ItemCount count={list.items.length} />
         </Typography>
         <Link tabIndex={-1} to={`/lists/${listId}/entries/edit`}>
           <IconButton aria-label="Editieren" color="inherit">
