@@ -14,9 +14,8 @@ services:
       - db
     environment:
       - DEBUG=trace,info,error
-      - SEED=547645382715487
-      - SECRET=hfekjsdhfhdsfhksdlf
-      - PASSWORD=test123
+      - SEED=58787657876
+      - SECRET=test123
   db:
     image: redis:3.2-alpine
     volumes:
