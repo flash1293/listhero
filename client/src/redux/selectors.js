@@ -6,6 +6,7 @@ import prop from "ramda/src/prop";
 import defaultTo from "ramda/src/defaultTo";
 import assoc from "ramda/src/assoc";
 import propEq from "ramda/src/propEq";
+import isEmpty from "ramda/src/isEmpty";
 import not from "ramda/src/not";
 
 const mappedAssoc = (prop, mapFn) => obj => assoc(prop, mapFn(obj), obj);
@@ -21,6 +22,7 @@ export const lists = () => state =>
     map(addEnteredText(state.enteredText)),
     map(addPreferredView(state.preferredView)),
     map(addListItemCount),
+    map(addHasRecentItems),
     defaultTo(EMPTY_ARRAY),
     prop("present"),
     prop("lists")
@@ -35,6 +37,15 @@ const addEnteredText = enteredText => list => ({
   ...list,
   enteredText: enteredText[list.uid]
 });
+
+const addHasRecentItems = mappedAssoc(
+  "hasRecentItems",
+  compose(
+    not,
+    isEmpty,
+    prop("recentItems")
+  )
+);
 
 const addListItemCount = mappedAssoc(
   "itemCount",

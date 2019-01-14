@@ -372,7 +372,7 @@ export const EditList = ({
         />
       </div>
     </div>
-    <AddItemNavigation uid={listId} />
+    {list.hasRecentItems && <AddItemNavigation uid={listId} />}
     {dialogItem && (
       <ChangeNameDialog
         initialText={dialogItem.name}

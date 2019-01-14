@@ -243,7 +243,7 @@ export const ViewList = ({
         )}
       </div>
     </div>
-    <AddItemNavigation uid={listId} />
+    {list.hasRecentItems && <AddItemNavigation uid={listId} />}
     {dialogItem && (
       <ItemContextDialog
         item={dialogItem}

@@ -56,7 +56,7 @@ export default compose(
           <List>
             <ListItem>
               <ListItemIcon>
-                <Logo />
+                <Logo inline />
               </ListItemIcon>
               <ListItemText
                 primary={`Listhero Version ${REDUCER_VERSION}`}
