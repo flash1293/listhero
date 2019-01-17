@@ -7,12 +7,12 @@ export default handlerMakers => (dispatch, ownProps) =>
   map(handler => handler(dispatch, ownProps), handlerMakers);
 
 export const addItem = (dispatch, ownProps) => name =>
-  dispatch({
+  name && name.split("\n").reverse().map(namePart => dispatch({
     type: "ADD_ITEM",
     list: ownProps.listId,
     uid: uuid(),
-    name
-  });
+    name: namePart
+  }));
 
 export const editItem = (dispatch, ownProps) => (item, name) =>
   dispatch({

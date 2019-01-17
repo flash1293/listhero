@@ -50,6 +50,12 @@ export default compose(
     handleChangeText: ({ handleChangeText, onChange }) => e => {
       handleChangeText(e);
       onChange(e.target.value);
+    },
+    handleKeyDown: ({ handleSubmit, clearText }) => e => {
+      if(e.key === "Enter" && !e.shiftKey) {
+        handleSubmit(e);
+        clearText();
+      }
     }
   }),
   suggestionEngine
@@ -59,6 +65,7 @@ export default compose(
     initialText,
     placeholder,
     handleChangeText,
+    handleKeyDown,
     onSubmitText,
     suggestions,
     onAddSuggestion,
@@ -76,11 +83,13 @@ export default compose(
       <form onSubmit={onSubmitText} style={{ margin: "10px" }}>
         <FormControl fullWidth>
           <Input
+            multiline
             type="text"
             inputRef={setInputRef}
             placeholder={placeholder}
             value={text !== undefined ? text : initialText || ""}
             onChange={handleChangeText}
+            onKeyDown={handleKeyDown}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton tabIndex={-1} onClick={onSubmitText}>
