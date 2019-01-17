@@ -33,7 +33,7 @@ import redirectToLogin from "../components/RedirectToLogin";
 import redirectToHome from "../components/RedirectToHome";
 import routeParam from "../components/RouteParam";
 import ChangeNameDialog from "../components/ChangeNameDialog";
-import AddItemNavigation from "../components/AddItemNavigation";
+import InlineNavigation from "../components/InlineNavigation";
 import ItemContextDialog from "../components/ItemContextDialog";
 import AddForm from "../components/AddForm";
 import ListMenu from "../components/ListMenu";
@@ -49,9 +49,10 @@ import buildHandlers, {
   moveItem,
   setPreferredView,
   changeEnteredText,
-  moveItemToList
+  moveItemToList,
+  visitList
 } from "../redux/actions";
-import buildSelector, { list, lists } from "../redux/selectors";
+import buildSelector, { list, lists, lastVisitedList } from "../redux/selectors";
 import ItemCount from "../components/ItemCount";
 
 // touch-support feature detection
@@ -254,6 +255,7 @@ const SortableList = pure(
 
 export const EditList = ({
   list,
+  lastVisitedList,
   listId,
   addItem,
   onSortEnd,
@@ -290,7 +292,7 @@ export const EditList = ({
           </IconButton>
         </Link>
         <Typography variant="h6" color="inherit" style={{ flex: 1 }}>
-          {list.name} <ItemCount count={list.items.length} />
+          {list.name} <ItemCount count={list.itemCount} />
         </Typography>
         <Link tabIndex={-1} to={`/lists/${listId}/entries`}>
           <IconButton color="inherit" aria-label="Einkaufs-Ansicht">
@@ -373,7 +375,7 @@ export const EditList = ({
         />
       </div>
     </div>
-    {list.hasRecentItems && <AddItemNavigation uid={listId} />}
+    <InlineNavigation currentList={list} lastList={lastVisitedList} />
     {dialogItem && (
       <ChangeNameDialog
         initialText={dialogItem.name}
@@ -401,7 +403,8 @@ export default compose(
   connect(
     buildSelector({
       list,
-      lists
+      lists,
+      lastVisitedList
     }),
     buildHandlers({
       addItem,
@@ -413,7 +416,8 @@ export default compose(
       moveItemToBottom,
       removeItem,
       setPreferredView,
-      moveItemToList
+      moveItemToList,
+      visitList
     })
   ),
   redirectToHome,

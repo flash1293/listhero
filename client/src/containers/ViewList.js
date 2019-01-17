@@ -28,16 +28,17 @@ import preferredView from "../components/PreferredView";
 import redirectToLogin from "../components/RedirectToLogin";
 import redirectToHome from "../components/RedirectToHome";
 import ListMenu from "../components/ListMenu";
-import AddItemNavigation from "../components/AddItemNavigation";
+import InlineNavigation from "../components/InlineNavigation";
 import removeAnimation from "../components/RemoveAnimation";
 import routeParam from "../components/RouteParam";
 import buildHandlers, {
   removeItem,
   moveItemToBottom,
   setPreferredView,
-  moveItemToList
+  moveItemToList,
+  visitList
 } from "../redux/actions";
-import buildSelector, { list, lists, filteredItems } from "../redux/selectors";
+import buildSelector, { list, lists, filteredItems, lastVisitedList } from "../redux/selectors";
 import ItemCount from "../components/ItemCount";
 
 const labelColor = label =>
@@ -118,6 +119,7 @@ const ViewListItem = compose(
 
 export const ViewList = ({
   list,
+  lastVisitedList,
   filteredItems: items,
   lists,
   listId,
@@ -145,7 +147,7 @@ export const ViewList = ({
           </IconButton>
         </Link>
         <Typography variant="h6" color="inherit" style={{ flex: 1 }}>
-          {list.name} <ItemCount count={list.items.length} />
+          {list.name} <ItemCount count={list.itemCount} />
         </Typography>
         <Link tabIndex={-1} to={`/lists/${listId}/entries/edit`}>
           <IconButton aria-label="Editieren" color="inherit">
@@ -244,7 +246,7 @@ export const ViewList = ({
         )}
       </div>
     </div>
-    {list.hasRecentItems && <AddItemNavigation uid={listId} />}
+    <InlineNavigation currentList={list} lastList={lastVisitedList} />
     {dialogItem && (
       <ItemContextDialog
         item={dialogItem}
@@ -263,12 +265,13 @@ export default compose(
   redirectToLogin,
   routeParam("id", "listId"),
   connect(
-    buildSelector({ lists, list, filteredItems }),
+    buildSelector({ lists, list, filteredItems, lastVisitedList }),
     buildHandlers({
       removeItem,
       moveItemToBottom,
       setPreferredView,
-      moveItemToList
+      moveItemToList,
+      visitList
     })
   ),
   editDialog("Item"),

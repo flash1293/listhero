@@ -106,6 +106,12 @@ export const addList = dispatch => name =>
     name
   });
 
+export const visitList = dispatch => uid =>
+  dispatch({
+    type: "VISIT_LIST",
+    uid
+  });
+
 export const createWeekplan = dispatch => list =>
   dispatch({
     type: "CREATE_WEEKPLAN",

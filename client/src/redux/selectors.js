@@ -8,6 +8,7 @@ import assoc from "ramda/src/assoc";
 import propEq from "ramda/src/propEq";
 import isEmpty from "ramda/src/isEmpty";
 import not from "ramda/src/not";
+import { isEmoji } from "../components/ListIcon";
 
 const mappedAssoc = (prop, mapFn) => obj => assoc(prop, mapFn(obj), obj);
 
@@ -17,12 +18,15 @@ const EMPTY_OBJECT = {};
 export default selectors => (state, ownProps) =>
   map(selector => selector(ownProps)(state), selectors);
 
+export const lastVisitedList = () => state => state.visitedList.lastList ? list({ listId: state.visitedList.lastList })(state) : undefined;
+
 export const lists = () => state =>
   compose(
     map(addEnteredText(state.enteredText)),
     map(addPreferredView(state.preferredView)),
     map(addListItemCount),
     map(addHasRecentItems),
+    map(addHasEmoji),
     defaultTo(EMPTY_ARRAY),
     prop("present"),
     prop("lists")
@@ -45,6 +49,11 @@ const addHasRecentItems = mappedAssoc(
     isEmpty,
     prop("recentItems")
   )
+);
+
+const addHasEmoji = mappedAssoc(
+  "hasLeadingEmoji",
+  compose(isEmoji, defaultTo(""), prop("name"))
 );
 
 const addListItemCount = mappedAssoc(
