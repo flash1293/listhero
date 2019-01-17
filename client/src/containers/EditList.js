@@ -315,7 +315,8 @@ export const EditList = ({
               flex: "1 1 auto",
               boxShadow: "inset 0 0 25px rgba(0,0,0,0.3)",
               backgroundColor: "#f5f5f5",
-              minHeight: "calc(100vh - 80px)"
+              minHeight: "calc(100vh - 80px)",
+              paddingBottom: 90
             }}
           >
             {lists.map((list, index) => (
