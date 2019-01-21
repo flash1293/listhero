@@ -13,6 +13,7 @@ import LinkIcon from "@material-ui/icons/Link";
 import ErrorIcon from "@material-ui/icons/Error";
 import SyncIcon from "@material-ui/icons/Sync";
 import aes from "aes-js";
+import { I18n } from "react-i18next";
 
 import buildHandlers, { requestLogin, createLogin } from "../redux/actions";
 import buildSelector, { user } from "../redux/selectors";
@@ -28,74 +29,68 @@ const Login = ({
     params: { username: linkDataUsername }
   }
 }) => (
-  <div>
-    <AppBar position="static" color="primary">
-      <Toolbar>
-        <Typography variant="h6" color="inherit">
-          Konto-Synchronisierung
-        </Typography>
-      </Toolbar>
-    </AppBar>
-    {!requesting &&
-      serverPassword &&
-      failed && (
-        <Typography
-          style={{
-            margin: "20px auto",
-            maxWidth: 400,
-            display: "flex",
-            alignItems: "center"
-          }}
-        >
-          <ErrorIcon style={{ paddingRight: 15 }} />
-          <span>
-            Die Anmeldung konnte nicht durchgeführt werden.{" "}
-            {!linkDataUsername && "Überprüfe das Server-Passwort."}
-          </span>
-        </Typography>
-      )}
-    {!requesting &&
-      !linkDataUsername && (
-        <ServerPassword
-          initialText={serverPassword}
-          onSubmit={submitServerPassword}
-          buttonLabel={username ? "Login" : "Account erstellen"}
-        />
-      )}
-    {linkDataUsername &&
-      !failed &&
-      !requesting && (
-        <div style={{ padding: 20 }}>
-          <Typography>
-            Achtung, dein aktuelles Nutzerkonto wird bei der Synchronisierung
-            überschrieben. Wenn du dein Konto nicht verlieren willst, sichere
-            dir zuerst den Synchronisierungs-Link.
+  <I18n>
+    {t => (
+      <div>
+        <AppBar position="static" color="primary">
+          <Toolbar>
+            <Typography variant="h6" color="inherit">
+              {t("login_title")}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        {!requesting && serverPassword && failed && (
+          <Typography
+            style={{
+              margin: "20px auto",
+              maxWidth: 400,
+              display: "flex",
+              alignItems: "center"
+            }}
+          >
+            <ErrorIcon style={{ paddingRight: 15 }} />
+            <span>
+              {t("login_error")} {!linkDataUsername && t("login_servererror")}
+            </span>
           </Typography>
-          <Button onClick={loginWithLinkData}>
-            <SyncIcon style={{ marginRight: 10 }} />
-            Synchronisieren
-          </Button>
-
-          <CopyToClipboard text={syncLink}>
-            <Button>
-              <LinkIcon style={{ marginRight: 10 }} />
-              Sync-Link für aktuelles Konto kopieren
+        )}
+        {!requesting && !linkDataUsername && (
+          <ServerPassword
+            initialText={serverPassword}
+            onSubmit={submitServerPassword}
+            buttonLabel={username ? t("login_login") : t("login_createaccount")}
+          />
+        )}
+        {linkDataUsername && !failed && !requesting && (
+          <div style={{ padding: 20 }}>
+            <Typography>{t("login_overwritewarning")}</Typography>
+            <Button onClick={loginWithLinkData}>
+              <SyncIcon style={{ marginRight: 10 }} />
+              {t("login_overwrite")}
             </Button>
-          </CopyToClipboard>
-        </div>
-      )}
-    {requesting && (
-      <CircularProgress
-        style={{
-          margin: "0 auto",
-          display: "block",
-          marginTop: 50
-        }}
-        size={80}
-        thickness={4}
-      />
+
+            <CopyToClipboard text={syncLink}>
+              <Button>
+                <LinkIcon style={{ marginRight: 10 }} />
+                {t("login_copysynclink")}
+              </Button>
+            </CopyToClipboard>
+          </div>
+        )}
+        {requesting && (
+          <CircularProgress
+            style={{
+              margin: "0 auto",
+              display: "block",
+              marginTop: 50
+            }}
+            size={80}
+            thickness={4}
+          />
+        )}
+      </div>
     )}
-  </div>
+  </I18n>
 );
 
 export default compose(

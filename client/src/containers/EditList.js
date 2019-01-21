@@ -52,7 +52,11 @@ import buildHandlers, {
   moveItemToList,
   visitList
 } from "../redux/actions";
-import buildSelector, { list, lists, lastVisitedList } from "../redux/selectors";
+import buildSelector, {
+  list,
+  lists,
+  lastVisitedList
+} from "../redux/selectors";
 import ItemCount from "../components/ItemCount";
 
 // touch-support feature detection
@@ -140,69 +144,77 @@ const SortableItem = compose(
   })),
   mapProps(({ key, index, itemIndex, ...other }) => other),
   pure
-)(({ item, onRemove, onIncrease, onDecrease, handleShortcuts, onClick, onContext, handleTouchEnd }) => {
-  const element = (
-    <Shortcuts
-      tabIndex={0}
-      stopPropagation={false}
-      name="TODO_ITEM"
-      handler={handleShortcuts}
-    >
-      <ListItem
-        ref={el => {
-          window.el = el;
-        }}
-        style={
-          item.marker
-            ? { backgroundColor: "#eee" }
-            : { padding: 0, wordBreak: "break-word" }
-        }
-        onClick={item.marker ? undefined : onClick}
-        onContextMenu={item.marker ? undefined : onContext}
-        button={!item.marker}
-        tabIndex={-1}
+)(
+  ({
+    item,
+    onRemove,
+    onIncrease,
+    onDecrease,
+    handleShortcuts,
+    onClick,
+    onContext,
+    handleTouchEnd
+  }) => {
+    const element = (
+      <Shortcuts
+        tabIndex={0}
+        stopPropagation={false}
+        name="TODO_ITEM"
+        handler={handleShortcuts}
       >
-        {!item.marker && (
-          <ListItemIcon>
-            <SortableDragHandle />
-          </ListItemIcon>
-        )}
-        {item.label ? (
-          <I18n>{t => <ListItemText primary={t(item.label)} />}</I18n>
-        ) : (
-          <ListItemText primary={item.name} />
-        )}
-        {!item.marker && (
-          <React.Fragment>
-            <ListItemIcon onClick={onIncrease}>
-              <IconButton
-                tabIndex="-1" 
-                style={{
-                  height: 48,
-                  width: 30
-                }}
-              >
-                <Add />
-              </IconButton>
+        <ListItem
+          ref={el => {
+            window.el = el;
+          }}
+          style={
+            item.marker
+              ? { backgroundColor: "#eee" }
+              : { padding: 0, wordBreak: "break-word" }
+          }
+          onClick={item.marker ? undefined : onClick}
+          onContextMenu={item.marker ? undefined : onContext}
+          button={!item.marker}
+          tabIndex={-1}
+        >
+          {!item.marker && (
+            <ListItemIcon>
+              <SortableDragHandle />
             </ListItemIcon>
-            <ListItemIcon
-              onClick={item.stacked ? onDecrease : onRemove}
-            >
-              <IconButton
-                tabIndex="-1" 
-                style={{
-                  height: 48,
-                  width: 30
-                }}
-              >
-                <ContentRemove />
-              </IconButton>
-            </ListItemIcon>
-          </React.Fragment>
-        )}
-      </ListItem>
-    </Shortcuts>
-  );
+          )}
+          {item.label ? (
+            <I18n>{t => <ListItemText primary={t(item.label)} />}</I18n>
+          ) : (
+            <ListItemText primary={item.name} />
+          )}
+          {!item.marker && (
+            <React.Fragment>
+              <ListItemIcon onClick={onIncrease}>
+                <IconButton
+                  tabIndex="-1"
+                  style={{
+                    height: 48,
+                    width: 30
+                  }}
+                >
+                  <Add />
+                </IconButton>
+              </ListItemIcon>
+              <ListItemIcon onClick={item.stacked ? onDecrease : onRemove}>
+                <IconButton
+                  tabIndex="-1"
+                  style={{
+                    height: 48,
+                    width: 30
+                  }}
+                >
+                  <ContentRemove />
+                </IconButton>
+              </ListItemIcon>
+            </React.Fragment>
+          )}
+        </ListItem>
+      </Shortcuts>
+    );
 
     return touchSupport ? (
       <LongPress
@@ -215,7 +227,8 @@ const SortableItem = compose(
     ) : (
       element
     );
-});
+  }
+);
 
 const SortableList = pure(
   SortableContainer(
@@ -277,125 +290,131 @@ export const EditList = ({
   handleShortcuts,
   lists
 }) => (
-  <div>
-    <AppBar position="static" color="primary">
-      <Shortcuts
-        name="EDIT_VIEW"
-        stopPropagation={false}
-        targetNodeSelector="body"
-        handler={handleShortcuts}
-      />
-      <Toolbar>
-        <Link tabIndex={-1} to="/">
-          <IconButton color="inherit">
-            <ArrowBack />
-          </IconButton>
-        </Link>
-        <Typography variant="h6" color="inherit" style={{ flex: 1 }}>
-          {list.name} <ItemCount count={list.itemCount} />
-        </Typography>
-        <Link tabIndex={-1} to={`/lists/${listId}/entries`}>
-          <IconButton color="inherit" aria-label="Einkaufs-Ansicht">
-            <Eye />
-          </IconButton>
-        </Link>
-        <ListMenu list={list} />
-      </Toolbar>
-    </AppBar>
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row"
-      }}
-    >
-      {windowWidth > 700 &&
-        lists.length > 1 && (
-          <List
-            style={{
-              flex: "1 1 auto",
-              boxShadow: "inset 0 0 25px rgba(0,0,0,0.3)",
-              backgroundColor: "#f5f5f5",
-              minHeight: "calc(100vh - 80px)",
-              paddingBottom: 90
-            }}
-          >
-            {lists.map((list, index) => (
-              <ListItem
-                key={list.uid}
-                tabIndex={-1}
-                button
-                style={list.uid === listId ? { backgroundColor: "#bbb" } : {}}
+  <I18n>
+    {t => (
+      <div>
+        <AppBar position="static" color="primary">
+          <Shortcuts
+            name="EDIT_VIEW"
+            stopPropagation={false}
+            targetNodeSelector="body"
+            handler={handleShortcuts}
+          />
+          <Toolbar>
+            <Link tabIndex={-1} to="/">
+              <IconButton color="inherit">
+                <ArrowBack />
+              </IconButton>
+            </Link>
+            <Typography variant="h6" color="inherit" style={{ flex: 1 }}>
+              {list.name} <ItemCount count={list.itemCount} />
+            </Typography>
+            <Link tabIndex={-1} to={`/lists/${listId}/entries`}>
+              <IconButton
+                color="inherit"
+                aria-label={t("list_shoppingview_label")}
               >
-                <ListItemIcon>
-                  <ListIcon name={list.name} />
-                </ListItemIcon>
-                <Link
-                  style={{
-                    flex: 1,
-                    paddingLeft: 15,
-                    marginTop: "-12px",
-                    marginBottom: "-12px",
-                    paddingTop: 12,
-                    paddingBottom: 12
-                  }}
-                  to={`/lists/${list.uid}/entries${
-                    list.preferredView === "edit" ? "/edit" : ""
-                  }`}
+                <Eye />
+              </IconButton>
+            </Link>
+            <ListMenu list={list} />
+          </Toolbar>
+        </AppBar>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row"
+          }}
+        >
+          {windowWidth > 700 && lists.length > 1 && (
+            <List
+              style={{
+                flex: "1 1 auto",
+                boxShadow: "inset 0 0 25px rgba(0,0,0,0.3)",
+                backgroundColor: "#f5f5f5",
+                minHeight: "calc(100vh - 80px)",
+                paddingBottom: 90
+              }}
+            >
+              {lists.map((list, index) => (
+                <ListItem
+                  key={list.uid}
+                  tabIndex={-1}
+                  button
+                  style={list.uid === listId ? { backgroundColor: "#bbb" } : {}}
                 >
-                  <ListItemText
-                    primary={filterLeadingEmoji(list.name)}
-                    secondary={`${list.itemCount} Einträge `}
-                  />
-                </Link>
-              </ListItem>
-            ))}
-          </List>
+                  <ListItemIcon>
+                    <ListIcon name={list.name} />
+                  </ListItemIcon>
+                  <Link
+                    style={{
+                      flex: 1,
+                      paddingLeft: 15,
+                      marginTop: "-12px",
+                      marginBottom: "-12px",
+                      paddingTop: 12,
+                      paddingBottom: 12
+                    }}
+                    to={`/lists/${list.uid}/entries${
+                      list.preferredView === "edit" ? "/edit" : ""
+                    }`}
+                  >
+                    <ListItemText
+                      primary={filterLeadingEmoji(list.name)}
+                      secondary={`${list.itemCount} ${t("list_entries")} `}
+                    />
+                  </Link>
+                </ListItem>
+              ))}
+            </List>
+          )}
+          <div style={{ flex: "5 1 0", position: "relative" }}>
+            <AddForm
+              placeholder={t("list_newentry")}
+              recentItems={list.recentItems}
+              listId={listId}
+              onSubmit={addItem}
+              onChange={changeEnteredText}
+              initialText={list.enteredText}
+            />
+            <SortableList
+              items={list.items}
+              onSortEnd={onSortEnd}
+              onMove={moveItem}
+              onClick={handleDialogOpen}
+              onContext={handleDialogContextOpen}
+              isContextDialogOpen={Boolean(dialogItemContext)}
+              onRemove={removeItem}
+              onDecrease={decreaseItem}
+              onIncrease={increaseItem}
+              useDragHandle
+              useWindowAsScrollContainer
+              lockAxis="y"
+            />
+          </div>
+        </div>
+        <InlineNavigation currentList={list} lastList={lastVisitedList} />
+        {dialogItem && (
+          <ChangeNameDialog
+            initialText={dialogItem.name}
+            onClose={handleDialogClose}
+            onSubmit={handleDialogSubmit}
+          />
         )}
-      <div style={{ flex: "5 1 0", position: "relative" }}>
-        <AddForm
-          placeholder="Neuer Eintrag"
-          recentItems={list.recentItems}
-          listId={listId}
-          onSubmit={addItem}
-          onChange={changeEnteredText}
-          initialText={list.enteredText}
-        />
-        <SortableList
-          items={list.items}
-          onSortEnd={onSortEnd}
-          onMove={moveItem}
-          onClick={handleDialogOpen}
-          onContext={handleDialogContextOpen}
-          isContextDialogOpen={Boolean(dialogItemContext)}
-          onRemove={removeItem}
-          onDecrease={decreaseItem}
-          onIncrease={increaseItem}
-          useDragHandle
-          useWindowAsScrollContainer
-          lockAxis="y"
-        />
+        {dialogItemContext && (
+          <ItemContextDialog
+            item={dialogItemContext}
+            lists={lists}
+            currentListId={listId}
+            onClose={handleDialogContextClose}
+            removeItem={removeItem}
+            moveToBottom={moveItemToBottom}
+            moveToList={moveItemToList}
+          />
+        )}
       </div>
-    </div>
-    <InlineNavigation currentList={list} lastList={lastVisitedList} />
-    {dialogItem && (
-      <ChangeNameDialog
-        initialText={dialogItem.name}
-        onClose={handleDialogClose}
-        onSubmit={handleDialogSubmit}
-      />
     )}
-    {dialogItemContext && (
-      <ItemContextDialog
-        item={dialogItemContext}
-        lists={lists}
-        currentListId={listId}
-        onClose={handleDialogContextClose}
-        removeItem={removeItem}
-        moveToBottom={moveItemToBottom}
-        moveToList={moveItemToList}
-      />
-    )}
-  </div>
+  </I18n>
 );
 
 export default compose(

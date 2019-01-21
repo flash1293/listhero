@@ -1,6 +1,7 @@
 import React from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import { I18n } from "react-i18next";
 
 import inputForm from "./InputForm";
 
@@ -24,14 +25,18 @@ export default inputForm(
         maxWidth: 400
       }}
     >
-      <TextField
-        label="Server-Passwort"
-        type="password"
-        autoComplete="current-password"
-        margin="normal"
-        value={text !== undefined ? text : initialText || ""}
-        onChange={handleChangeText}
-      />
+      <I18n>
+        {t => (
+          <TextField
+            label={t("serverpassword_label")}
+            type="password"
+            autoComplete="current-password"
+            margin="normal"
+            value={text !== undefined ? text : initialText || ""}
+            onChange={handleChangeText}
+          />
+        )}
+      </I18n>
       <Button onClick={handleSubmit}>{buttonLabel}</Button>
     </form>
   )

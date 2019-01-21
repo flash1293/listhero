@@ -21,6 +21,8 @@ import Paper from "@material-ui/core/Paper";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withHandlers } from "recompose";
+import { I18n } from "react-i18next";
+import intersperse from "ramda/src/intersperse";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import { Logo } from "../components/Logo";
@@ -33,11 +35,7 @@ import Drawer from "../components/Drawer";
 import drawerToggle from "../components/DrawerToggle";
 import routerContext from "../components/RouterContext";
 import moveObject from "../components/MoveObject";
-import buildHandlers, {
-  addList,
-  moveList,
-  refresh
-} from "../redux/actions";
+import buildHandlers, { addList, moveList, refresh } from "../redux/actions";
 
 const SortableDragHandle = SortableHandle(({ name }) => (
   <ListIcon name={name} />
@@ -70,10 +68,14 @@ const SortableItem = compose(
           list.preferredView === "edit" ? "/edit" : ""
         }`}
       >
-        <ListItemText
-          primary={filterLeadingEmoji(list.name)}
-          secondary={`${list.itemCount} Einträge `}
-        />
+        <I18n>
+          {t => (
+            <ListItemText
+              primary={filterLeadingEmoji(list.name)}
+              secondary={`${list.itemCount} ${t("list_entries")}`}
+            />
+          )}
+        </I18n>
         <ListItemSecondaryAction>
           <ListMenu list={list} />
         </ListItemSecondaryAction>
@@ -110,71 +112,69 @@ export const Lists = ({
   onSortEnd,
   refresh
 }) => (
-  <div>
-    <AppBar position="static" color="primary">
-      <Toolbar>
-        <IconButton
-          style={{ marginLeft: -12, marginRight: 10, color: "white" }}
-          color="default"
-          aria-label="Menu"
-          onClick={toggleDrawer}
-        >
-          <MenuIcon />
-        </IconButton>
-        <Logo onClick={refresh} inverted showSyncMarker={!merged} />
-        <Typography variant="h6" color="inherit" style={{ flex: 1 }}>
-          Alle Listen
-        </Typography>
-        <IconButton
-          onClick={handleDialogOpen}
-          aria-label="Liste hinzufügen"
-          color="inherit"
-        >
-          <Add />
-        </IconButton>
-      </Toolbar>
-    </AppBar>
-    <SortableList
-      lists={lists}
-      onSortEnd={onSortEnd}
-      history={router.history}
-      useDragHandle
-      useWindowAsScrollContainer
-      lockAxis="y"
-    />
-    {lists.length === 0 &&
-      merged && (
-        <Paper style={{ padding: "20px" }} elevation={2}>
-          <Typography>
-            Noch keine Listen angelegt.<br />
-            Tippe rechts oben "+", um eine Liste hinzuzufügen.<br />
-            <br />
-            Einträge können über mehrere Geräte synchronisiert werden.<br />
-            Öffne Links oben das Menü, um den Sync-Code zu kopieren.
-          </Typography>
-        </Paper>
-      )}
-    {lists.length === 0 &&
-      !merged && (
-        <CircularProgress
-          style={{
-            margin: "0 auto",
-            display: "block",
-            marginTop: 50
-          }}
-          size={80}
-          thickness={4}
+  <I18n>
+    {t => (
+      <div>
+        <AppBar position="static" color="primary">
+          <Toolbar>
+            <IconButton
+              style={{ marginLeft: -12, marginRight: 10, color: "white" }}
+              color="default"
+              aria-label={t("lists_menu_label")}
+              onClick={toggleDrawer}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Logo onClick={refresh} inverted showSyncMarker={!merged} />
+            <Typography variant="h6" color="inherit" style={{ flex: 1 }}>
+              {t("lists_title")}
+            </Typography>
+            <IconButton
+              onClick={handleDialogOpen}
+              aria-label={t("lists_addlist_label")}
+              color="inherit"
+            >
+              <Add />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+        <SortableList
+          lists={lists}
+          onSortEnd={onSortEnd}
+          history={router.history}
+          useDragHandle
+          useWindowAsScrollContainer
+          lockAxis="y"
         />
-      )}
-    {isDialogOpen && (
-      <ChangeNameDialog
-        initialText=""
-        onSubmit={handleDialogSubmit}
-        onClose={handleDialogClose}
-      />
+        {lists.length === 0 && merged && (
+          <Paper style={{ padding: "20px" }} elevation={2}>
+            <Typography>
+              {intersperse(<br />, t("lists_welcome").split("\n"))}
+            </Typography>
+          </Paper>
+        )}
+        {lists.length === 0 && !merged && (
+          <CircularProgress
+            style={{
+              margin: "0 auto",
+              display: "block",
+              marginTop: 50
+            }}
+            size={80}
+            thickness={4}
+          />
+        )}
+        {isDialogOpen && (
+          <ChangeNameDialog
+            initialText=""
+            onSubmit={handleDialogSubmit}
+            onClose={handleDialogClose}
+          />
+        )}
+        <Drawer isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
+      </div>
     )}
-    <Drawer isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
-  </div>
+  </I18n>
 );
 
 export default compose(

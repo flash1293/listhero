@@ -18,6 +18,7 @@ import ShareIcon from "@material-ui/icons/Share";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Divider from "@material-ui/core/Divider/Divider";
 import { Link } from "react-router-dom";
+import { I18n } from "react-i18next";
 
 import { REDUCER_VERSION } from "../config";
 import buildSelector, { user } from "../redux/selectors";
@@ -38,7 +39,8 @@ export default compose(
     })
   ),
   syncLink,
-  addDialog("logout"))(
+  addDialog("logout")
+)(
   ({
     isDrawerOpen,
     toggleDrawer,
@@ -50,87 +52,91 @@ export default compose(
     syncLink,
     refresh
   }) => (
-    <React.Fragment>
-      <Drawer open={isDrawerOpen} type="temporary" onClose={toggleDrawer}>
-        <div role="button">
-          <List>
-            <ListItem>
-              <ListItemIcon>
-                <Logo inline />
-              </ListItemIcon>
-              <ListItemText
-                primary={`Listhero Version ${REDUCER_VERSION}`}
-                secondary={`Account-ID: ${username}`}
-              />
-              <ListItemSecondaryAction>
-                <IconButton onClick={toggleDrawer}>
-                  <ChevronLeft />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-            <Divider />
-            <CopyToClipboard text={syncLink}>
-              <ListItem button>
-                <ListItemIcon>
-                  <LinkIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Sync-Link kopieren"
-                  secondary="Dieser Link gibt Zugriff auf deinen Account"
-                />
-              </ListItem>
-            </CopyToClipboard>
-            <Link to="/qr">
-              <ListItem button>
-                <ListItemIcon>
-                  <ShareIcon />
-                </ListItemIcon>
-                <ListItemText primary="Sync-Link als Qr Code anzeigen" />
-              </ListItem>
-            </Link>
-            <Link to="/readQr">
-              <ListItem button>
-                <ListItemIcon>
-                  <PhotoCameraIcon />
-                </ListItemIcon>
-                <ListItemText primary="Sync-Qr-Code abscannen" />
-              </ListItem>
-            </Link>
-            <ListItem button onClick={refresh}>
-              <ListItemIcon>
-                <SyncIcon />
-              </ListItemIcon>
-              <ListItemText primary="Neu synchronisieren" />
-            </ListItem>
-            <Divider />
-            <ListItem button onClick={handleDialogOpen}>
-              <ListItemIcon>
-                <AccountCircleIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary="Neuen Account erstellen"
-                secondary="Ohne Sync-Link geht dein aktueller Account verloren"
-              />
-            </ListItem>
-            <Divider />
-            <Link to="/help">
-              <ListItem button>
-                <ListItemIcon>
-                  <KeyboardIcon />
-                </ListItemIcon>
-                <ListItemText primary="Shortcuts" />
-              </ListItem>
-            </Link>
-          </List>
-        </div>
-      </Drawer>
-      {isDialogOpen && (
-        <ConfirmDialog
-          label="Willst du deinen aktuellen Account wirklich verwerfen?"
-          onSubmit={handleDialogSubmit}
-          onClose={handleDialogClose}
-        />
+    <I18n>
+      {t => (
+        <React.Fragment>
+          <Drawer open={isDrawerOpen} type="temporary" onClose={toggleDrawer}>
+            <div role="button">
+              <List>
+                <ListItem>
+                  <ListItemIcon>
+                    <Logo inline />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={`${t("drawer_version")} ${REDUCER_VERSION}`}
+                    secondary={`${t("drawer_accountid")}: ${username}`}
+                  />
+                  <ListItemSecondaryAction>
+                    <IconButton onClick={toggleDrawer}>
+                      <ChevronLeft />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <Divider />
+                <CopyToClipboard text={syncLink}>
+                  <ListItem button>
+                    <ListItemIcon>
+                      <LinkIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={t("drawer_copysync")}
+                      secondary={t("drawer_copysync_description")}
+                    />
+                  </ListItem>
+                </CopyToClipboard>
+                <Link to="/qr">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <ShareIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={t("drawer_copysyncqr")} />
+                  </ListItem>
+                </Link>
+                <Link to="/readQr">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <PhotoCameraIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={t("drawer_scanqr")} />
+                  </ListItem>
+                </Link>
+                <ListItem button onClick={refresh}>
+                  <ListItemIcon>
+                    <SyncIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={t("drawer_resync")} />
+                </ListItem>
+                <Divider />
+                <ListItem button onClick={handleDialogOpen}>
+                  <ListItemIcon>
+                    <AccountCircleIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t("drawer_newaccount")}
+                    secondary={t("drawer_newaccount_description")}
+                  />
+                </ListItem>
+                <Divider />
+                <Link to="/help">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <KeyboardIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={t("drawer_shortcuts")} />
+                  </ListItem>
+                </Link>
+              </List>
+            </div>
+          </Drawer>
+          {isDialogOpen && (
+            <ConfirmDialog
+              label={t("drawer_newaccount_dialog")}
+              onSubmit={handleDialogSubmit}
+              onClose={handleDialogClose}
+            />
+          )}
+        </React.Fragment>
       )}
-    </React.Fragment>
+    </I18n>
   )
 );

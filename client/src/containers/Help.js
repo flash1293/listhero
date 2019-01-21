@@ -17,42 +17,46 @@ import keymap from "../keymap";
 import routerContext from "../components/RouterContext";
 import redirectToLogin from "../components/RedirectToLogin";
 
-export const Help = ({ syncLink, router }) => (
+export const Help = ({ router }) => (
   <div>
-    <AppBar position="static" color="primary">
-      <Toolbar>
-        <IconButton onClick={router.history.goBack} color="inherit">
-          <ArrowBack />
-        </IconButton>
-        <Typography variant="h6" color="inherit">
-          Shortcuts
-        </Typography>
-      </Toolbar>
-    </AppBar>
     <I18n>
-      {t => Object.entries(keymap).map(([area, shortcuts]) => (
-        <Paper style={{ margin: "20px" }}>
-          <Typography variant="h5" style={{ padding: "20px" }}>
-            {t(`SC_${area}`)}
-          </Typography>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Funktion</TableCell>
-                <TableCell>Shortcut</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {Object.entries(shortcuts).map(([action, shortcut]) => (
-                <TableRow key={action}>
-                  <TableCell>{t(`SC_${action}`)}</TableCell>
-                  <TableCell>{shortcut}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Paper>
-      ))}
+      {t => (
+        <React.Fragment>
+          <AppBar position="static" color="primary">
+            <Toolbar>
+              <IconButton onClick={router.history.goBack} color="inherit">
+                <ArrowBack />
+              </IconButton>
+              <Typography variant="h6" color="inherit">
+                {t("shortcut_title")}
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          {Object.entries(keymap).map(([area, shortcuts]) => (
+            <Paper key={area} style={{ margin: "20px" }}>
+              <Typography variant="h5" style={{ padding: "20px" }}>
+                {t(`shortcut_${area}`)}
+              </Typography>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>{t("shortcut_feature")}</TableCell>
+                    <TableCell>{t("shortcut_shortcut")}</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Object.entries(shortcuts).map(([action, shortcut]) => (
+                    <TableRow key={action}>
+                      <TableCell>{t(`shortcut_${action}`)}</TableCell>
+                      <TableCell>{shortcut}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+          ))}
+        </React.Fragment>
+      )}
     </I18n>
   </div>
 );

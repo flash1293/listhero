@@ -60,8 +60,6 @@ export default compose(
     handleNormalList: ({ createNormalList, list }) => () => {
       createNormalList(list);
     },
-    handleCategoryPage: ({ history, list }) => () =>
-      history.push(`/lists/${list.uid}/entries/categories`),
     stopPropagation: () => e => {
       e.preventDefault();
       e.stopPropagation();
@@ -91,7 +89,7 @@ export default compose(
     handleWeekplan,
     handleNormalList,
     stopPropagation,
-    handleCategoryPage
+    t
   }) => (
     <div onClick={stopPropagation}>
       <IconButton
@@ -109,21 +107,20 @@ export default compose(
         onClose={handleClose}
         onClick={handleClose}
       >
-        <MenuItem onClick={handleDialogOpen}>Umbenennen</MenuItem>
-        <MenuItem onClick={handleClear}>Leeren</MenuItem>
-        <MenuItem onClick={handleRemove}>Löschen</MenuItem>
+        <MenuItem onClick={handleDialogOpen}>{t("listmenu_rename")}</MenuItem>
+        <MenuItem onClick={handleClear}>{t("listmenu_clear")}</MenuItem>
+        <MenuItem onClick={handleRemove}>{t("listmenu_remove")}</MenuItem>
         {!list.isWeekplan && (
-          <MenuItem onClick={handleWeekplan}>In Wochenplan umwandeln</MenuItem>
-        )}
-        {list.isWeekplan && (
-          <MenuItem onClick={handleNormalList}>
-            In Einkaufsliste umwandeln
+          <MenuItem onClick={handleWeekplan}>
+            {t("listmenu_toweekplan")}
           </MenuItem>
         )}
+        {list.isWeekplan && (
+          <MenuItem onClick={handleNormalList}>{t("listmenu_tolist")}</MenuItem>
+        )}
         <Divider />
-        <MenuItem onClick={handleCategoryPage}>Kategorien</MenuItem>
         <CopyToClipboard text={listAsText}>
-          <MenuItem>In Zwischenablage kopieren</MenuItem>
+          <MenuItem>{t("listmenu_copy")}</MenuItem>
         </CopyToClipboard>
       </Menu>
       {dialogList && (

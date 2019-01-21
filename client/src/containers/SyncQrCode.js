@@ -6,12 +6,14 @@ import IconButton from "@material-ui/core/IconButton";
 import ArrowBack from "@material-ui/icons/ArrowBack";
 import { compose } from "redux";
 import QRCode from "qrcode.react";
+import { I18n } from "react-i18next";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import routerContext from "../components/RouterContext";
 import syncLink from "../components/SyncLink";
 
 export const SyncQrCode = ({ syncLink, router }) => (
+  <I18n>{t =>
   <div>
     <AppBar position="static" color="primary">
       <Toolbar>
@@ -19,7 +21,7 @@ export const SyncQrCode = ({ syncLink, router }) => (
           <ArrowBack />
         </IconButton>
         <Typography variant="h6" color="inherit">
-          Sync-Link
+          {t("copysyncqr_title")}
         </Typography>
       </Toolbar>
     </AppBar>
@@ -33,9 +35,10 @@ export const SyncQrCode = ({ syncLink, router }) => (
       <QRCode size={300} value={syncLink} />
     </div>
     <Typography style={{ padding: 15, textAlign: "center" }}>
-      Dieser QR-Code gibt Zugriff auf deinen Account.
+      {t("copysyncqr_explanation")}
     </Typography>
   </div>
+  }</I18n>
 );
 
 export default compose(redirectToLogin, routerContext, syncLink)(SyncQrCode);

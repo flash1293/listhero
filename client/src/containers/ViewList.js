@@ -38,7 +38,12 @@ import buildHandlers, {
   moveItemToList,
   visitList
 } from "../redux/actions";
-import buildSelector, { list, lists, filteredItems, lastVisitedList } from "../redux/selectors";
+import buildSelector, {
+  list,
+  lists,
+  filteredItems,
+  lastVisitedList
+} from "../redux/selectors";
 import ItemCount from "../components/ItemCount";
 
 const labelColor = label =>
@@ -116,7 +121,6 @@ const ViewListItem = compose(
   }
 );
 
-
 export const ViewList = ({
   list,
   lastVisitedList,
@@ -132,134 +136,136 @@ export const ViewList = ({
   windowWidth,
   handleShortcuts
 }) => (
-  <div>
-    <AppBar position="static" color="primary">
-      <Shortcuts
-        name="SHOPPING_VIEW"
-        stopPropagation={false}
-        targetNodeSelector="body"
-        handler={handleShortcuts}
-      />
-      <Toolbar>
-        <Link tabIndex={-1} to="/">
-          <IconButton color="inherit">
-            <ArrowBack />
-          </IconButton>
-        </Link>
-        <Typography variant="h6" color="inherit" style={{ flex: 1 }}>
-          {list.name} <ItemCount count={list.itemCount} />
-        </Typography>
-        <Link tabIndex={-1} to={`/lists/${listId}/entries/edit`}>
-          <IconButton aria-label="Editieren" color="inherit">
-            <Edit />
-          </IconButton>
-        </Link>
-        <ListMenu list={list} />
-      </Toolbar>
-    </AppBar>
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row"
-      }}
-    >
-      {windowWidth > 700 &&
-        lists.length > 1 && (
-          <List
-            style={{
-              flex: "1 1 auto",
-              boxShadow: "inset 0 0 25px rgba(0,0,0,0.3)",
-              backgroundColor: "#f5f5f5",
-              minHeight: "calc(100vh - 80px)",
-              paddingBottom: 90
-            }}
-          >
-            {lists.map((list, index) => (
-              <ListItem
-                key={list.uid}
-                tabIndex={-1}
-                button
-                style={list.uid === listId ? { backgroundColor: "#bbb" } : {}}
-              >
-                <ListItemIcon>
-                  <ListIcon name={list.name} />
-                </ListItemIcon>
-                <Link
-                  style={{
-                    flex: 1,
-                    paddingLeft: 15,
-                    marginTop: "-12px",
-                    marginBottom: "-12px",
-                    paddingTop: 12,
-                    paddingBottom: 12
-                  }}
-                  to={`/lists/${list.uid}/entries${
-                    list.preferredView === "edit" ? "/edit" : ""
-                  }`}
+  <I18n>
+    {t => (
+      <div>
+        <AppBar position="static" color="primary">
+          <Shortcuts
+            name="SHOPPING_VIEW"
+            stopPropagation={false}
+            targetNodeSelector="body"
+            handler={handleShortcuts}
+          />
+          <Toolbar>
+            <Link tabIndex={-1} to="/">
+              <IconButton color="inherit">
+                <ArrowBack />
+              </IconButton>
+            </Link>
+            <Typography variant="h6" color="inherit" style={{ flex: 1 }}>
+              {list.name} <ItemCount count={list.itemCount} />
+            </Typography>
+            <Link tabIndex={-1} to={`/lists/${listId}/entries/edit`}>
+              <IconButton aria-label={t("list_editview_label")} color="inherit">
+                <Edit />
+              </IconButton>
+            </Link>
+            <ListMenu list={list} />
+          </Toolbar>
+        </AppBar>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row"
+          }}
+        >
+          {windowWidth > 700 && lists.length > 1 && (
+            <List
+              style={{
+                flex: "1 1 auto",
+                boxShadow: "inset 0 0 25px rgba(0,0,0,0.3)",
+                backgroundColor: "#f5f5f5",
+                minHeight: "calc(100vh - 80px)",
+                paddingBottom: 90
+              }}
+            >
+              {lists.map((list, index) => (
+                <ListItem
+                  key={list.uid}
+                  tabIndex={-1}
+                  button
+                  style={list.uid === listId ? { backgroundColor: "#bbb" } : {}}
                 >
-                  <ListItemText
-                    primary={filterLeadingEmoji(list.name)}
-                    secondary={`${list.itemCount} Einträge `}
-                  />
-                </Link>
-              </ListItem>
-            ))}
-          </List>
-        )}
-      <div
-        style={{
-          marginBottom: 60,
-          flex: "5 1 0",
-          display: "flex",
-          justifyContent: "center"
-        }}
-      >
-        {items.length > 0 ? (
-          <List style={{ marginBottom: 60, flex: "1" }}>
-            {items.map(
-              (item, index) =>
-                item.isDivider ? (
-                  <Divider key={`divider-${index}`} />
-                ) : (
-                  <ViewListItem
-                    item={item}
-                    key={item.uid ? item.uid : item.label}
-                    removeItem={removeItem}
-                    isDialogOpen={Boolean(dialogItem)}
-                    handleContextMenu={handleDialogOpen}
-                  />
-                )
-            )}
-          </List>
-        ) : (
+                  <ListItemIcon>
+                    <ListIcon name={list.name} />
+                  </ListItemIcon>
+                  <Link
+                    style={{
+                      flex: 1,
+                      paddingLeft: 15,
+                      marginTop: "-12px",
+                      marginBottom: "-12px",
+                      paddingTop: 12,
+                      paddingBottom: 12
+                    }}
+                    to={`/lists/${list.uid}/entries${
+                      list.preferredView === "edit" ? "/edit" : ""
+                    }`}
+                  >
+                    <ListItemText
+                      primary={filterLeadingEmoji(list.name)}
+                      secondary={`${list.itemCount} ${t("list_entries")} `}
+                    />
+                  </Link>
+                </ListItem>
+              ))}
+            </List>
+          )}
           <div
             style={{
+              marginBottom: 60,
+              flex: "5 1 0",
               display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              color: "#aaa",
-              marginTop: "50px"
+              justifyContent: "center"
             }}
           >
-            <DoneAll />
-            <Typography color="inherit">Alles erledigt!</Typography>
+            {items.length > 0 ? (
+              <List style={{ marginBottom: 60, flex: "1" }}>
+                {items.map((item, index) =>
+                  item.isDivider ? (
+                    <Divider key={`divider-${index}`} />
+                  ) : (
+                    <ViewListItem
+                      item={item}
+                      key={item.uid ? item.uid : item.label}
+                      removeItem={removeItem}
+                      isDialogOpen={Boolean(dialogItem)}
+                      handleContextMenu={handleDialogOpen}
+                    />
+                  )
+                )}
+              </List>
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  color: "#aaa",
+                  marginTop: "50px"
+                }}
+              >
+                <DoneAll />
+                <Typography color="inherit">{t("list_noentries")}</Typography>
+              </div>
+            )}
           </div>
+        </div>
+        <InlineNavigation currentList={list} lastList={lastVisitedList} />
+        {dialogItem && (
+          <ItemContextDialog
+            item={dialogItem}
+            lists={lists}
+            currentListId={listId}
+            onClose={handleDialogClose}
+            removeItem={removeItem}
+            moveToBottom={moveItemToBottom}
+            moveToList={moveItemToList}
+          />
         )}
       </div>
-    </div>
-    <InlineNavigation currentList={list} lastList={lastVisitedList} />
-    {dialogItem && (
-      <ItemContextDialog
-        item={dialogItem}
-        lists={lists}
-        currentListId={listId}
-        onClose={handleDialogClose}
-        removeItem={removeItem}
-        moveToBottom={moveItemToBottom}
-        moveToList={moveItemToList}
-      />
     )}
-  </div>
+  </I18n>
 );
 
 export default compose(

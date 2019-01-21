@@ -1,10 +1,6 @@
 import compose from "ramda/src/compose";
-import values from "ramda/src/values";
-import flatten from "ramda/src/flatten";
 import { lifecycle, withState } from "recompose";
 import Bloodhound from "bloodhound-js";
-
-import categoryList from "../data/categories.json";
 
 const EMPTY_ARRAY = [];
 
@@ -20,7 +16,7 @@ function slidingTokenizer(str) {
 
 function initializeSuggestionEngine(recentItems, setSuggestionHandler) {
   const engine = new Bloodhound({
-    local: recentItems.concat(flatten(values(categoryList))),
+    local: recentItems,
     queryTokenizer: Bloodhound.tokenizers.nonword,
     datumTokenizer: slidingTokenizer
   });

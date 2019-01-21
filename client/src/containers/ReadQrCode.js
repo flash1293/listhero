@@ -10,6 +10,7 @@ import Input from "@material-ui/core/Input";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Send from "@material-ui/icons/Send";
 import { withHandlers } from "recompose";
+import { I18n } from "react-i18next";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import routerContext from "../components/RouterContext";
@@ -23,53 +24,55 @@ export const SyncQrCode = ({
   onSubmit,
   text
 }) => (
-  <div>
-    <AppBar position="static" color="primary">
-      <Toolbar>
-        <IconButton onClick={router.history.goBack} color="inherit">
-          <ArrowBack />
-        </IconButton>
-        <Typography variant="h6" color="inherit">
-          Sync-Link einlesen
-        </Typography>
-      </Toolbar>
-    </AppBar>
-    <form
-      style={{
-        display: "block",
-        textAlign: "center",
-        margin: "5vmin auto",
-        maxWidth: "400px"
-      }}
-      onSubmit={handleSubmit}
-    >
-      <Typography style={{ padding: 15 }}>
-        Scanne einen Sync-Qr-Code:
-      </Typography>
-      <QrReader
-        delay={300}
-        onScan={onSubmit}
-        onError={() => {}}
-        style={{ width: "100%" }}
-      />
-      <Typography style={{ padding: 15 }}>
-        oder füge hier einen Link ein:
-      </Typography>
-      <Input
-        type="text"
-        placeholder={`${window.location.protocol}//${window.location.host}/...`}
-        value={text}
-        onChange={handleChangeText}
-        endAdornment={
-          <InputAdornment position="end">
-            <IconButton tabIndex={-1} onClick={handleSubmit}>
-              <Send />
+  <I18n>
+    {t => (
+      <div>
+        <AppBar position="static" color="primary">
+          <Toolbar>
+            <IconButton onClick={router.history.goBack} color="inherit">
+              <ArrowBack />
             </IconButton>
-          </InputAdornment>
-        }
-      />
-    </form>
-  </div>
+            <Typography variant="h6" color="inherit">
+              {t("scanqr_title")}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <form
+          style={{
+            display: "block",
+            textAlign: "center",
+            margin: "5vmin auto",
+            maxWidth: "400px"
+          }}
+          onSubmit={handleSubmit}
+        >
+          <Typography style={{ padding: 15 }}>{t("scanqr_scan")}:</Typography>
+          <QrReader
+            delay={300}
+            onScan={onSubmit}
+            onError={() => {}}
+            style={{ width: "100%" }}
+          />
+          <Typography style={{ padding: 15 }}>{t("scanqr_paste")}:</Typography>
+          <Input
+            type="text"
+            placeholder={`${window.location.protocol}//${
+              window.location.host
+            }/...`}
+            value={text}
+            onChange={handleChangeText}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton tabIndex={-1} onClick={handleSubmit}>
+                  <Send />
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </form>
+      </div>
+    )}
+  </I18n>
 );
 
 export default compose(
