@@ -12,6 +12,7 @@ import websocketMiddleware from "./websocketMiddleware";
 import { refreshOnRehydrateMiddleware } from "./refreshOnRehydrateMiddleware";
 import syncMiddleware from "./syncMiddleware";
 import loginMiddleware from "./loginMiddleware";
+import { abortableActionMiddleware, abortableActionReducer } from "../abortable-action";
 
 const persistentReducer = persistReducer(
   persistConfig,
@@ -20,13 +21,15 @@ const persistentReducer = persistReducer(
     user: userReducer,
     preferredView: preferredViewReducer,
     enteredText: enteredTextReducer,
-    visitedList: visitedListReducer
+    visitedList: visitedListReducer,
+    abortableActions: abortableActionReducer
   })
 );
 export const store = createStore(
   persistentReducer,
   applyMiddleware(
     refreshOnRehydrateMiddleware,
+    abortableActionMiddleware,
     loginMiddleware,
     websocketMiddleware,
     syncMiddleware

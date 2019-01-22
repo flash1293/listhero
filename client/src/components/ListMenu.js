@@ -4,14 +4,16 @@ import compose from "ramda/src/compose";
 import { withState, withHandlers, mapProps } from "recompose";
 import { connect } from "react-redux";
 import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { withRouter } from "react-router-dom";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { translate } from "react-i18next";
+import { withSnackbar } from 'notistack';
 
 import buildHandlers, {
-  removeList,
+  delayedRemoveList,
   editList,
   createWeekplan,
   createNormalList,
@@ -26,7 +28,7 @@ export default compose(
     () => ({}),
     buildHandlers({
       editList,
-      removeList,
+      delayedRemoveList,
       clearList,
       createWeekplan,
       createNormalList
@@ -36,6 +38,8 @@ export default compose(
   withState("anchorEl", "setAnchorEl", null),
   withState("isOpen", "setOpen", false),
   withRouter,
+  withSnackbar,
+  translate("translations"),
   withHandlers({
     handleOpen: ({ setOpen, setAnchorEl }) => e => {
       setAnchorEl(e.currentTarget);
@@ -46,9 +50,15 @@ export default compose(
       setOpen(false);
       handleDialogOpen(list);
     },
-    handleRemove: ({ removeList, setOpen, list }) => () => {
+    handleRemove: ({ t, enqueueSnackbar, delayedRemoveList, setOpen, list }) => () => {
       setOpen(false);
-      removeList(list);
+      const [flushRemoval, cancelRemoval] = delayedRemoveList(list);
+      enqueueSnackbar(`${list.name} ${t("snackbar_listremove_label")}`, {
+        variant: 'default',
+        action: <Button onClick={cancelRemoval} color="secondary" size="small">{t("snackbar_listremove_action")}</Button>,
+        onClose: flushRemoval,
+        autoHideDuration: 5000
+      });
     },
     handleClear: ({ clearList, setOpen, list }) => () => {
       setOpen(false);
@@ -65,7 +75,6 @@ export default compose(
       e.stopPropagation();
     }
   }),
-  translate("translations"),
   mapProps(props => ({
     ...props,
     listAsText: props.list.items

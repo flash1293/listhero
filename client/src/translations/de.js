@@ -82,5 +82,7 @@ dir zuerst den Synchronisierungs-Link.`,
   itemmenu_moveto: "Auf Liste verschieben",
   namedialog_cancel: "Abbrechen",
   namedialog_confirm: "Speichern",
-  serverpassword_label: "Server-Passwort"
+  serverpassword_label: "Server-Passwort",
+  snackbar_listremove_label: "gelöscht",
+  snackbar_listremove_action: "Rückgängig",
 };

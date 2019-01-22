@@ -12,6 +12,7 @@
     "i18next": "^10.2.2",
     "i18next-browser-languagedetector": "^2.1.0",
     "lz-string": "^1.4.4",
+    "notistack": "^0.4.1",
     "qrcode.react": "^0.7.2",
     "ramda": "^0.25.0",
     "react": "^16.5.2",

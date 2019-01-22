@@ -81,5 +81,7 @@ export default {
   itemmenu_moveto: "Move to List",
   namedialog_cancel: "Cancel",
   namedialog_confirm: "Save",
-  serverpassword_label: "Server Password"
+  serverpassword_label: "Server Password",
+  snackbar_listremove_label: "deleted",
+  snackbar_listremove_action: "Undo",
 };

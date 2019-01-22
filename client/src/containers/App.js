@@ -6,6 +6,7 @@ import { I18nextProvider } from "react-i18next";
 import { ShortcutManager } from "react-shortcuts";
 import { withContext } from "recompose";
 import PropTypes from "prop-types";
+import { SnackbarProvider } from "notistack";
 
 import i18n from "../i18n";
 import { store, persistor } from "../redux";
@@ -25,58 +26,43 @@ const PreloadedRouter = preloader({
   syncQrCode: () => import("./SyncQrCode"),
   readQrCode: () => import("./ReadQrCode"),
   help: () => import("./Help")
-})(
-  ({
-    viewList,
-    editList,
-    syncQrCode,
-    readQrCode,
-    recentUsed,
-    help
-  }) => (
-    <Router>
-      <div>
-        <Route exact path="/" component={Lists} />
-        <Route exact path="/login" component={Login} />
-        <Route
-          exact
-          path="/login/:username/:password/:encryptionKey/:serverPassword"
-          component={Login}
-        />
-        <Route
-          exact
-          path="/login/:username/:password/:encryptionKey/"
-          component={Login}
-        />
-        <Route exact path="/qr" component={syncQrCode} />
-        <Route exact path="/readQr" component={readQrCode} />
-        <Route exact path="/lists/:id/entries" component={viewList} />
-        <Route exact path="/lists/:id/entries/edit" component={editList} />
-        <Route
-          exact
-          path="/lists/:id/entries/last-used"
-          component={recentUsed}
-        />
-        <Route
-          exact
-          path="/help"
-          component={help}
-        />
-      </div>
-    </Router>
-  )
-);
+})(({ viewList, editList, syncQrCode, readQrCode, recentUsed, help }) => (
+  <Router>
+    <div>
+      <Route exact path="/" component={Lists} />
+      <Route exact path="/login" component={Login} />
+      <Route
+        exact
+        path="/login/:username/:password/:encryptionKey/:serverPassword"
+        component={Login}
+      />
+      <Route
+        exact
+        path="/login/:username/:password/:encryptionKey/"
+        component={Login}
+      />
+      <Route exact path="/qr" component={syncQrCode} />
+      <Route exact path="/readQr" component={readQrCode} />
+      <Route exact path="/lists/:id/entries" component={viewList} />
+      <Route exact path="/lists/:id/entries/edit" component={editList} />
+      <Route exact path="/lists/:id/entries/last-used" component={recentUsed} />
+      <Route exact path="/help" component={help} />
+    </div>
+  </Router>
+));
 
 export default withContext({ shortcuts: PropTypes.object.isRequired }, () => ({
   shortcuts: shortcutManager
 }))(() => (
-  <I18nextProvider i18n={i18n}>
-    <PersistGate persistor={persistor}>
-      <Provider store={store}>
-        <ThemeProvider>
-          <PreloadedRouter />
-        </ThemeProvider>
-      </Provider>
-    </PersistGate>
-  </I18nextProvider>
+  <SnackbarProvider>
+    <I18nextProvider i18n={i18n}>
+      <PersistGate persistor={persistor}>
+        <Provider store={store}>
+          <ThemeProvider>
+            <PreloadedRouter />
+          </ThemeProvider>
+        </Provider>
+      </PersistGate>
+    </I18nextProvider>
+  </SnackbarProvider>
 ));

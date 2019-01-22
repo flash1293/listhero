@@ -4611,6 +4611,10 @@ normalize-url@^1.4.0:
     query-string "^4.1.0"
     sort-keys "^1.0.0"
 
+notistack@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/notistack/-/notistack-0.4.1.tgz#1f1367a0f4d9542641aed300dd332985a1d0047a"
+
 npm-run-path@^2.0.0:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/npm-run-path/-/npm-run-path-2.0.2.tgz#35a9232dfa35d7067b4cb2ddf2357b1871536c5f"

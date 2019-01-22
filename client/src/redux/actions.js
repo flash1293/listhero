@@ -2,6 +2,7 @@ import map from "ramda/src/map";
 import uuid from "uuid/v4";
 import aes from "aes-js";
 import { getRandomData, uint8ArrayToArray } from "./utils";
+import { createAbortableAction, cancelAbortableAction, commitAbortableAction } from "../abortable-action";
 
 export default handlerMakers => (dispatch, ownProps) =>
   map(handler => handler(dispatch, ownProps), handlerMakers);
@@ -150,6 +151,17 @@ export const removeList = dispatch => list =>
     type: "REMOVE_LIST",
     list: list.uid
   });
+
+export const delayedRemoveList = dispatch => list => {
+  const action = {
+    type: "REMOVE_LIST",
+    list: list.uid
+  };
+
+  dispatch(createAbortableAction(action, 0));
+
+  return [() => dispatch(commitAbortableAction(action)), () => dispatch(cancelAbortableAction(action))];
+}
 
 export const clearList = dispatch => list =>
   dispatch({

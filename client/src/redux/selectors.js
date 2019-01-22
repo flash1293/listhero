@@ -1,5 +1,7 @@
 import find from "ramda/src/find";
 import filter from "ramda/src/filter";
+import flip from "ramda/src/flip";
+import contains from "ramda/src/contains";
 import map from "ramda/src/map";
 import compose from "ramda/src/compose";
 import prop from "ramda/src/prop";
@@ -18,7 +20,10 @@ const EMPTY_OBJECT = {};
 export default selectors => (state, ownProps) =>
   map(selector => selector(ownProps)(state), selectors);
 
-export const lastVisitedList = () => state => state.visitedList.lastList ? list({ listId: state.visitedList.lastList })(state) : undefined;
+export const lastVisitedList = () => state =>
+  state.visitedList.lastList
+    ? list({ listId: state.visitedList.lastList })(state)
+    : undefined;
 
 export const lists = () => state =>
   compose(
@@ -27,10 +32,25 @@ export const lists = () => state =>
     map(addListItemCount),
     map(addHasRecentItems),
     map(addHasEmoji),
+    filterPendingRemovals(state),
     defaultTo(EMPTY_ARRAY),
     prop("present"),
     prop("lists")
   )(state);
+
+const filterPendingRemovals = ({
+  abortableActions: { REMOVE_LIST }
+}) => filter(
+    compose(
+      not,
+      compose(
+        flip(contains),
+        map(prop("list")),
+        defaultTo(EMPTY_ARRAY)
+      )(REMOVE_LIST),
+      prop("uid")
+    )
+  );
 
 const addPreferredView = preferredView => list => ({
   ...list,
@@ -53,24 +73,44 @@ const addHasRecentItems = mappedAssoc(
 
 const addHasEmoji = mappedAssoc(
   "hasLeadingEmoji",
-  compose(isEmoji, defaultTo(""), prop("name"))
+  compose(
+    isEmoji,
+    defaultTo(""),
+    prop("name")
+  )
 );
 
 const addListItemCount = mappedAssoc(
   "itemCount",
   compose(
     prop("length"),
-    filter(compose(not, prop("marker"))),
+    filter(
+      compose(
+        not,
+        prop("marker")
+      )
+    ),
     defaultTo(EMPTY_ARRAY),
     prop("items")
   )
 );
 
 export const list = ownProps =>
-  compose(find(propEq("uid", ownProps.listId)), lists());
-export const listItems = ownProps => compose(prop("items"), list(ownProps));
+  compose(
+    find(propEq("uid", ownProps.listId)),
+    lists()
+  );
+export const listItems = ownProps =>
+  compose(
+    prop("items"),
+    list(ownProps)
+  );
 
-export const user = () => compose(defaultTo(EMPTY_OBJECT), prop("user"));
+export const user = () =>
+  compose(
+    defaultTo(EMPTY_OBJECT),
+    prop("user")
+  );
 
 export const preferredView = () => prop("preferredView");
 
@@ -94,4 +134,8 @@ export const filteredItems = ownProps =>
     lists()
   );
 
-export const merged = () => compose(prop("merged"), prop("lists"));
+export const merged = () =>
+  compose(
+    prop("merged"),
+    prop("lists")
+  );
