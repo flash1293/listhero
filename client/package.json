@@ -15,6 +15,7 @@
     "i18next-browser-languagedetector": "^2.1.0",
     "lz-string": "^1.4.4",
     "notistack": "^0.4.1",
+    "npm-license-crawler": "^0.1.9",
     "qrcode.react": "^0.7.2",
     "ramda": "^0.25.0",
     "react": "^16.5.2",
@@ -38,9 +39,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "yarn run licenses && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "analyze": "source-map-explorer build/static/js/main.*",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "licenses": "cp ../LICENSE public/__licenses.txt && echo '\\nIncluded:\\n\\n' >> public/__licenses.txt && npm-license-crawler --omitDependencies --onlyDirectDependencies | tail -n +3 >> public/__licenses.txt"
   }
 }

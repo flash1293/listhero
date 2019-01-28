@@ -8,6 +8,7 @@
 
 # production
 /build
+/public/__licenses.txt
 
 # misc
 .DS_Store

@@ -27,6 +27,7 @@ import syncLink from "../components/SyncLink";
 import addDialog from "../components/AddDialog";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { Logo } from "../components/Logo";
+import { Typography } from "@material-ui/core";
 
 export default compose(
   connect(
@@ -126,6 +127,7 @@ export default compose(
                   </ListItem>
                 </Link>
               </List>
+              <Typography><a href="/__licenses.txt" download style={{ position: "absolute", bottom: 10, left: 18, color: '#999' }}>License</a></Typography>
             </div>
           </Drawer>
           {isDialogOpen && (
