@@ -2,7 +2,6 @@
   "name": "ekofe-server",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": {},
   "author": "Johannes Reuter <flash1293@gmail.com>",
   "license": "MIT",
   "scripts": {

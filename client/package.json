@@ -2,6 +2,8 @@
   "name": "ekofe",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "author": "Johannes Reuter <flash1293@gmail.com>",
   "dependencies": {
     "@johannes.reuter/react-long": "^1.1.3",
     "@material-ui/core": "^3.0.0",
