@@ -43,7 +43,7 @@ export default {
   list_noentries: "All done!",
   copysyncqr_title: "Sync Link",
   copysyncqr_explanation: "This link grants access to your account",
-  recentused_title: "Last Recently Used",
+  recentused_title: "Recent Entries",
   scanqr_title: "Scan Sync Link",
   scanqr_scan: "Scan a sync qr code here",
   scanqr_paste: "or paste a link here",
