@@ -16,18 +16,20 @@ import AddableItem from "./AddableItem";
 export default compose(
   inputForm,
   withState("inputRef", "setInputRef"),
+  withState("selectedSuggestionIndex", "setSelectedSuggestionIndex", -1),
   withHandlers({
     focusInput: ({ inputRef }) => () => inputRef.focus()
   }),
   lifecycle({
     componentWillReceiveProps(nextProps) {
-      if(nextProps.listId !== this.props.listId) {
+      if (nextProps.listId !== this.props.listId) {
         // remove current text from input field to fill it with the initial value
         // (thats what you get for local state)
         this.props.storeText(undefined);
       }
     }
   }),
+  suggestionEngine,
   withHandlers({
     handleShortcuts: ({ focusInput }) => (action, event) => {
       switch (action) {
@@ -38,27 +40,64 @@ export default compose(
           break;
       }
     },
-    onAddSuggestion: ({ focusInput, clearText }) => () => {
+    onAddSuggestion: ({
+      focusInput,
+      clearText,
+      setSelectedSuggestionIndex
+    }) => () => {
       clearText();
       focusInput();
+      setSelectedSuggestionIndex(-1);
     },
-    onSubmitText: ({ focusInput, clearText, handleSubmit }) => e => {
+    onSubmitText: ({
+      focusInput,
+      clearText,
+      handleSubmit,
+      setSelectedSuggestionIndex
+    }) => e => {
       handleSubmit(e);
       focusInput();
       clearText();
+      setSelectedSuggestionIndex(-1);
     },
-    handleChangeText: ({ handleChangeText, onChange }) => e => {
+    handleChangeText: ({
+      handleChangeText,
+      onChange,
+      setSelectedSuggestionIndex
+    }) => e => {
       handleChangeText(e);
       onChange(e.target.value);
+      setSelectedSuggestionIndex(-1);
     },
-    handleKeyDown: ({ handleSubmit, clearText }) => e => {
-      if(e.key === "Enter" && !e.shiftKey) {
-        handleSubmit(e);
+    handleKeyDown: ({
+      handleSubmit,
+      onSubmit,
+      clearText,
+      suggestions,
+      selectedSuggestionIndex,
+      setSelectedSuggestionIndex
+    }) => e => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        if (selectedSuggestionIndex !== -1) {
+          e.preventDefault();
+          onSubmit(suggestions[selectedSuggestionIndex]);
+        } else {
+          handleSubmit(e);
+        }
         clearText();
+        setSelectedSuggestionIndex(-1);
+      } else if (e.key === "ArrowDown") {
+        const newSuggestionIndex =
+          (selectedSuggestionIndex + 1) % suggestions.length;
+        setSelectedSuggestionIndex(newSuggestionIndex);
+      } else if (e.key === "ArrowUp") {
+        const newSuggestionIndex =
+          (suggestions.length + selectedSuggestionIndex - 1) %
+          suggestions.length;
+        setSelectedSuggestionIndex(newSuggestionIndex);
       }
     }
-  }),
-  suggestionEngine
+  })
 )(
   ({
     text,
@@ -72,7 +111,8 @@ export default compose(
     listId,
     onClose,
     handleShortcuts,
-    setInputRef
+    setInputRef,
+    selectedSuggestionIndex
   }) => (
     <Shortcuts
       name="EDIT_VIEW"
@@ -110,12 +150,13 @@ export default compose(
             boxShadow: "0px 6px 6px -6px rgba(0,0,0,0.25)"
           }}
         >
-          {suggestions.map(suggestion => (
+          {suggestions.map((suggestion, index) => (
             <AddableItem
               onAdd={onAddSuggestion}
               listId={listId}
               key={suggestion}
               entry={suggestion}
+              selected={index === selectedSuggestionIndex}
             />
           ))}
         </List>

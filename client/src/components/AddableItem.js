@@ -8,11 +8,12 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Add from "@material-ui/icons/Add";
 import compose from "ramda/src/compose";
 
-export const AddableItem = ({ entry, inset, addItem }) => (
+export const AddableItem = ({ entry, inset, addItem, selected }) => (
   <ListItem
     button
     onClick={addItem}
     style={inset ? { paddingLeft: "38px", paddingRight: 0 } : {}}
+    selected={selected}
   >
     <ListItemText primary={entry} />
     <ListItemIcon>
