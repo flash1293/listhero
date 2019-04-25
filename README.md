@@ -24,4 +24,4 @@ The easiest way to deploy an ekofe instance is using the prepared `docker-compos
 
 ## Mechanism
 
-This app uses redux under the hood and syncs not the app state itself, but the individual actions between various clients connected to the same account. More explanation in the [presentation (german)](https://docs.google.com/presentation/d/1mfBnBNriB-ifflkYr-FCAmIciigvAv3ioP72TqLZUCE/edit?usp=sharing)
+This app uses redux under the hood and syncs not the app state itself, but the individual actions between various clients connected to the same account. More explanation in the [presentation](https://docs.google.com/presentation/d/1WtJjzC9rBdzH84J0rLnWLK6Mtjt5sIRVVy6Jom2M-h0/edit?usp=sharing)
