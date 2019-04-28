@@ -341,7 +341,11 @@ export const EditList = ({
                   key={list.uid}
                   tabIndex={-1}
                   button
-                  style={list.uid === listId ? { backgroundColor: "#bbb" } : {}}
+                  style={
+                    list.uid === listId
+                      ? { backgroundColor: "#bbb" }
+                      : { opacity: list.itemCount ? 1 : 0.5 }
+                  }
                 >
                   <ListItemIcon>
                     <ListIcon name={list.name} />

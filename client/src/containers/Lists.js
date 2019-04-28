@@ -51,7 +51,7 @@ const SortableItem = compose(
   })
 )(({ list, history, goToSettings }) => {
   return (
-    <ListItem button tabIndex={-1}>
+    <ListItem button tabIndex={-1} style={{ opacity: list.itemCount ? 1 : 0.5 }}>
       <ListItemIcon>
         <SortableDragHandle name={list.name} />
       </ListItemIcon>
