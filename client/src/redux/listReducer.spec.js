@@ -1,4 +1,6 @@
-import reducer from "./listReducer";
+import currentListsReducer from "./listReducer";
+
+const reducer = currentListsReducer;
 
 describe("listReducer", () => {
   describe("add list", () => {

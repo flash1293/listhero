@@ -23,6 +23,7 @@
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.5.2",
     "react-i18next": "^7.3.1",
+    "react-intersection-observer": "^8.22.6",
     "react-qr-reader": "^2.1.0",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",

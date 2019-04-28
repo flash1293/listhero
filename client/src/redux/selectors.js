@@ -10,6 +10,7 @@ import assoc from "ramda/src/assoc";
 import propEq from "ramda/src/propEq";
 import isEmpty from "ramda/src/isEmpty";
 import not from "ramda/src/not";
+import reverse from "ramda/src/reverse";
 import { isEmoji } from "../components/ListIcon";
 
 const mappedAssoc = (prop, mapFn) => obj => assoc(prop, mapFn(obj), obj);
@@ -34,13 +35,30 @@ export const lists = () => state =>
     map(addHasEmoji),
     filterPendingRemovals(state),
     defaultTo(EMPTY_ARRAY),
+    prop("currentLists"),
     prop("present"),
     prop("lists")
   )(state);
 
-const filterPendingRemovals = ({
-  abortableActions: { REMOVE_LIST }
-}) => filter(
+export const log = ({ searchQuery, listId }) => state =>
+  compose(
+    reverse,
+    filter(
+      ({ list, oldList }) =>
+        !searchQuery ||
+        (list || "").includes(searchQuery) ||
+        (oldList || "").includes(searchQuery)
+    ),
+    filter(
+      (item) => !listId || listId === item.listId || listId === item.oldListLid
+    ),
+    prop("log"),
+    prop("present"),
+    prop("lists")
+  )(state);
+
+const filterPendingRemovals = ({ abortableActions: { REMOVE_LIST } }) =>
+  filter(
     compose(
       not,
       compose(

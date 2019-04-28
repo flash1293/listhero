@@ -15,6 +15,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import SyncIcon from "@material-ui/icons/Sync";
 import KeyboardIcon from "@material-ui/icons/Keyboard";
 import ShareIcon from "@material-ui/icons/Share";
+import HistoryIcon from "@material-ui/icons/History";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Divider from "@material-ui/core/Divider/Divider";
 import { Link } from "react-router-dom";
@@ -118,6 +119,14 @@ export default compose(
                   />
                 </ListItem>
                 <Divider />
+                <Link to="/log">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <HistoryIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={t("drawer_log")} />
+                  </ListItem>
+                </Link>
                 <Link to="/help">
                   <ListItem button>
                     <ListItemIcon>

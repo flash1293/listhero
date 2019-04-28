@@ -25,8 +25,9 @@ const PreloadedRouter = preloader({
   recentUsed: () => import("./RecentUsed"),
   syncQrCode: () => import("./SyncQrCode"),
   readQrCode: () => import("./ReadQrCode"),
-  help: () => import("./Help")
-})(({ viewList, editList, syncQrCode, readQrCode, recentUsed, help }) => (
+  help: () => import("./Help"),
+  log: () => import("./Log")
+})(({ viewList, editList, syncQrCode, readQrCode, recentUsed, help, log }) => (
   <Router>
     <div>
       <Route exact path="/" component={Lists} />
@@ -46,7 +47,9 @@ const PreloadedRouter = preloader({
       <Route exact path="/lists/:id/entries" component={viewList} />
       <Route exact path="/lists/:id/entries/edit" component={editList} />
       <Route exact path="/lists/:id/entries/last-used" component={recentUsed} />
+      <Route exact path="/lists/:id/log" component={log} />
       <Route exact path="/help" component={help} />
+      <Route exact path="/log/:query?" component={log} />
     </div>
   </Router>
 ));

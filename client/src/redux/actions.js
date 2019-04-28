@@ -7,12 +7,17 @@ import { createAbortableAction, cancelAbortableAction, commitAbortableAction } f
 export default handlerMakers => (dispatch, ownProps) =>
   map(handler => handler(dispatch, ownProps), handlerMakers);
 
+function timestamp() {
+  return { timestamp: Date.now() };
+}
+
 export const addItem = (dispatch, ownProps) => name =>
   name && name.split("\n").reverse().map(namePart => dispatch({
     type: "ADD_ITEM",
     list: ownProps.listId,
     uid: uuid(),
-    name: namePart
+    name: namePart,
+    ...timestamp()
   }));
 
 export const editItem = (dispatch, ownProps) => (item, name) =>
@@ -20,7 +25,8 @@ export const editItem = (dispatch, ownProps) => (item, name) =>
     type: "EDIT_ITEM",
     list: ownProps.listId,
     item: item.uid,
-    name
+    name,
+    ...timestamp()
   });
 
 export const moveItem = (dispatch, ownProps) => (oldId, newIndex) =>
@@ -37,6 +43,7 @@ export const moveItemToList = (dispatch, ownProps) => (oldId, newList) =>
     oldList: ownProps.listId,
     newList,
     oldId,
+    ...timestamp()
     // example on how to use compat_levels to prevent a full re-sync in most cases
     // if MOVE_ITEM_TO_LIST is a new action and there may be client which don't support
     // it yet simultaneously with clients which already dispatch this type of action.
@@ -67,14 +74,16 @@ export const removeItem = (dispatch, ownProps) => item =>
   dispatch({
     type: "REMOVE_ITEM",
     list: ownProps.listId,
-    item: item.uid
+    item: item.uid,
+    ...timestamp()
   });
 
 export const removeRecentlyUsedItem = (dispatch, ownProps) => item =>
   dispatch({
     type: "REMOVE_RECENTLY_USED_ITEM",
     list: ownProps.listId,
-    item: item
+    item: item,
+    ...timestamp()
   });
 
 export const increaseItem = (dispatch, ownProps) => item =>
@@ -97,14 +106,16 @@ export const addStackableItem = (dispatch, ownProps) => name =>
     list: ownProps.listId,
     uid: uuid(),
     stackIfPossible: true,
-    name
+    name,
+    ...timestamp()
   });
 
 export const addList = dispatch => name =>
   dispatch({
     type: "ADD_LIST",
     uid: uuid(),
-    name
+    name,
+    ...timestamp()
   });
 
 export const visitList = dispatch => uid =>
@@ -143,19 +154,22 @@ export const editList = dispatch => (list, name) =>
   dispatch({
     type: "EDIT_LIST",
     list: list.uid,
-    name
+    name,
+    ...timestamp()
   });
 
 export const removeList = dispatch => list =>
   dispatch({
     type: "REMOVE_LIST",
-    list: list.uid
+    list: list.uid,
+    ...timestamp()
   });
 
 export const delayedRemoveList = dispatch => list => {
   const action = {
     type: "REMOVE_LIST",
-    list: list.uid
+    list: list.uid,
+    ...timestamp()
   };
 
   dispatch(createAbortableAction(action, 0));
@@ -167,7 +181,8 @@ export const clearList = dispatch => list =>
   dispatch({
     type: "REMOVE_MULTIPLE_ITEMS",
     list: list.uid,
-    items: list.items.map(item => item.uid)
+    items: list.items.map(item => item.uid),
+    ...timestamp()
   });
 
 export const requestLogin = dispatch => (

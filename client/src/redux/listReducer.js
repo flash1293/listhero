@@ -12,7 +12,7 @@ import {
 } from "./stackItemHelpers";
 
 // TODO: lists-wrapper hier rausnehmen
-const initalState = [];
+const initalState = { currentLists: [], log: [] };
 
 const RECENT_ITEMS_LENGTH = 200;
 
@@ -37,7 +37,7 @@ function replaceByMap(list, pred, map) {
   return newList;
 }
 
-export default function reducer(state = initalState, action) {
+export function currentListsReducer(state, action) {
   switch (action.type) {
     case "ADD_LIST":
       if (action.name === "") return state;
@@ -58,15 +58,14 @@ export default function reducer(state = initalState, action) {
               ? (() => {
                   // TODO move this to individual functions
                   const itemToStack = stackItemIndex(list.items, action.name);
-                  return list.items.map(
-                    (item, index) =>
-                      index === itemToStack
-                        ? {
-                            ...item,
-                            name: increaseStack(item.name),
-                            stacked: true
-                          }
-                        : item
+                  return list.items.map((item, index) =>
+                    index === itemToStack
+                      ? {
+                          ...item,
+                          name: increaseStack(item.name),
+                          stacked: true
+                        }
+                      : item
                   );
                 })()
               : [
@@ -233,15 +232,15 @@ export default function reducer(state = initalState, action) {
         state,
         l => l.uid === action.list,
         list => {
-          const itemsToDelete = list.items.filter(item => action.items.indexOf(item.uid) > -1).filter(item => !item.marker);
+          const itemsToDelete = list.items
+            .filter(item => action.items.indexOf(item.uid) > -1)
+            .filter(item => !item.marker);
           if (itemsToDelete) {
             return {
               ...list,
               items: list.items.filter(i => action.items.indexOf(i.uid) === -1),
               recentItems: uniq(
-                itemsToDelete
-                  .map(item => item.name)
-                  .concat(list.recentItems)
+                itemsToDelete.map(item => item.name).concat(list.recentItems)
               ).slice(0, RECENT_ITEMS_LENGTH)
             };
           } else {
@@ -303,5 +302,110 @@ export default function reducer(state = initalState, action) {
       return state.filter(l => l.uid !== action.list);
     default:
       return state;
+  }
+}
+
+function decorateLogItem(logItem, action) {
+  return {
+    type: action.type,
+    timestamp: action.timestamp,
+    listId: action.list,
+    ...logItem
+  };
+}
+
+function getLogItemForAction(action, lists) {
+  let list, item, itemMap, oldList, newList;
+  switch (action.type) {
+    case "ADD_LIST":
+      return decorateLogItem({ list: action.name, listId: action.uid }, action);
+    case "ADD_ITEM":
+      list = lists.find(({ uid }) => uid === action.list);
+      if (!list) return;
+      return decorateLogItem({
+        list: list.name,
+        item: action.name
+      }, action);
+    case "REMOVE_ITEM":
+      list = lists.find(({ uid }) => uid === action.list);
+      if (!list) return;
+      item = list.items.find(({ uid }) => uid === action.item);
+      if (!item) return;
+      return decorateLogItem({ list: list.name, item: item.name }, action);
+    case "REMOVE_RECENTLY_USED_ITEM":
+      list = lists.find(({ uid }) => uid === action.list);
+      if (!list) return;
+      return decorateLogItem({ list: list.name, item: action.item }, action);
+    case "CLEAR_LIST":
+      list = lists.find(({ uid }) => uid === action.list);
+      if (!list) return;
+      return list.items.map(({ name }) => ({
+        type: "REMOVE_ITEM",
+        list: list.name,
+        item: name
+      }));
+    case "REMOVE_MULTIPLE_ITEMS":
+      list = lists.find(({ uid }) => uid === action.list);
+      if (!list) return;
+      itemMap = list.items.reduce(
+        (map, item) => ({ ...map, [item.uid]: item }),
+        {}
+      );
+      return action.items.map(uid => ({
+        type: "REMOVE_ITEM",
+        timestamp: action.timestamp,
+        list: list.name,
+        item: itemMap[uid]
+      }));
+    case "EDIT_ITEM":
+      list = lists.find(({ uid }) => uid === action.list);
+      if (!list) return;
+      item = list.items.find(({ uid }) => uid === action.item);
+      if (!item) return;
+      return decorateLogItem({
+        list: list.name,
+        oldItem: item.name,
+        item: action.name
+      }, action);
+    case "EDIT_LIST":
+      list = lists.find(({ uid }) => uid === action.list);
+      if (!list) return;
+      return decorateLogItem({ oldList: list.name, list: action.name }, action);
+    case "REMOVE_LIST":
+      list = lists.find(({ uid }) => uid === action.list);
+      if (!list) return;
+      return decorateLogItem({ list: list.name }, action);
+    case "MOVE_ITEM_TO_LIST":
+      oldList = lists.find(({ uid }) => uid === action.oldList);
+      if (!oldList) return;
+      newList = lists.find(({ uid }) => uid === action.newList);
+      if (!newList) return;
+      item = oldList.items.find(({ uid }) => uid === action.oldId);
+      if (!item) return;
+      return decorateLogItem({
+        oldList: oldList.name,
+        list: newList.name,
+        item: item.name,
+        listId: action.newList,
+        oldListId: action.oldList
+      }, action);
+    default:
+      return undefined;
+  }
+}
+
+export default function loggingReducer(state = initalState, action) {
+  const updatedLists = currentListsReducer(state.currentLists, action);
+  if (updatedLists === state.currentLists) {
+    return state;
+  } else {
+    const logItem = getLogItemForAction(action, state.currentLists);
+    return {
+      ...state,
+      currentLists: updatedLists,
+      log: logItem
+        ? [...state.log, ...(logItem instanceof Array ? logItem : [logItem])]
+        : state.log
+    };
   }
 }

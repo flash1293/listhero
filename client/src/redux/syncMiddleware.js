@@ -103,7 +103,7 @@ const postActionCreator = store => req =>
       return jsonRes;
     });
 
-const syncFilter = action => action.type !== "persist/REHYDRATE";
+const syncFilter = action => action.type !== "persist/REHYDRATE" && action.type !== "persist/PERSIST";
 
 export default syncMiddleware(
   postActionCreator,

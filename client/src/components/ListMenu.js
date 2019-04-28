@@ -10,7 +10,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { withRouter } from "react-router-dom";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { translate } from "react-i18next";
-import { withSnackbar } from 'notistack';
+import { Link } from "react-router-dom";
+import { withSnackbar } from "notistack";
 
 import buildHandlers, {
   delayedRemoveList,
@@ -50,12 +51,22 @@ export default compose(
       setOpen(false);
       handleDialogOpen(list);
     },
-    handleRemove: ({ t, enqueueSnackbar, delayedRemoveList, setOpen, list }) => () => {
+    handleRemove: ({
+      t,
+      enqueueSnackbar,
+      delayedRemoveList,
+      setOpen,
+      list
+    }) => () => {
       setOpen(false);
       const [flushRemoval, cancelRemoval] = delayedRemoveList(list);
       enqueueSnackbar(`${list.name} ${t("snackbar_listremove_label")}`, {
-        variant: 'default',
-        action: <Button onClick={cancelRemoval} color="secondary" size="small">{t("snackbar_listremove_action")}</Button>,
+        variant: "default",
+        action: (
+          <Button onClick={cancelRemoval} color="secondary" size="small">
+            {t("snackbar_listremove_action")}
+          </Button>
+        ),
         onClose: flushRemoval,
         autoHideDuration: 5000
       });
@@ -131,6 +142,9 @@ export default compose(
         <CopyToClipboard text={listAsText}>
           <MenuItem>{t("listmenu_copy")}</MenuItem>
         </CopyToClipboard>
+        <Link to={`/lists/${list.uid}/log`}>
+          <MenuItem>{t("listmenu_log")}</MenuItem>
+        </Link>
       </Menu>
       {dialogList && (
         <ChangeNameDialog

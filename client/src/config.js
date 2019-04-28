@@ -7,7 +7,7 @@ import createCompressor from "./redux/onlyDecompress";
 export const APP_VERSION = 5;
 
 // issues a purge and re-sync from the server on update (only list-data)
-export const REDUCER_VERSION = 7;
+export const REDUCER_VERSION = 8;
 
 // issues a purge and re-sync from the server on an explicit sync request action
 // if there was a reduced action bigger than this version in the past
