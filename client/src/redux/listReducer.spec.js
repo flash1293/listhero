@@ -1,4 +1,4 @@
-import currentListsReducer from "./listReducer";
+import { currentListsReducer } from "./listReducer";
 
 const reducer = currentListsReducer;
 
