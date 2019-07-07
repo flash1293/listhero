@@ -8,6 +8,8 @@ import ArrowBack from "@material-ui/icons/ArrowBack";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { I18n } from "react-i18next";
+import { withState } from "recompose";
+import Sort from "@material-ui/icons/Sort";
 
 import redirectToLogin from "../components/RedirectToLogin";
 import redirectToHome from "../components/RedirectToHome";
@@ -16,7 +18,7 @@ import routerContext from "../components/RouterContext";
 import buildSelector, { list } from "../redux/selectors";
 import RecentlyUsedItem from "../components/RecentlyUsedItem";
 
-export const RecentUsed = ({ listId, list: { recentItems }, router }) => (
+export const RecentUsed = ({ listId, list: { recentItems }, router, sortList, setSortList }) => (
   <I18n>
     {t => (
       <div>
@@ -25,13 +27,20 @@ export const RecentUsed = ({ listId, list: { recentItems }, router }) => (
             <IconButton onClick={router.history.goBack} color="inherit">
               <ArrowBack />
             </IconButton>
-            <Typography variant="h6" color="inherit">
+            <Typography variant="h6" color="inherit" style={{ flex: 1 }}>
               {t("recentused_title")}
             </Typography>
+              <IconButton
+                onClick={() => setSortList(!sortList)}
+                color="inherit"
+                style={{ opacity: sortList ? 1 : 0.5 }}
+              >
+                <Sort />
+              </IconButton>
           </Toolbar>
         </AppBar>
         <List>
-          {recentItems.map((entry, index) => (
+          {(sortList ? [...recentItems].sort() : recentItems).map((entry, index) => (
             <RecentlyUsedItem key={entry} listId={listId} entry={entry} />
           ))}
         </List>
@@ -45,5 +54,6 @@ export default compose(
   routeParam("id", "listId"),
   connect(buildSelector({ list })),
   routerContext,
-  redirectToHome
+  redirectToHome,
+  withState('sortList', 'setSortList', false)
 )(RecentUsed);
