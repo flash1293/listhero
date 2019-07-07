@@ -342,7 +342,8 @@ function getLogItemForAction(action, lists) {
       return list.items.map(({ name }) => ({
         type: "REMOVE_ITEM",
         list: list.name,
-        item: name
+        item: name,
+        listId: action.list
       }));
     case "REMOVE_MULTIPLE_ITEMS":
       list = lists.find(({ uid }) => uid === action.list);
@@ -351,11 +352,12 @@ function getLogItemForAction(action, lists) {
         (map, item) => ({ ...map, [item.uid]: item }),
         {}
       );
-      return action.items.map(uid => ({
+      return action.items.filter(uid => Boolean(itemMap[uid])).map(uid => ({
         type: "REMOVE_ITEM",
         timestamp: action.timestamp,
         list: list.name,
-        item: itemMap[uid]
+        item: itemMap[uid].name,
+        listId: action.list
       }));
     case "EDIT_ITEM":
       list = lists.find(({ uid }) => uid === action.list);
