@@ -45,6 +45,9 @@ export default {
   copysyncqr_title: "Sync-Link",
   copysyncqr_explanation: "Dieser QR-Code gibt Zugriff auf deinen Account.",
   recentused_title: "Zuletzt verwendet",
+  recentused_search_placeholder: "Einträge filtern",
+  recentused_sort_chronological: "Chronologisch sortieren",
+  recentused_sort_alphabetical: "Alphabetisch sortieren",
   scanqr_title: "Sync-Link einlesen",
   scanqr_scan: "Scanne einen Sync-Qr-Code",
   scanqr_paste: "oder füge hier einen Link ein",
@@ -93,8 +96,11 @@ dir zuerst den Synchronisierungs-Link.`,
   log_item_ADD_LIST: "Liste {{ list }} hinzugefügt",
   log_item_ADD_ITEM: "Eintrag {{ item }} zu {{ list }} hinzugefügt",
   log_item_REMOVE_ITEM: "Eintrag {{ item }} von {{ list }} gelöscht",
-  log_item_REMOVE_RECENTLY_USED_ITEM: "Eintrag {{ item }} von zuletzt verwendeten Einträgen von {{ list }} gelöscht",
-  log_item_EDIT_ITEM: "Eintrag {{ oldItem }} zu {{ item }} auf {{ list }} geändert",
+  log_item_REMOVE_RECENTLY_USED_ITEM:
+    "Eintrag {{ item }} von zuletzt verwendeten Einträgen von {{ list }} gelöscht",
+  log_item_EDIT_ITEM:
+    "Eintrag {{ oldItem }} zu {{ item }} auf {{ list }} geändert",
   log_item_REMOVE_LIST: "Liste {{ list }} gelöscht",
-  log_item_MOVE_ITEM_TO_LIST: "Eintrag {{ item }} von {{ oldList }} zu {{ list }} verschoben",
+  log_item_MOVE_ITEM_TO_LIST:
+    "Eintrag {{ item }} von {{ oldList }} zu {{ list }} verschoben"
 };
