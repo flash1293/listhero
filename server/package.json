@@ -5,7 +5,7 @@
   "author": "Johannes Reuter <flash1293@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "DEBUG=trace,info,error SEED=58787657876 REDIS_HOST=localhost SECRET=test123 nodemon src/index.js"
+    "start": "DEBUG=trace,info,error SEED=58787657876 MONGODB_URI=mongodb://localhost:27017/ekofe SECRET=test123 nodemon src/index.js"
   },
   "dependencies": {
     "basicauth-middleware": "^3.0.0",
@@ -17,6 +17,7 @@
     "express-noop": "^1.1.0",
     "express-ws": "^3.0.0",
     "ioredis": "^3.2.2",
+    "mongodb": "^3.4.1",
     "scrypt": "^6.0.3"
   },
   "devDependencies": {

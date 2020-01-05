@@ -17,7 +17,7 @@ services:
       - SEED=58787657876
       - SECRET=test123
   db:
-    image: redis:3.2-alpine
+    image: mongo:4.0-xenial
     volumes:
-      - "./data:/data"
+      - "./data:/data/db"
       
