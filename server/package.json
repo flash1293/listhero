@@ -5,7 +5,8 @@
   "author": "Johannes Reuter <flash1293@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "DEBUG=trace,info,error SEED=58787657876 MONGODB_URI=mongodb://localhost:27017/ekofe SECRET=test123 nodemon src/index.js"
+    "dev": "DEBUG=trace,info,error SEED=58787657876 MONGODB_URI=mongodb://localhost:27017/ekofe SECRET=test123 nodemon src/index.js",
+    "start": "DEBUG=info,error node src/index.js"
   },
   "dependencies": {
     "async-mutex": "^0.1.4",
