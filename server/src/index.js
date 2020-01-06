@@ -217,8 +217,9 @@ var Mutex = require("async-mutex").Mutex;
     }
   });
 
-  const server = app.listen(3001, () =>
-    info("Ekofe server listening on port 3001!")
+  const port = process.env.PORT || 3001;
+  const server = app.listen(port, () =>
+    info(`Ekofe server listening on port ${port}!`)
   );
 
   process.on("SIGTERM", function() {
