@@ -18,7 +18,6 @@ const MongoClient = require("mongodb").MongoClient;
   const db = mongo.db();
 
   // ensure indices
-  await db.collection("users").createIndex("username");
   await db.collection("data").createIndex("username");
 
   const seed = process.env.SEED;
@@ -38,7 +37,7 @@ const MongoClient = require("mongodb").MongoClient;
     (req, res) => {
       const { username, password } = req.body;
 
-      db.collection("users")
+      db.collection("data")
         .findOne({ username })
         .then(user => {
           if (user) {
@@ -57,13 +56,11 @@ const MongoClient = require("mongodb").MongoClient;
             return scrypt
               .kdf(password, scryptParams)
               .then(kdf =>
-                db.collection("users").insertOne({
+                db.collection("data").insertOne({
                   username,
-                  kdf: kdf.toString("base64")
+                  kdf: kdf.toString("base64"),
+                  actions: []
                 })
-              )
-              .then(() =>
-                db.collection("data").insertOne({ username, actions: [] })
               )
               .then(() =>
                 res.json(jwt.sign({ username: username }, process.env.SECRET))
@@ -83,10 +80,16 @@ const MongoClient = require("mongodb").MongoClient;
     async (req, res) => {
       const { startFrom, actions, snapshot, version } = req.body;
       try {
-        const data = await db
-          .collection("data")
-          .findOne({ username: req.user.username });
-        const actionCount = data.actions.length;
+        const data = await db.collection("data").findOne(
+          { username: req.user.username },
+          {
+            projection: {
+              actions: { $slice: [startFrom, Math.pow(2, 30)] },
+              snapshot: 1
+            }
+          }
+        );
+        const actionCount = startFrom + data.actions.length;
         const storedSnapshot = data.snapshot || {};
 
         if (actions.length > 0) {
@@ -100,7 +103,7 @@ const MongoClient = require("mongodb").MongoClient;
           );
         }
 
-        const newActions = data.actions.slice(startFrom).concat(actions);
+        const newActions = data.actions.concat(actions);
 
         const sequence = actionCount;
         let storedSnapshotSequence = storedSnapshot.sequence
@@ -125,13 +128,14 @@ const MongoClient = require("mongodb").MongoClient;
             await db.collection("data").findOneAndUpdate(
               { username: req.user.username },
               {
-                snapshot: {
-                  version,
-                  snapshot,
-                  sequence: snapshotSequence
+                $set: {
+                  snapshot: {
+                    version,
+                    snapshot,
+                    sequence: snapshotSequence
+                  }
                 }
-              },
-              { upsert: true, session }
+              }
             );
             storedSnapshotSequence = snapshotSequence;
             storedSnapshotVersion = version;
