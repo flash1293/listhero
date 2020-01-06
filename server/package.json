@@ -8,6 +8,9 @@
     "dev": "DEBUG=trace,info,error SEED=58787657876 MONGODB_URI=mongodb://localhost:27017/ekofe SECRET=test123 nodemon src/index.js",
     "start": "DEBUG=info,error node src/index.js"
   },
+  "engines": {
+    "node": "12.13.0"
+  },
   "dependencies": {
     "async-mutex": "^0.1.4",
     "basicauth-middleware": "^3.0.0",
