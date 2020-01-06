@@ -24,11 +24,11 @@ export const persistConfig = {
   transforms: [compressor]
 };
 
-export const API_PROTOCOL = window.location.protocol;
+export const API_PROTOCOL = window.location.hostname === "localhost"
+    ? window.location.protocol
+    : "https:";
+;
 
-export const API_HOST =
-  window.location.hostname === "localhost"
-    ? "localhost:3001"
-    : window.location.host;
+export const API_HOST = process.env.REACT_APP_API_HOST || window.location.hostname;
 
 export const clientSession = uuid();

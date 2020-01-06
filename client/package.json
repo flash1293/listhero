@@ -41,6 +41,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "yarn run licenses && react-scripts build",
+    "heroku": "REACT_APP_API_HOST='listhero.herokuapp.com' yarn build",
     "test": "react-scripts test --env=jsdom",
     "analyze": "source-map-explorer build/static/js/main.*",
     "eject": "react-scripts eject",
