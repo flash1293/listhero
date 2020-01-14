@@ -9,7 +9,7 @@
     "start": "DEBUG=info,error node src/index.js"
   },
   "engines": {
-    "node": "8.15.0"
+    "node": "8.x"
   },
   "dependencies": {
     "async-mutex": "^0.1.4",
