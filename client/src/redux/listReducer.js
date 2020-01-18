@@ -396,18 +396,21 @@ function getLogItemForAction(action, lists) {
   }
 }
 
+const LOG_LIMIT = 1000;
+
 export default function loggingReducer(state = initalState, action) {
   const updatedLists = currentListsReducer(state.currentLists, action);
   if (updatedLists === state.currentLists) {
     return state;
   } else {
     const logItem = getLogItemForAction(action, state.currentLists);
+    const updatedLog = logItem
+        ? [...state.log, ...(logItem instanceof Array ? logItem : [logItem])]
+        : state.log;
     return {
       ...state,
       currentLists: updatedLists,
-      log: logItem
-        ? [...state.log, ...(logItem instanceof Array ? logItem : [logItem])]
-        : state.log
+      log: updatedLog.slice(-1 * LOG_LIMIT)
     };
   }
 }

@@ -7,7 +7,7 @@ import createCompressor from "./redux/onlyDecompress";
 export const APP_VERSION = 5;
 
 // issues a purge and re-sync from the server on update (only list-data)
-export const REDUCER_VERSION = 8;
+export const REDUCER_VERSION = 9;
 
 // issues a purge and re-sync from the server on an explicit sync request action
 // if there was a reduced action bigger than this version in the past
@@ -24,11 +24,14 @@ export const persistConfig = {
   transforms: [compressor]
 };
 
-export const API_PROTOCOL = window.location.hostname === "localhost"
+export const API_PROTOCOL =
+  window.location.hostname === "localhost"
     ? window.location.protocol
     : "https:";
-;
-
-export const API_HOST = process.env.REACT_APP_API_HOST || window.location.hostname;
+export const API_HOST =
+  process.env.REACT_APP_API_HOST ||
+  (window.location.hostname === "localhost"
+    ? "localhost:3001"
+    : window.location.hostname);
 
 export const clientSession = uuid();
