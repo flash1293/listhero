@@ -1,4 +1,4 @@
-# Redis ->MongoDB Migration
+# Redis -> MongoDB Migration
 
 This script migrates the data from a redis dump to a json file importable as MongoDB collection.
 

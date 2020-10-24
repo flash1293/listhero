@@ -12,15 +12,23 @@
 ekofe is a small, simple shopping-list app which syncs lists between multiple devices. It uses react, service workers, and material-ui.
 You can try (and use) it on [listhero.de](https://listhero.de).
 
-The data is encrypted on the client and synced using a small node.js application server which saves the encrypted changes in a redis instance.
+The data is encrypted on the client and synced using a small node.js application server which saves the encrypted changes in a connected postgres instance.
 
 ## Development
 
-To start the server and client locally, you need a local redis server. Run `yarn install` and afterwards `yarn start` in the `client`-directory and the `server`-directory.
+To start the server and client locally, you need a local redis server. Run `yarn install` and afterwards `yarn dev` in the `client`-directory and the `server`-directory.
+
+### Setting up a local db
+
+(for Mac)
+
+* `brew install postgres`
+* `pg_ctl -D /usr/local/var/postgres start`
+* `createdb ekofe`
 
 ## Deployment
 
-The easiest way to deploy an ekofe instance is using the prepared `docker-compose.yml` file. On a production system, you can use the built images `flash1293/ekofe-server` and `flash1293/ekofe-client` instead of lokal sources and Dockerfiles.
+The easiest way to deploy an ekofe instance is using the prepared `docker-compose.yml` file. On a production system, you can use the built images `flash1293/ekofe-server` and `flash1293/ekofe-client` instead of local sources and Dockerfiles.
 
 ## Mechanism
 

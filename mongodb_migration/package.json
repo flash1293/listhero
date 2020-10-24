@@ -1,0 +1,13 @@
+{
+  "name": "ekofe-migration",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Johannes Reuter <flash1293@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": "8.x"
+  },
+  "dependencies": {
+    "pg": "^8.4.1"
+  }
+}

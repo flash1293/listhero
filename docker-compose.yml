@@ -16,8 +16,15 @@ services:
       - DEBUG=trace,info,error
       - SEED=58787657876
       - SECRET=test123
+      - DISABLE_SSL=1
+      - DATABASE_URL=postgresql://db_user:db_password@db/ekofe
   db:
-    image: mongo:4.0-xenial
+    image: postgres:13
+    environment:
+      - PGDATA=/data/db
+      - POSTGRES_DB=ekofe
+      - POSTGRES_USER=db_user
+      - POSTGRES_PASSWORD=db_password
     volumes:
       - "./data:/data/db"
       

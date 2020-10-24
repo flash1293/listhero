@@ -1,3 +1,4 @@
+const fs = require("fs");
 const express = require("express");
 const noop = require("express-noop");
 const bodyParser = require("body-parser");
@@ -9,18 +10,39 @@ const scrypt = require("scrypt");
 const trace = require("debug")("trace");
 const info = require("debug")("info");
 const error = require("debug")("error");
-const MongoClient = require("mongodb").MongoClient;
-var Mutex = require("async-mutex").Mutex;
+const { Pool } = require("pg");
+
+const schema = fs.readFileSync(__dirname + "/schema.sql", "utf8");
+
+const dbConfig = {
+  connectionString: process.env.DATABASE_URL || "postgresql://localhost/ekofe",
+  ssl: process.env.DISABLE_SSL
+    ? false
+    : {
+        rejectUnauthorized: false,
+      },
+};
+
+let db;
+let retryDelay = 1000;
+
+async function initDb() {
+  try {
+    db = new Pool(dbConfig);
+
+    await db.query(schema);
+  } catch (e) {
+    error(`failed setting up db connection, retrying in ${retryDelay}ms`, e);
+    await new Promise((res) => {
+      setTimeout(res, retryDelay);
+      retryDelay *= 1.3;
+    });
+    await initDb();
+  }
+  info("Database set up");
+}
 
 (async () => {
-  const mongo = await MongoClient.connect(
-    process.env.MONGODB_URI || "mongodb://db:27017/ekofe"
-  );
-  const db = mongo.db();
-
-  // ensure indices
-  await db.collection("data").createIndex("username");
-
   const seed = process.env.SEED;
 
   const app = express();
@@ -30,50 +52,43 @@ var Mutex = require("async-mutex").Mutex;
 
   const clients = {};
 
-  const locks = {};
-
   const scryptParams = scrypt.paramsSync(0.2);
 
   app.post(
     "/token",
     process.env.PASSWORD ? basicauth("user", process.env.PASSWORD) : noop(),
-    (req, res) => {
+    async (req, res) => {
       const { username, password } = req.body;
 
-      db.collection("data")
-        .findOne({ username })
-        .then(user => {
-          if (user) {
-            return scrypt
-              .verifyKdf(new Buffer(user.kdf, "base64"), password)
-              .then(result => {
-                if (result) {
-                  res.json(
-                    jwt.sign({ username: username }, process.env.SECRET)
-                  );
-                } else {
-                  res.send(401);
-                }
-              });
+      try {
+        const resultDb = await db.query(
+          "SELECT kdf FROM users WHERE username=$1::text",
+          [username]
+        );
+
+        if (resultDb.rows.length) {
+          const user = resultDb.rows[0];
+          const result = await scrypt.verifyKdf(
+            new Buffer(user.kdf, "base64"),
+            password
+          );
+          if (result) {
+            res.json(jwt.sign({ username: username }, process.env.SECRET));
           } else {
-            return scrypt
-              .kdf(password, scryptParams)
-              .then(kdf =>
-                db.collection("data").insertOne({
-                  username,
-                  kdf: kdf.toString("base64"),
-                  actions: []
-                })
-              )
-              .then(() =>
-                res.json(jwt.sign({ username: username }, process.env.SECRET))
-              );
+            res.send(401);
           }
-        })
-        .catch(err => {
-          error(err);
-          res.status(500).end(err);
-        });
+        } else {
+          const kdf = await scrypt.kdf(password, scryptParams);
+          await db.query(
+            "INSERT INTO users(username,kdf) VALUES($1::text,$2::text)",
+            [username, kdf.toString("base64")]
+          );
+          res.json(jwt.sign({ username: username }, process.env.SECRET));
+        }
+      } catch (err) {
+        error(err);
+        res.status(500).end(err);
+      }
     }
   );
 
@@ -82,117 +97,100 @@ var Mutex = require("async-mutex").Mutex;
     jwtExpress({ secret: process.env.SECRET }),
     async (req, res) => {
       const { startFrom, actions, snapshot, version } = req.body;
-      if (!locks[req.user.username]) {
-        locks[req.user.username] = new Mutex();
-      }
 
-      await locks[req.user.username].runExclusive(async () => {
-        try {
-          const data = await db.collection("data").findOne(
-            { username: req.user.username },
-            {
-              projection: {
-                actions: { $slice: [startFrom, Math.pow(2, 30)] },
-                snapshot: 1
-              }
-            }
+      const transaction = await db.connect();
+      await transaction.query("BEGIN");
+      try {
+        const dbResult = await transaction.query(
+          "SELECT snapshot_version, snapshot_sequence, LENGTH(snapshot_content) as snapshot_size, actions[$2::int:] as actions FROM users WHERE username=$1::text",
+          [req.user.username, startFrom + 1]
+        );
+        const storedActions = dbResult.rows[0].actions || [];
+        const actionCount = startFrom + storedActions.length;
+        const storedSnapshot = dbResult.rows[0] || {};
+
+        if (actions.length > 0) {
+          await transaction.query(
+            "UPDATE users SET actions = array_cat((SELECT actions FROM users WHERE username=$1::text),$2::text[]) WHERE username=$1::text",
+            [req.user.username, actions.map((action) => String(action))]
           );
-          const actionCount = startFrom + data.actions.length;
-          const storedSnapshot = data.snapshot || {};
+        }
 
-          if (actions.length > 0) {
-            await db.collection("data").updateOne(
-              { username: req.user.username },
-              {
-                $push: {
-                  actions: { $each: actions.map(action => String(action)) }
-                }
-              }
+        const newActions = storedActions.concat(actions);
+
+        const sequence = actionCount;
+        let storedSnapshotSequence = storedSnapshot.snapshot_sequence || 0;
+        let storedSnapshotVersion = storedSnapshot.snapshot_version || 0;
+        trace(storedSnapshotSequence);
+        trace(storedSnapshotVersion);
+        trace(sequence);
+        trace(newActions);
+        if (snapshot) {
+          info(`Trying to store snapshot`);
+          if (
+            (storedSnapshotVersion === undefined ||
+              version >= storedSnapshotVersion) &&
+            startFrom === sequence
+          ) {
+            info(`Storing snapshot`);
+            const snapshotSequence = sequence + actions.length;
+            await transaction.query(
+              "UPDATE users SET snapshot_version = $1::int, snapshot_content = $2::text, snapshot_sequence = $3::int WHERE username = $4::text",
+              [parseInt(version), snapshot, snapshotSequence, req.user.username]
             );
+            storedSnapshotSequence = snapshotSequence;
+            storedSnapshotVersion = version;
           }
+        }
+        const baseAnswer = {
+          snapshotSequence:
+            version === storedSnapshotVersion ? storedSnapshotSequence : 0,
+          seed,
+        };
 
-          const newActions = data.actions.concat(actions);
-
-          const sequence = actionCount;
-          let storedSnapshotSequence = storedSnapshot.sequence
-            ? parseInt(storedSnapshot.sequence)
-            : 0;
-          let storedSnapshotVersion = storedSnapshot.version
-            ? parseInt(storedSnapshot.version)
-            : undefined;
-          trace(storedSnapshotSequence);
-          trace(storedSnapshotVersion);
-          trace(sequence);
-          trace(newActions);
-          if (snapshot) {
-            info(`Trying to store snapshot`);
-            if (
-              (storedSnapshotVersion === undefined ||
-                version >= storedSnapshotVersion) &&
-              startFrom === sequence
-            ) {
-              info(`Storing snapshot`);
-              const snapshotSequence = sequence + actions.length;
-              await db.collection("data").findOneAndUpdate(
-                { username: req.user.username },
-                {
-                  $set: {
-                    snapshot: {
-                      version,
-                      snapshot,
-                      sequence: snapshotSequence
-                    }
-                  }
-                }
-              );
-              storedSnapshotSequence = snapshotSequence;
-              storedSnapshotVersion = version;
-            }
-          }
-          const baseAnswer = {
-            snapshotSequence:
-              version === storedSnapshotVersion ? storedSnapshotSequence : 0,
-            seed
-          };
-
-          if (startFrom < sequence) {
-            if (
-              !snapshot &&
-              version === storedSnapshotVersion &&
-              storedSnapshotSequence > startFrom &&
-              JSON.stringify(newActions).length > storedSnapshot.snapshot.length
-            ) {
-              res.json({
-                ...baseAnswer,
-                replayFrom: startFrom,
-                replayLog: newActions.slice(storedSnapshotSequence - startFrom),
-                snapshot: storedSnapshot.snapshot
-              });
-            } else {
-              res.json({
-                ...baseAnswer,
-                replayFrom: startFrom,
-                replayLog: newActions
-              });
-            }
+        if (startFrom < sequence) {
+          if (
+            !snapshot &&
+            version === storedSnapshotVersion &&
+            storedSnapshotSequence > startFrom &&
+            JSON.stringify(newActions).length > storedSnapshot.snapshot_size
+          ) {
+            const snapshotContentResult = await transaction.query(
+              "SELECT snapshot_content FROM users WHERE username = $1::text",
+              [req.user.username]
+            );
+            res.json({
+              ...baseAnswer,
+              replayFrom: startFrom,
+              replayLog: newActions.slice(storedSnapshotSequence - startFrom),
+              snapshot: snapshotContentResult.rows[0].snapshot_content,
+            });
           } else {
             res.json({
-              ...baseAnswer
+              ...baseAnswer,
+              replayFrom: startFrom,
+              replayLog: newActions,
             });
           }
-          if (actions.length > 0) {
-            (clients[req.user.username] || []).forEach(
-              c => c.session !== req.headers["x-sync-session"] && c.ws.send("")
-            );
-          }
-          info(`New action log length: ${sequence + actions.length}`);
-        } catch (err) {
-          error(err);
-          res.status(500).end(err);
+        } else {
+          res.json({
+            ...baseAnswer,
+          });
         }
-      });
-
-      delete locks[req.user.username];
+        if (actions.length > 0) {
+          (clients[req.user.username] || []).forEach(
+            (c) => c.session !== req.headers["x-sync-session"] && c.ws.send("")
+          );
+        }
+        info(`New action log length: ${sequence + actions.length}`);
+        await transaction.query("COMMIT");
+      } catch (err) {
+        await transaction.query("ROLLBACK");
+        error(err);
+        res.status(500).end(err);
+      } finally {
+        transaction.release();
+      }
     }
   );
 
@@ -208,7 +206,7 @@ var Mutex = require("async-mutex").Mutex;
       ws.on("close", () => {
         info("update listener disconnected");
         clients[jwtToken.username] = clients[jwtToken.username].filter(
-          c => c.ws !== ws
+          (c) => c.ws !== ws
         );
       });
     } catch (err) {
@@ -218,12 +216,15 @@ var Mutex = require("async-mutex").Mutex;
   });
 
   const port = process.env.PORT || 3001;
-  const server = app.listen(port, () =>
-    info(`Ekofe server listening on port ${port}!`)
-  );
+  const server = app.listen(port, () => {
+    initDb();
+    info(`Ekofe server listening on port ${port}!`);
+  });
 
-  process.on("SIGTERM", function() {
-    server.close(function() {
+  // gracefully shut down when receiving sigterm
+  process.on("SIGTERM", function () {
+    pool.end();
+    server.close(function () {
       process.exit(0);
     });
   });

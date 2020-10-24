@@ -5,14 +5,13 @@
   "author": "Johannes Reuter <flash1293@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "DEBUG=trace,info,error SEED=58787657876 MONGODB_URI=mongodb://localhost:27017/ekofe SECRET=test123 nodemon src/index.js",
+    "dev": "DEBUG=trace,info,error SEED=58787657876 DATABASE_URL=postgresql://localhost/ekofe DISABLE_SSL=1 SECRET=test123 nodemon src/index.js",
     "start": "DEBUG=info,error node src/index.js"
   },
   "engines": {
     "node": "8.x"
   },
   "dependencies": {
-    "async-mutex": "^0.1.4",
     "basicauth-middleware": "^3.0.0",
     "body-parser": "^1.18.2",
     "cors": "^2.8.5",
@@ -21,7 +20,7 @@
     "express-jwt": "^5.3.0",
     "express-noop": "^1.1.0",
     "express-ws": "^3.0.0",
-    "mongodb": "^3.4.1",
+    "pg": "^8.4.1",
     "scrypt": "^6.0.3"
   },
   "devDependencies": {
