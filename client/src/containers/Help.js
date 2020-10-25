@@ -17,14 +17,14 @@ import keymap from "../keymap";
 import routerContext from "../components/RouterContext";
 import redirectToLogin from "../components/RedirectToLogin";
 
-export const Help = ({ router }) => (
+export const Help = ({ history }) => (
   <div>
     <I18n>
       {t => (
         <React.Fragment>
           <AppBar position="static" color="primary">
             <Toolbar>
-              <IconButton onClick={router.history.goBack} color="inherit">
+              <IconButton onClick={history.goBack} color="inherit">
                 <ArrowBack />
               </IconButton>
               <Typography variant="h6" color="inherit">

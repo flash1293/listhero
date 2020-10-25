@@ -26,7 +26,7 @@ import RecentlyUsedItem from "../components/RecentlyUsedItem";
 export const RecentUsed = ({
   listId,
   list: { recentItems },
-  router,
+  history,
   sortList,
   setSortList,
   handleChangeText,
@@ -46,7 +46,7 @@ export const RecentUsed = ({
         <div>
           <AppBar position="static" color="primary">
             <Toolbar>
-              <IconButton onClick={router.history.goBack} color="inherit">
+              <IconButton onClick={history.goBack} color="inherit">
                 <ArrowBack />
               </IconButton>
               <Typography variant="h6" color="inherit" style={{ flex: 1 }}>

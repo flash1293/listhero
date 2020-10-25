@@ -6,34 +6,34 @@
   "author": "Johannes Reuter <flash1293@gmail.com>",
   "dependencies": {
     "@johannes.reuter/react-long": "^1.1.3",
-    "@material-ui/core": "^3.0.0",
-    "@material-ui/icons": "^3.0.0",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "aes-js": "^3.1.0",
     "bloodhound-js": "^1.2.2",
     "emoji-regex": "^6.5.1",
     "i18next": "^10.2.2",
     "i18next-browser-languagedetector": "^2.1.0",
     "lz-string": "^1.4.4",
-    "notistack": "^0.4.1",
+    "notistack": "^0.9.12",
     "npm-license-crawler": "^0.1.9",
     "qrcode.react": "^0.7.2",
     "ramda": "^0.25.0",
-    "react": "^16.5.2",
+    "react": "^16.8.0",
     "react-click-n-hold": "^1.0.6",
     "react-copy-to-clipboard": "^5.0.1",
-    "react-dom": "^16.5.2",
+    "react-dom": "^16.8.0",
     "react-i18next": "^7.3.1",
     "react-intersection-observer": "^8.22.6",
     "react-qr-reader": "^2.1.0",
     "react-redux": "^5.0.6",
-    "react-router-dom": "^4.2.2",
-    "react-scripts": "1.0.17",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.0",
     "react-shortcuts": "^2.0.0",
     "react-sortable-hoc": "^1.4.0",
     "react-window-size": "^1.0.1",
     "recompose": "^0.26.0",
-    "redux": "^3.7.2",
-    "redux-persist": "^5.4.0",
+    "redux": "^4.0.5",
+    "redux-persist": "^6.0.0",
     "reselect": "^3.0.1",
     "source-map-explorer": "^1.5.0",
     "uuid": "^3.1.0"
@@ -46,5 +46,17 @@
     "analyze": "source-map-explorer build/static/js/main.*",
     "eject": "react-scripts eject",
     "licenses": "cp ../LICENSE public/__licenses.txt && echo '\\nIncluded:\\n\\n' >> public/__licenses.txt && npm-license-crawler --omitDependencies --onlyDirectDependencies | tail -n +3 >> public/__licenses.txt"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

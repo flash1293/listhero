@@ -134,7 +134,7 @@ export default compose(
   }),
   routerContext,
   withHandlers({
-    handleChangeText: ({ router: { history } }) => ({ target: { value } }) =>
+    handleChangeText: ({ history }) => ({ target: { value } }) =>
       history.push(!value ? "/log" : `/log/${value}`)
   })
 )(LogView);

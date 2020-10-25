@@ -291,7 +291,7 @@ export default compose(
   preferredView("shop"),
   routerContext,
   withHandlers({
-    handleShortcuts: ({ router: { history }, listId, lists }) => action => {
+    handleShortcuts: ({ history, listId, lists }) => action => {
       switch (action) {
         case "EDIT_MODE":
           history.push(`/lists/${listId}/entries/edit`);

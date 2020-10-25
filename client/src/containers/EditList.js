@@ -451,7 +451,7 @@ export default compose(
   windowSize,
   routerContext,
   withHandlers({
-    handleShortcuts: ({ router: { history }, listId, lists }) => action => {
+    handleShortcuts: ({ history, listId, lists }) => action => {
       switch (action) {
         case "SHOPPING_MODE":
           history.push(`/lists/${listId}/entries`);

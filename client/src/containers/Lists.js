@@ -105,7 +105,7 @@ export const Lists = ({
   handleDialogOpen,
   handleDialogClose,
   handleDialogSubmit,
-  router,
+  history,
   toggleDrawer,
   isDrawerOpen,
   merged,
@@ -141,7 +141,7 @@ export const Lists = ({
         <SortableList
           lists={lists}
           onSortEnd={onSortEnd}
-          history={router.history}
+          history={history}
           useDragHandle
           useWindowAsScrollContainer
           lockAxis="y"

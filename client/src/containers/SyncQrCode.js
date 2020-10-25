@@ -12,12 +12,12 @@ import redirectToLogin from "../components/RedirectToLogin";
 import routerContext from "../components/RouterContext";
 import syncLink from "../components/SyncLink";
 
-export const SyncQrCode = ({ syncLink, router }) => (
+export const SyncQrCode = ({ syncLink, history }) => (
   <I18n>{t =>
   <div>
     <AppBar position="static" color="primary">
       <Toolbar>
-        <IconButton onClick={router.history.goBack} color="inherit">
+        <IconButton onClick={history.goBack} color="inherit">
           <ArrowBack />
         </IconButton>
         <Typography variant="h6" color="inherit">

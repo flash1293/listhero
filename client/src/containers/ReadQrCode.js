@@ -18,7 +18,7 @@ import syncLink from "../components/SyncLink";
 import inputForm from "../components/InputForm";
 
 export const SyncQrCode = ({
-  router,
+  history,
   handleChangeText,
   handleSubmit,
   onSubmit,
@@ -29,7 +29,7 @@ export const SyncQrCode = ({
       <div>
         <AppBar position="static" color="primary">
           <Toolbar>
-            <IconButton onClick={router.history.goBack} color="inherit">
+            <IconButton onClick={history.goBack} color="inherit">
               <ArrowBack />
             </IconButton>
             <Typography variant="h6" color="inherit">
@@ -80,8 +80,8 @@ export default compose(
   routerContext,
   syncLink,
   withHandlers({
-    onSubmit: ({ router }) => shareUrl =>
-      shareUrl && router.history.push(new URL(shareUrl).hash.substr(1))
+    onSubmit: ({ history }) => shareUrl =>
+      shareUrl && history.push(new URL(shareUrl).hash.substr(1))
   }),
   inputForm
 )(SyncQrCode);
